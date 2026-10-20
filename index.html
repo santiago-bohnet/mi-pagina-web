@@ -27,6 +27,7 @@
 #kuro-greeting.speaking{visibility:visible}
 @media(max-width:520px){#kuro-greeting{padding:12px 14px;max-width:62vw;font-size:1rem}}
 @media(prefers-reduced-motion:reduce){#despertar.intro-stage{min-height:125svh}}
+#compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
 </style>
 </head>
 <body>
@@ -34,6 +35,7 @@
 <div id="kuro-greeting" role="status" aria-live="off" aria-label="Kuro dice: Bienvenido a mi universo">Bienvenido a mi universo</div>
 <div id="scene-title">SECTOR 00 · ORIGEN</div>
 <div id="kuro-overlay" aria-label="Kuro, tu acompañante"><span id="catmark"><i class="eyes"></i></span><div><b>KURO</b><br><small id="kuro-speech">Sistemas despertando…</small></div></div>
+<a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
 <main>
 <section class="intro-stage" id="despertar" aria-label="Introducción interactiva: los ojos escarlata de Kuro se acercan, la nave emerge de la oscuridad y Kuro dice: Bienvenido a mi universo. Desplazate hacia abajo para continuar y hacia arriba para volver."><h1 class="sr-only">Kuro</h1></section>
 <section class="stage" id="explorar"><p class="eyebrow">01 / DESCUBRIMIENTO</p><h2>NO TODO LO QUE FLOTA<br>ESTÁ PERDIDO</h2><p class="desc">Mové el cursor o el dedo: el universo responde. Avanzá con el scroll para acercarte a su núcleo. El significado de los objetos flotantes todavía está por decidirse.</p><a class="action" href="#nucleo">Hacia el núcleo Ω ↓</a></section>
