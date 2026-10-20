@@ -168,6 +168,7 @@ function frame(t){
  camera.position.x+=((mx*(.3+universe*2.1))-camera.position.x)*.045;
  camera.position.y+=((1-my*(.2+universe*1.6))-camera.position.y)*.045;
  camera.lookAt(camera.position.x*.4,0,camera.position.z-30);
+ camera.updateMatrixWorld();
  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
  starMaterial.opacity=.83*universe;
  core.visible=universe>.1;
