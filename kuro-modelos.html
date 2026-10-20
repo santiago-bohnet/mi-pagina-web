@@ -37,7 +37,7 @@ letter-spacing:.17em;padding:7px 10px;background:#190e17ce;border:1px solid #663
 .body p{font-size:.91rem;line-height:1.62;color:#c2a9b4;min-height:53px;margin:0 0 15px}
 .tools{display:flex;gap:9px;margin:15px 0}.tools button{border:1px solid #624252;background:#1a121c;
 color:#dec2ce;border-radius:11px;padding:9px 12px;flex:1;font-size:.84rem}
-.tools button:hover{border-color:#da5a80}
+.tools button:hover,.tools button[aria-pressed=true]{border-color:#da5a80;background:#562038;color:#fff}
 .pick{width:100%;min-height:46px;border:1px solid #e54a73;background:linear-gradient(100deg,#51152d,#901b42);
 color:white;border-radius:12px;padding:12px 14px;font-weight:650}
 .pick:hover,.pick[aria-pressed=true]{background:linear-gradient(100deg,#a82b51,#df385f)}
@@ -57,12 +57,12 @@ border-radius:15px;color:white;box-shadow:0 9px 36px #000a;display:none;text-ali
 </header>
 <div id="loading" role="status"></div>
 <main class="grid" id="gallery">
-<article class="card" data-card="0"><div class="viewport" data-model="0" tabindex="0" aria-label="Modelo 1 Noctis, arrastrá para girar"><span class="serial">01 / 06</span><span class="chip">FELINO · ELEGANTE</span></div><div class="body"><h2>Noctis</h2><p>Pantera aerodinámica. Más estilizada, con orejas afinadas, mirada suave y alas en flecha.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="0" aria-pressed="false">Elegir Noctis</button></div></article>
-<article class="card" data-card="1"><div class="viewport" data-model="1" tabindex="0" aria-label="Modelo 2 Nube, arrastrá para girar"><span class="serial">02 / 06</span><span class="chip">KAWAII · FUTURISTA</span></div><div class="body"><h2>Nube</h2><p>Cara más pequeña y adorable, ojos luminosos grandes y alas cortas redondeadas, sin cachetes abultados.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="1" aria-pressed="false">Elegir Nube</button></div></article>
-<article class="card" data-card="2"><div class="viewport" data-model="2" tabindex="0" aria-label="Modelo 3 Vesper, arrastrá para girar"><span class="serial">03 / 06</span><span class="chip">VELOZ · SIGILOSO</span></div><div class="body"><h2>Vesper</h2><p>Interceptor afilado con orejas inclinadas y alas largas de caza. La variante más veloz.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="2" aria-pressed="false">Elegir Vesper</button></div></article>
-<article class="card" data-card="3"><div class="viewport" data-model="3" tabindex="0" aria-label="Modelo 4 Umbra, arrastrá para girar"><span class="serial">04 / 06</span><span class="chip">MÍSTICO · ETÉREO</span></div><div class="body"><h2>Umbra</h2><p>Inspirado en un gato de sombras: alas orgánicas, ojos finos y una silueta flotante misteriosa.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="3" aria-pressed="false">Elegir Umbra</button></div></article>
-<article class="card" data-card="4"><div class="viewport" data-model="4" tabindex="0" aria-label="Modelo 5 Omega, arrastrá para girar"><span class="serial">05 / 06</span><span class="chip">GUARDIÁN · Ω</span></div><div class="body"><h2>Omega</h2><p>Un guardián felino de blindaje sólido, alas protectoras y núcleo central escarlata.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="4" aria-pressed="false">Elegir Omega</button></div></article>
-<article class="card" data-card="5"><div class="viewport" data-model="5" tabindex="0" aria-label="Modelo 6 Kuro X, arrastrá para girar"><span class="serial">06 / 06</span><span class="chip">MECÁNICO · FELINO</span></div><div class="body"><h2>Kuro X</h2><p>Casco robótico de gato joven, paneles refinados y seis bigotes rojos grabados en el rostro.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="5" aria-pressed="false">Elegir Kuro X</button></div></article>
+<article class="card" data-card="0"><div class="viewport" data-model="0" tabindex="0" aria-label="Modelo 1 Noctis, arrastrá para girar"><span class="serial">01 / 06</span><span class="chip">FELINO · ELEGANTE</span></div><div class="body"><h2>Noctis</h2><p>Pantera aerodinámica. Más estilizada, con orejas afinadas, mirada suave y alas en flecha.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button><button class="detail" data-detail="true" aria-pressed="false">Rostro</button></div><button class="pick" data-choice="0" aria-pressed="false">Elegir Noctis</button></div></article>
+<article class="card" data-card="1"><div class="viewport" data-model="1" tabindex="0" aria-label="Modelo 2 Nube, arrastrá para girar"><span class="serial">02 / 06</span><span class="chip">KAWAII · FUTURISTA</span></div><div class="body"><h2>Nube</h2><p>Cara más pequeña y adorable, ojos luminosos grandes y alas cortas redondeadas, sin cachetes abultados.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button><button class="detail" data-detail="true" aria-pressed="false">Rostro</button></div><button class="pick" data-choice="1" aria-pressed="false">Elegir Nube</button></div></article>
+<article class="card" data-card="2"><div class="viewport" data-model="2" tabindex="0" aria-label="Modelo 3 Vesper, arrastrá para girar"><span class="serial">03 / 06</span><span class="chip">VELOZ · SIGILOSO</span></div><div class="body"><h2>Vesper</h2><p>Interceptor afilado con orejas inclinadas y alas largas de caza. La variante más veloz.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button><button class="detail" data-detail="true" aria-pressed="false">Rostro</button></div><button class="pick" data-choice="2" aria-pressed="false">Elegir Vesper</button></div></article>
+<article class="card" data-card="3"><div class="viewport" data-model="3" tabindex="0" aria-label="Modelo 4 Umbra, arrastrá para girar"><span class="serial">04 / 06</span><span class="chip">MÍSTICO · ETÉREO</span></div><div class="body"><h2>Umbra</h2><p>Inspirado en un gato de sombras: alas orgánicas, ojos finos y una silueta flotante misteriosa.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button><button class="detail" data-detail="true" aria-pressed="false">Rostro</button></div><button class="pick" data-choice="3" aria-pressed="false">Elegir Umbra</button></div></article>
+<article class="card" data-card="4"><div class="viewport" data-model="4" tabindex="0" aria-label="Modelo 5 Omega, arrastrá para girar"><span class="serial">05 / 06</span><span class="chip">GUARDIÁN · Ω</span></div><div class="body"><h2>Omega</h2><p>Un guardián felino de blindaje sólido, alas protectoras y núcleo central escarlata.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button><button class="detail" data-detail="true" aria-pressed="false">Rostro</button></div><button class="pick" data-choice="4" aria-pressed="false">Elegir Omega</button></div></article>
+<article class="card" data-card="5"><div class="viewport" data-model="5" tabindex="0" aria-label="Modelo 6 Kuro X, arrastrá para girar"><span class="serial">06 / 06</span><span class="chip">MECÁNICO · FELINO</span></div><div class="body"><h2>Kuro X</h2><p>Casco robótico de gato joven, paneles refinados y seis bigotes rojos grabados en el rostro.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button><button class="detail" data-detail="true" aria-pressed="false">Rostro</button></div><button class="pick" data-choice="5" aria-pressed="false">Elegir Kuro X</button></div></article>
 </main><div id="selection" role="status" aria-live="polite"></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/+esm';
@@ -292,8 +292,19 @@ document.querySelectorAll('.viewport').forEach(node=>{
   e.preventDefault();state.target+=(e.key==='ArrowLeft'?-1:1)*.22;
  }});
  node.closest('.card').querySelectorAll('[data-angle]').forEach(btn=>btn.addEventListener('click',()=>{
-  state.target=Number(btn.dataset.angle);if(reduced){state.angle=state.target;drawSingle(state,0)}
+  state.target=Number(btn.dataset.angle);
+  if(reduced){state.angle=state.target;drawSingle(state,0)}
  }));
+ state.zoom=false;
+ node.closest('.card').querySelector('[data-detail]').addEventListener('click',e=>{
+  state.zoom=!state.zoom;
+  const btn=e.currentTarget;
+  btn.setAttribute('aria-pressed',String(state.zoom));
+  state.camera.position.z=state.zoom?6.0:9.75;
+  state.camera.lookAt(0,.12,0);
+  if(state.zoom)state.target=0;
+  if(reduced){state.angle=state.target;drawSingle(state,0)}
+ });
  viewports.push(state);
 });
 const observer=new IntersectionObserver(entries=>entries.forEach(e=>{
