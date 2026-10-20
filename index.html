@@ -67,157 +67,29 @@ const torusMat=new THREE.MeshStandardMaterial({color:0x24020b,metalness:.82,roug
 for(let i=0;i<3;i++){let mesh=new THREE.Mesh(new THREE.TorusGeometry(8+i*2,.18,10,90),torusMat);mesh.rotation.set(i*.6,i*.55,i*.27);core.add(mesh)}
 const central=new THREE.Mesh(new THREE.IcosahedronGeometry(3,2),new THREE.MeshStandardMaterial({color:0x11070f,metalness:.7,roughness:.25,emissive:0x941139,emissiveIntensity:.55,wireframe:true}));core.add(central);
 const orbiters=[];for(let i=0;i<22;i++){let m=new THREE.Mesh(new THREE.OctahedronGeometry(.3+Math.random()*1.2),new THREE.MeshStandardMaterial({color:0x211423,metalness:.6,roughness:.3,emissive:0x491127,emissiveIntensity:.4}));m.position.set((Math.random()-.5)*65,(Math.random()-.5)*40,-10-Math.random()*140);m.rotation.set(Math.random()*2,Math.random()*2,Math.random()*2);scene.add(m);orbiters.push(m)}
-// Kuro v4. Silueta de pantera mecánica: rostro ancho, orejas altivas, alas-garra,
-// armadura estratificada y ojos felinos, no un avión con dos luces.
+// Kuro v2: nave felina que se desarma y recompone en un gato tridimensional.
+// Piezas independientes: ninguna transformación depende de esconder el modelo entero.
 const kuro=new THREE.Group();scene.add(kuro);kuro.position.set(0,-1,12);
-const shell=new THREE.MeshPhysicalMaterial({color:0x24202b,metalness:.46,roughness:.36,clearcoat:.7,clearcoatRoughness:.28,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
-const panel=new THREE.MeshStandardMaterial({color:0x48323f,metalness:.5,roughness:.39,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
-const graphite=new THREE.MeshStandardMaterial({color:0x110e17,metalness:.58,roughness:.36,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
-const trim=new THREE.MeshStandardMaterial({color:0xaa314b,metalness:.4,roughness:.33,emissive:0xc3234c,emissiveIntensity:.54,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+const shell=new THREE.MeshStandardMaterial({color:0x06050a,metalness:.94,roughness:.16});
 const fur=new THREE.MeshStandardMaterial({color:0x030306,metalness:.16,roughness:.75});
-const iris=new THREE.MeshBasicMaterial({color:0xff1c4b,side:THREE.DoubleSide});
+const trim=new THREE.MeshStandardMaterial({color:0x501025,metalness:.92,roughness:.2,emissive:0x8b102c,emissiveIntensity:.32});
+const iris=new THREE.MeshBasicMaterial({color:0xff174a});
 const gold=new THREE.MeshBasicMaterial({color:0xffbc80});
-function mesh(g,m,parent,x=0,y=0,z=0){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);parent.add(o);return o}
+function mesh(g,m,p,x=0,y=0,z=0){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);p.add(o);return o}
 const craft=new THREE.Group(),catBody=new THREE.Group();kuro.add(craft,catBody);
-function armor(outline,material,z,parent=craft,depth=.095){
- const shape=new THREE.Shape();shape.moveTo(outline[0][0],outline[0][1]);
- for(let i=1;i<outline.length;i++)shape.lineTo(outline[i][0],outline[i][1]);
- shape.closePath();
- return mesh(new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:true,bevelThickness:.032,bevelSize:.035,bevelSegments:2,curveSegments:2}),material,parent,0,0,z);
-}
-function line(points,material=trim,width=.019,parent=craft){
- const curve=new THREE.CatmullRomCurve3(points.map(([x,y,z])=>new THREE.Vector3(x,y,z)));
- return mesh(new THREE.TubeGeometry(curve,Math.max(12,points.length*8),width,5,false),material,parent);
-}
-// Cuerpo afilado longitudinal con esqueleto acorazado.
-const hull=mesh(new THREE.SphereGeometry(1,32,22),shell,craft,0,-.26,-.42);hull.scale.set(.91,.67,2.95);
-const spine=mesh(new THREE.CylinderGeometry(.15,.55,3.45,7),graphite,craft,0,.6,-.55);spine.rotation.x=Math.PI/2;
-for(let n=0;n<5;n++){
- const z=1.2-n*.63;
- armor([[-.67,.47],[-.5,.82],[0,.95],[.5,.82],[.67,.47]],n%2?graphite:panel,z,craft,.045);
-}
-// Kuro v6 · rostro felino joven: silueta estrecha, ojos suaves y 6 bigotes grabados.
-// El bigote es un acento ESCARLATA AL RAS DEL CASCO, nunca sobresale de la nave.
-const face=armor([
- [0,1.23],[.63,1.07],[.93,.61],[1.01,-.04],[.78,-.55],
- [.43,-.88],[0,-1.02],[-.43,-.88],[-.78,-.55],[-1.01,-.04],
- [-.93,.61],[-.63,1.07]
-],shell,2.46,craft,.19);
-// Frente suave; sin placas anchas en los pómulos ni mandíbula puntiaguda.
-armor([[-.57,.90],[0,1.12],[.57,.90],[.28,.77],[0,.80],[-.28,.77]],panel,2.70,craft,.045);
-armor([[-.26,.70],[0,.84],[.26,.70],[.12,.54],[0,.58],[-.12,.54]],graphite,2.77,craft,.032);
-// Nariz minúscula triangular, color grafito con reflejo rojo tenue.
-const noseMat=new THREE.MeshStandardMaterial({
- color:0x752c44,emissive:0x380b18,emissiveIntensity:.22,
- metalness:.22,roughness:.44,transparent:true,opacity:0,
- depthWrite:false,side:THREE.DoubleSide
-});
-const noseShape=new THREE.Shape();
-noseShape.moveTo(-.145,-.36);
-noseShape.quadraticCurveTo(0,-.32,.145,-.36);
-noseShape.quadraticCurveTo(.17,-.42,.11,-.455);
-noseShape.quadraticCurveTo(.015,-.53,0,-.53);
-noseShape.quadraticCurveTo(-.015,-.53,-.11,-.455);
-noseShape.quadraticCurveTo(-.17,-.42,-.145,-.36);
-mesh(new THREE.ExtrudeGeometry(noseShape,{
- depth:.034,bevelEnabled:true,bevelThickness:.013,bevelSize:.010,
- bevelSegments:3,curveSegments:14
-}),noseMat,craft,0,0,2.83);
-// Una boquita discreta con expresión agradable, sin hocico abultado.
-const mouthMat=new THREE.MeshBasicMaterial({
- color:0x714253,transparent:true,opacity:0,depthWrite:false
-});
-line([[0,-.53,2.89],[0,-.64,2.88]],mouthMat,.009);
-line([[0,-.64,2.88],[-.12,-.70,2.865],[-.22,-.66,2.85]],mouthMat,.008);
-line([[0,-.64,2.88],[.12,-.70,2.865],[.22,-.66,2.85]],mouthMat,.008);
-// Tres rayitas curvas a cada lado, como pelo-bigote futurista embutido.
-// Las seis terminan ANTES del borde de la mejilla: no hay líneas colgantes.
+const hull=mesh(new THREE.CapsuleGeometry(.62,2.9,6,16),shell,craft,0,0,-.65);hull.rotation.x=Math.PI/2;
+const cockpit=mesh(new THREE.SphereGeometry(.72,24,16),shell,craft,0,.12,.45);cockpit.scale.set(1,.62,1.22);
+const fins=[];
 for(const side of [-1,1]){
- const strokes=[
-  [[.36,-.21,2.725],[.58,-.16,2.733],[.81,-.19,2.73]],
-  [[.38,-.35,2.73],[.59,-.35,2.735],[.82,-.38,2.73]],
-  [[.37,-.49,2.73],[.55,-.56,2.735],[.73,-.60,2.72]]
- ];
- for(const stroke of strokes){
-  line(stroke.map(([x,y,z])=>[side*x,y,z]),trim,.014);
- }
+ const fin=mesh(new THREE.ConeGeometry(.64,2.65,4),shell,craft,side*1.2,.18,-.6);
+ fin.rotation.z=side*Math.PI*.51;fin.rotation.x=.3;fins.push(fin);
+ const edge=mesh(new THREE.BoxGeometry(.055,.065,2.0),trim,fin,0,.15,0);
+ const ear=mesh(new THREE.ConeGeometry(.48,1.05,3),shell,craft,side*.53,.77,.6);
+ ear.rotation.z=-side*.2;fins.push(ear);
+ mesh(new THREE.SphereGeometry(.12,12,8),iris,craft,side*.34,.18,1.29);
 }
-const eyeHighlights=[];
-// Orejas compactas y estilizadas; conservan la apariencia de nave felina.
-for(const side of [-1,1]){
- armor([[side*.56,.96],[side*.67,1.58],[side*1.13,2.11],
-  [side*1.11,.59],[side*.85,.61]],shell,2.33,craft,.16);
- armor([[side*.86,1.32],[side*1.08,1.84],[side*1.05,.9],
-  [side*.93,.91]],graphite,2.56,craft,.05);
- armor([[side*.95,1.25],[side*1.065,1.63],[side*1.04,1.02]],trim,2.61,craft,.020);
- line([[side*.7,1.07,2.60],[side*.77,1.55,2.59],
-  [side*1.13,2.07,2.56]],trim,.016);
- // Sin placas sobre las mejillas: contorno limpio y ligeramente redondeado.
- // Ojos rojos grandes, más redondeados y menos enojados.
- armor([[side*.17,.42],[side*.4,.57],[side*.8,.55],
-  [side*.87,.38],[side*.68,.27],[side*.33,.29]],graphite,2.84,craft,.055);
- const eyeShape=new THREE.Shape();
- eyeShape.moveTo(side*.25,.40);
- eyeShape.quadraticCurveTo(side*.51,.64,side*.79,.45);
- eyeShape.quadraticCurveTo(side*.87,.34,side*.67,.32);
- eyeShape.quadraticCurveTo(side*.40,.28,side*.25,.40);
- mesh(new THREE.ExtrudeGeometry(eyeShape,{
-  depth:.024,bevelEnabled:true,bevelThickness:.012,bevelSize:.009,
-  bevelSegments:2,curveSegments:14
- }),iris,craft,0,0,2.99);
- // Un brillo rosado pequeño suaviza la mirada sin volverla blanca.
- const glint=new THREE.Mesh(new THREE.SphereGeometry(.042,10,8),
-  new THREE.MeshBasicMaterial({color:0xffa0b4}));
- glint.position.set(side*.44,.48,3.055);craft.add(glint);eyeHighlights.push(glint);
- line([[side*.23,.47,3.045],[side*.48,.59,2.97],
-  [side*.83,.52,2.94]],trim,.017);
-}
-line([[0,1.04,2.76],[0,.88,2.83],[0,.77,2.87]],trim,.015);
-// Alas-garra: caen hacia atrás como hombros de un felino, NO salen horizontales.
-const wingRoots=[];
-for(const side of [-1,1]){
- const wing=new THREE.Group();wing.position.set(side*.79,-.16,.22);craft.add(wing);wingRoots.push({wing,side});
- armor([[0,.30],[side*.60,.40],[side*1.20,.20],[side*1.74,-.24],
-        [side*2.27,-1.85],[side*1.63,-1.41],[side*.96,-1.0],[0,-.47]],shell,-.12,wing,.18);
- armor([[side*.29,.19],[side*1.15,.12],[side*1.60,-.32],[side*2.09,-1.56],[side*1.40,-1.03]],graphite,.14,wing,.07);
- armor([[side*.25,.21],[side*.92,.27],[side*1.45,-.23],[side*1.68,-.91],[side*.94,-.59]],panel,.23,wing,.065);
- line([[side*.20,.31,.34],[side*.70,.30,.35],[side*1.38,-.24,.27],[side*2.17,-1.69,.1]],trim,.033,wing);
- line([[side*.62,-.29,.35],[side*1.20,-.74,.29],[side*1.68,-1.02,.24]],trim,.018,wing);
- // Una segunda garra que acentúa el perfil de pantera sin crear barra de avión.
- armor([[side*.77,-.67],[side*1.36,-.9],[side*1.75,-1.6],[side*.98,-1.22]],shell,-.14,wing,.10);
- // Motores laterales encastrados, mirando hacia atrás.
- const nacelle=mesh(new THREE.CapsuleGeometry(.22,1.20,5,14),graphite,craft,side*1.24,-.89,-.77);
- nacelle.rotation.x=Math.PI/2;
- for(let n=0;n<3;n++)line([[side*(.98+n*.12),-.97,1.0],[side*(1.08+n*.12),-1.05,.94]],trim,.02);
-}
-// Quilla y energía central.
-armor([[-.44,-1.16],[0,-1.83],[.44,-1.16],[0,-1.39]],graphite,2.37,craft,.12);
-armor([[-.12,-1.35],[0,-1.64],[.12,-1.35]],trim,2.52);
-const engine=mesh(new THREE.TorusGeometry(.52,.085,9,32),trim,craft,0,-.28,-3);
-const thrusterMat=new THREE.MeshBasicMaterial({color:0xff2a58,transparent:true,opacity:0,depthWrite:false});
-const thrust=mesh(new THREE.ConeGeometry(.37,1.3,24),thrusterMat,craft,0,-.28,-3.65);thrust.rotation.x=-Math.PI/2;
-for(const side of [-1,1]){
- const motor=mesh(new THREE.TorusGeometry(.26,.075,8,28),trim,craft,side*1.25,-.89,-1.75);motor.rotation.y=Math.PI/2;
-}
-// Halo suave y localizado directamente delante de cada ojo.
-const lightCanvas=document.createElement('canvas');lightCanvas.width=lightCanvas.height=128;
-const ctx=lightCanvas.getContext('2d');
-const grad=ctx.createRadialGradient(64,64,2,64,64,62);
-grad.addColorStop(0,'rgba(255,105,138,1)');
-grad.addColorStop(.16,'rgba(255,32,81,.92)');
-grad.addColorStop(.43,'rgba(240,7,66,.35)');
-grad.addColorStop(1,'rgba(210,0,45,0)');
-ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);
-const glowTexture=new THREE.CanvasTexture(lightCanvas);
-const eyeGlows=[];
-for(const side of [-1,1]){
- const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTexture,color:0xff2855,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
- glow.position.set(side*.54,.43,3.11);glow.scale.set(.62,.42,1);craft.add(glow);eyeGlows.push(glow);
-}
-// Luz escarlata desde los laterales + rebote violeta tenue en las placas.
-const rim=new THREE.PointLight(0xff395c,0,13,1.4);rim.position.set(3.1,1.2,3.2);craft.add(rim);
-const key=new THREE.PointLight(0xc39aad,0,13,1.35);key.position.set(-2.6,2.5,4.8);craft.add(key);
-const underGlow=new THREE.PointLight(0xba2148,0,11,1.5);underGlow.position.set(0,-2,3.1);craft.add(underGlow);
+const engine=mesh(new THREE.TorusGeometry(.42,.07,8,28),trim,craft,0,-.1,-2.4);
+const thrust=mesh(new THREE.ConeGeometry(.38,1.1,24),new THREE.MeshBasicMaterial({color:0xff3352,transparent:true,opacity:.72}),craft,0,-.1,-2.95);thrust.rotation.x=-Math.PI/2;
 const catHead=mesh(new THREE.SphereGeometry(.96,32,24),fur,catBody,0,.63,.3);catHead.scale.set(1,.86,.8);
 const cheeks=[-1,1].map(side=>mesh(new THREE.SphereGeometry(.42,20,12),fur,catBody,side*.53,.27,.71));
 for(const side of [-1,1]){
@@ -243,8 +115,7 @@ function evolveKuro(t,progress){
  craft.rotation.y=p*Math.PI*1.4;
  catBody.rotation.y=(1-p)*-Math.PI*1.3;
  catBody.position.y=Math.sin(Math.PI*p)*.12;
- thrust.scale.y=.82+Math.sin(t*12)*.16;
- wingRoots.forEach(({wing,side})=>{wing.rotation.z=side*(.013+Math.sin(t*.95)*.009)});
+ thrust.scale.y=.82+Math.sin(t*18)*.24;
  tailSeg.forEach((seg,i)=>{seg.position.x=-.65-i*.17+Math.sin(t*2+i*.55)*.09*p;seg.position.y=-1.07+i*.22+Math.sin(t*2.5+i*.6)*.08*p});
  shards.forEach((sh,i)=>{
    const angle=i*Math.PI*2/shards.length+t*.7,burst=Math.sin(Math.PI*p);
@@ -283,13 +154,12 @@ function frame(t){
  core.visible=universe>.1;
  orbiters.forEach(o=>o.visible=universe>.15);
  // La nave sigue siendo casi invisible al principio; los ojos no desaparecen.
- shell.opacity=shipReveal;panel.opacity=shipReveal;trim.opacity=shipReveal;graphite.opacity=shipReveal;
- noseMat.opacity=shipReveal;mouthMat.opacity=shipReveal*.65;
- eyeHighlights.forEach(highlight=>highlight.visible=shipReveal>.64);
- thrusterMat.opacity=.65*shipReveal;
- rim.intensity=52*shipReveal;
- key.intensity=65*shipReveal;
- underGlow.intensity=29*shipReveal;
+ // Se conservan los materiales originales de la nave (commit histórico).
+ // Para la introducción, ocultar geometría al principio sin ocultar los ojos.
+ craft.children.forEach(part=>{
+  if(part.isMesh&&part.material!==iris)part.visible=shipReveal>.02;
+ });
+
  ambient.intensity=.15+universe*1.05;
  red.intensity=140*universe;
  core.rotation.y+=.002;core.rotation.x+=.001;central.rotation.y+=.005;
