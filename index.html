@@ -43,23 +43,72 @@ const torusMat=new THREE.MeshStandardMaterial({color:0x24020b,metalness:.82,roug
 for(let i=0;i<3;i++){let mesh=new THREE.Mesh(new THREE.TorusGeometry(8+i*2,.18,10,90),torusMat);mesh.rotation.set(i*.6,i*.55,i*.27);core.add(mesh)}
 const central=new THREE.Mesh(new THREE.IcosahedronGeometry(3,2),new THREE.MeshStandardMaterial({color:0x11070f,metalness:.7,roughness:.25,emissive:0x941139,emissiveIntensity:.55,wireframe:true}));core.add(central);
 const orbiters=[];for(let i=0;i<22;i++){let m=new THREE.Mesh(new THREE.OctahedronGeometry(.3+Math.random()*1.2),new THREE.MeshStandardMaterial({color:0x211423,metalness:.6,roughness:.3,emissive:0x491127,emissiveIntensity:.4}));m.position.set((Math.random()-.5)*65,(Math.random()-.5)*40,-10-Math.random()*140);m.rotation.set(Math.random()*2,Math.random()*2,Math.random()*2);scene.add(m);orbiters.push(m)}
-// Kuro comienza como nave felina, con orejas y ojos rojos, y evoluciona visualmente a gato.
+// Kuro v2: nave felina que se desarma y recompone en un gato tridimensional.
+// Piezas independientes: ninguna transformación depende de esconder el modelo entero.
 const kuro=new THREE.Group();scene.add(kuro);kuro.position.set(0,-1,12);
-const black=new THREE.MeshStandardMaterial({color:0x030306,metalness:.58,roughness:.25});
-const eyeMat=new THREE.MeshBasicMaterial({color:0xff174a});
-function part(geometry,material,x,y,z){const m=new THREE.Mesh(geometry,material);m.position.set(x,y,z);kuro.add(m);return m}
-const head=part(new THREE.SphereGeometry(1.2,22,16),black,0,0,0);head.scale.set(1,.86,.72);
-const ears=[-1,1].map(dir=>{let e=part(new THREE.ConeGeometry(.53,1.1,4),black,dir*.73,.99,0);e.rotation.z=-dir*.19;return e});
-part(new THREE.SphereGeometry(.15,12,8),eyeMat,-.43,.08,.95);part(new THREE.SphereGeometry(.15,12,8),eyeMat,.43,.08,.95);
-const wing1=part(new THREE.ConeGeometry(.55,3,3),black,-1.7,-.25,-.8);wing1.rotation.z=1.3;
-const wing2=part(new THREE.ConeGeometry(.55,3,3),black,1.7,-.25,-.8);wing2.rotation.z=-1.3;
+const shell=new THREE.MeshStandardMaterial({color:0x06050a,metalness:.94,roughness:.16});
+const fur=new THREE.MeshStandardMaterial({color:0x030306,metalness:.16,roughness:.75});
+const trim=new THREE.MeshStandardMaterial({color:0x501025,metalness:.92,roughness:.2,emissive:0x8b102c,emissiveIntensity:.32});
+const iris=new THREE.MeshBasicMaterial({color:0xff174a});
+const gold=new THREE.MeshBasicMaterial({color:0xffbc80});
+function mesh(g,m,p,x=0,y=0,z=0){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);p.add(o);return o}
+const craft=new THREE.Group(),catBody=new THREE.Group();kuro.add(craft,catBody);
+const hull=mesh(new THREE.CapsuleGeometry(.62,2.9,6,16),shell,craft,0,0,-.65);hull.rotation.x=Math.PI/2;
+const cockpit=mesh(new THREE.SphereGeometry(.72,24,16),shell,craft,0,.12,.45);cockpit.scale.set(1,.62,1.22);
+const fins=[];
+for(const side of [-1,1]){
+ const fin=mesh(new THREE.ConeGeometry(.64,2.65,4),shell,craft,side*1.2,.18,-.6);
+ fin.rotation.z=side*Math.PI*.51;fin.rotation.x=.3;fins.push(fin);
+ const edge=mesh(new THREE.BoxGeometry(.055,.065,2.0),trim,fin,0,.15,0);
+ const ear=mesh(new THREE.ConeGeometry(.48,1.05,3),shell,craft,side*.53,.77,.6);
+ ear.rotation.z=-side*.2;fins.push(ear);
+ mesh(new THREE.SphereGeometry(.12,12,8),iris,craft,side*.34,.18,1.29);
+}
+const engine=mesh(new THREE.TorusGeometry(.42,.07,8,28),trim,craft,0,-.1,-2.4);
+const thrust=mesh(new THREE.ConeGeometry(.38,1.1,24),new THREE.MeshBasicMaterial({color:0xff3352,transparent:true,opacity:.72}),craft,0,-.1,-2.95);thrust.rotation.x=-Math.PI/2;
+const catHead=mesh(new THREE.SphereGeometry(.96,32,24),fur,catBody,0,.63,.3);catHead.scale.set(1,.86,.8);
+const cheeks=[-1,1].map(side=>mesh(new THREE.SphereGeometry(.42,20,12),fur,catBody,side*.53,.27,.71));
+for(const side of [-1,1]){
+ const ear=mesh(new THREE.ConeGeometry(.39,.91,4),fur,catBody,side*.65,1.36,.25);ear.rotation.z=-side*.2;
+ const inner=mesh(new THREE.ConeGeometry(.17,.48,4),trim,catBody,side*.65,1.36,.57);inner.rotation.z=-side*.2;
+ const eye=mesh(new THREE.SphereGeometry(.18,16,12),iris,catBody,side*.37,.69,1.016);eye.scale.set(1.3,.62,.45);
+ const pupil=mesh(new THREE.SphereGeometry(.055,10,8),shell,catBody,side*.37,.69,1.098);pupil.scale.set(.45,1.5,.4);
+}
+const nose=mesh(new THREE.ConeGeometry(.095,.15,3),trim,catBody,0,.28,1.07);nose.rotation.z=Math.PI;
+const torso=mesh(new THREE.SphereGeometry(.73,28,18),fur,catBody,0,-.73,-.13);torso.scale.set(.85,1.25,.75);
+const paws=[];
+for(const side of [-1,1])for(const front of [-1,1]){
+ const leg=mesh(new THREE.CapsuleGeometry(.2,.51,5,12),fur,catBody,side*.47,-1.4,front*.4);paws.push(leg);
+}
+const tailSeg=[];for(let i=0;i<7;i++){const seg=mesh(new THREE.SphereGeometry(.18-i*.013,12,10),fur,catBody,-.65-i*.19,-1.07+i*.2,-.52);tailSeg.push(seg)}
+// Fragmentos intermedios independientes: sensación de desarmado y reconstrucción.
+const shards=[];for(let i=0;i<12;i++){const shard=mesh(new THREE.TetrahedronGeometry(.13+i%3*.055),i%3===0?trim:shell,kuro);shards.push(shard)}
+const ease=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
+function evolveKuro(t,progress){
+ const p=ease((progress-.025)/.19);
+ craft.scale.setScalar(Math.max(.001,1-p));catBody.scale.setScalar(Math.max(.001,p));
+ craft.visible=p<.997;catBody.visible=p>.003;
+ craft.rotation.y=p*Math.PI*1.4;
+ catBody.rotation.y=(1-p)*-Math.PI*1.3;
+ catBody.position.y=Math.sin(Math.PI*p)*.12;
+ thrust.scale.y=.82+Math.sin(t*18)*.24;
+ tailSeg.forEach((seg,i)=>{seg.position.x=-.65-i*.17+Math.sin(t*2+i*.55)*.09*p;seg.position.y=-1.07+i*.22+Math.sin(t*2.5+i*.6)*.08*p});
+ shards.forEach((sh,i)=>{
+   const angle=i*Math.PI*2/shards.length+t*.7,burst=Math.sin(Math.PI*p);
+   sh.visible=burst>.02;
+   sh.position.set(Math.cos(angle)*(1.1+burst*1.8),Math.sin(angle)*(1.0+burst*1.55),Math.cos(angle*2)*.7);
+   sh.rotation.set(t*1.7+i,t*.9+i,angle);
+   sh.scale.setScalar(burst);
+ });
+ return p;
+}
 let mx=0,my=0,sy=0;
 addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
 addEventListener('scroll',()=>{sy=scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)},{passive:true});
 function frame(t){t*=.001;const targetZ=35-sy*116;camera.position.z+=(targetZ-camera.position.z)*.034;camera.position.x+=((mx*2.4)-camera.position.x)*.03;camera.position.y+=((1-my*1.8)-camera.position.y)*.03;camera.lookAt(camera.position.x*.4,0,camera.position.z-30);
 core.rotation.y+=.002;core.rotation.x+=.001;central.rotation.y+=.005;
 for(let i=0;i<orbiters.length;i++){const o=orbiters[i];o.rotation.x+=.0015;o.rotation.y+=.003;o.position.y+=Math.sin(t+i)*.0015}
-kuro.position.z=camera.position.z-12;kuro.position.x=camera.position.x+Math.sin(t*.8)*.65;kuro.position.y=camera.position.y-2.2+Math.cos(t*1.2)*.22;kuro.rotation.y=mx*.22;const cat=sy>.09;wing1.scale.setScalar(cat?.28:1);wing2.scale.setScalar(cat?.28:1);head.scale.set(cat?1.02:1,cat?1:.86,cat?.88:.72);
+kuro.position.z=camera.position.z-12;kuro.position.x=camera.position.x+Math.sin(t*.8)*.65;kuro.position.y=camera.position.y-2.2+Math.cos(t*1.2)*.22;kuro.rotation.y=mx*.22;const cat=evolveKuro(t,sy)>.5;
 if(sy>.71){label.textContent='SECTOR 03 · UMBRALES';msg.textContent='Elegí un portal.'}else if(sy>.47){label.textContent='SECTOR 02 · NÚCLEO Ω';msg.textContent='Algo nos está observando…'}else if(sy>.18){label.textContent='SECTOR 01 · EXPLORACIÓN';msg.textContent='Seguí explorando.'}else{label.textContent='SECTOR 00 · ORIGEN';msg.textContent=cat?'Kuro te acompaña.':'Nave Kuro · Despertando…'}
 renderer.render(scene,camera);if(!reduced)requestAnimationFrame(frame)}
 if(reduced){frame(0)}else requestAnimationFrame(frame);
