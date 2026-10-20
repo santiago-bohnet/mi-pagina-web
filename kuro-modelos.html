@@ -1,167 +1,336 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#08070b"><title>Diseños de Kuro · Elegí la nave</title>
+<meta name="theme-color" content="#08060a"><meta name="description" content="Seis conceptos tridimensionales nuevos para elegir la nave felina Kuro.">
+<title>KURO · Laboratorio de diseño</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,Segoe UI,sans-serif;background:#07060a;color:#f7edf1}*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 50% 0%,#310b1c 0%,#09070d 45%,#050409 100%);min-height:100vh}
-header{padding:28px max(20px,5vw) 14px;max-width:1500px;margin:auto}h1{margin:12px 0 8px;font-size:clamp(1.8rem,4vw,3.4rem);letter-spacing:-.035em}
-p{color:#c5acb6;line-height:1.6}a{color:#ff6b8c;text-decoration:none}a:hover{text-decoration:underline}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:22px;max-width:1500px;margin:15px auto 70px;padding:0 max(20px,5vw)}
-.card{background:linear-gradient(145deg,#1a101c,#0b0910);border:1px solid #602438;border-radius:24px;overflow:hidden;transition:border-color .2s}
-.card:hover,.card:focus-within{border-color:#e6426d}.scene{height:310px;position:relative;background:radial-gradient(ellipse,#200d1d,#030307 65%)}
-.scene canvas{display:block;width:100%;height:100%;touch-action:pan-y}.scene::after{content:"ARRASTRÁ PARA GIRAR";pointer-events:none;position:absolute;bottom:12px;left:14px;font-size:.64rem;letter-spacing:.16em;color:#ae8d9a}
-.info{padding:19px 21px 23px}.info h2{margin:0;font-size:1.28rem}.info p{font-size:.88rem;min-height:70px}
-button{width:100%;padding:12px;border-radius:14px;border:1px solid #da4469;background:#351323;color:#fff;font:inherit;cursor:pointer}
-button[aria-pressed=true]{background:#a91e45;border-color:#ff7a94}
-#choice{position:fixed;z-index:20;bottom:14px;left:50%;transform:translateX(-50%);border:1px solid #9f3556;border-radius:16px;background:#170914ee;backdrop-filter:blur(12px);padding:12px 17px;max-width:calc(100% - 20px);font-size:.9rem;text-align:center;display:none}
-#choice.show{display:block}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+:root{color-scheme:dark;font-family:Inter,system-ui,"Segoe UI",sans-serif;background:#07060a;color:#f9f2f5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;overflow-x:hidden;
+background:radial-gradient(ellipse 60% 420px at 50% 0%,#43102778,transparent),linear-gradient(#09060c,#07060a)}
+body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;opacity:.2;
+background-image:radial-gradient(#f7698a 1px,transparent 1px);background-size:63px 73px}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,.viewport:focus-visible{outline:2px solid #ff779a;outline-offset:3px}
+.top{max-width:1520px;margin:auto;padding:25px clamp(18px,4vw,64px) 15px}
+.back{display:inline-flex;align-items:center;gap:10px;border:1px solid #69344b;background:#170e18;border-radius:100px;padding:11px 18px;color:#f8c8d5;font-size:.88rem}
+.kicker{font-size:.72rem;letter-spacing:.3em;color:#ff627f;font-weight:700;margin:42px 0 10px}
+h1{font-size:clamp(2.1rem,5vw,4.2rem);line-height:1.07;letter-spacing:-.065em;margin:0}
+h1 span{color:#ff547c}.sub{max-width:710px;font-size:clamp(.98rem,1.4vw,1.13rem);line-height:1.7;color:#cfb6c0;margin:18px 0 26px}
+.trail{display:flex;flex-wrap:wrap;gap:11px;margin-bottom:9px}.trail span{font-size:.73rem;padding:9px 13px;
+border:1px solid #512438;border-radius:100px;color:#d7a8b7;background:#150d16}
+.grid{max-width:1520px;margin:0 auto;padding:10px clamp(18px,4vw,64px) 95px;display:grid;
+grid-template-columns:repeat(auto-fit,minmax(min(100%,370px),1fr));gap:23px}
+.card{position:relative;overflow:hidden;border-radius:22px;border:1px solid #633048;
+background:linear-gradient(160deg,#1d111d 0%,#0d0910 60%,#130b15);box-shadow:0 19px 60px #0006;
+transition:border-color .2s,transform .2s}
+.card:hover,.card.selected{border-color:#e44b74}
+.viewport{height:360px;position:relative;overflow:hidden;touch-action:pan-y;
+background:radial-gradient(ellipse at 50% 55%,#3a182b,#100b16 42%,#06060a 76%)}
+.viewport canvas{width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.viewport canvas:active{cursor:grabbing}
+.viewport:before{position:absolute;z-index:1;inset:0;pointer-events:none;content:"";
+background:linear-gradient(90deg,#0005,transparent 23%,transparent 76%,#0005)}
+.viewport:after{position:absolute;z-index:1;bottom:18px;left:17px;pointer-events:none;
+content:"ARRASTRÁ PARA GIRAR";color:#b993a2;letter-spacing:.13em;font-size:.62rem}
+.serial{position:absolute;z-index:2;top:16px;left:17px;font-size:.74rem;color:#ef9aaf;
+letter-spacing:.17em;padding:7px 10px;background:#190e17ce;border:1px solid #663249;border-radius:9px;pointer-events:none}
+.chip{position:absolute;z-index:2;top:20px;right:15px;color:#f8d3df;font-size:.65rem;letter-spacing:.1em;pointer-events:none}
+.body{padding:22px 21px 23px}.body h2{font-size:1.45rem;letter-spacing:-.035em;margin:0 0 8px}
+.body p{font-size:.91rem;line-height:1.62;color:#c2a9b4;min-height:53px;margin:0 0 15px}
+.tools{display:flex;gap:9px;margin:15px 0}.tools button{border:1px solid #624252;background:#1a121c;
+color:#dec2ce;border-radius:11px;padding:9px 12px;flex:1;font-size:.84rem}
+.tools button:hover{border-color:#da5a80}
+.pick{width:100%;min-height:46px;border:1px solid #e54a73;background:linear-gradient(100deg,#51152d,#901b42);
+color:white;border-radius:12px;padding:12px 14px;font-weight:650}
+.pick:hover,.pick[aria-pressed=true]{background:linear-gradient(100deg,#a82b51,#df385f)}
+#selection{position:fixed;z-index:20;bottom:17px;left:50%;width:max-content;max-width:calc(100vw - 28px);
+transform:translateX(-50%);background:#200c18ef;border:1px solid #f34f7b;padding:13px 20px;
+border-radius:15px;color:white;box-shadow:0 9px 36px #000a;display:none;text-align:center;font-size:.88rem}
+#selection.show{display:block}
+#loading{max-width:1520px;margin:auto;padding:0 clamp(18px,4vw,64px);color:#f0b5c6;font-size:.82rem}
+@media(max-width:470px){.viewport{height:315px}.sub{font-size:.95rem}.top{padding-top:18px}.kicker{margin-top:27px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
 </style></head><body>
-<header><a href="./index.html">← Volver a Universo Kuro</a><h1>¿Cuál nave debería ser Kuro? 🐈‍⬛</h1>
-<p>Preparé <strong>seis diseños 3D diferentes</strong> para comparar. Podés arrastrarlos para verlos desde otros ángulos. Esto es un catálogo de pruebas: <strong>la nave de la página principal no cambia</strong> hasta que elijas una.</p></header>
+<header class="top"><a class="back" href="./index.html">← Volver al universo</a>
+<p class="kicker">PROYECTO KURO / ESTUDIO DE DISEÑO 02</p>
+<h1>Seis diseños.<br><span>Una sola identidad.</span></h1>
+<p class="sub">Rehice los seis conceptos desde cero. Esta vez tienen casco modelado, ojos felinos diseñados, alas con volumen, materiales oscuros e iluminación de estudio. Rotá cada modelo, miralo de perfil y elegí qué dirección querés seguir. <strong>Ninguno reemplaza la nave de la página principal todavía.</strong></p>
+<div class="trail"><span>06 modelos 3D</span><span>Giratorios</span><span>Negro + escarlata</span><span>Prototipos, no diseños finales</span></div>
+</header>
+<div id="loading" role="status"></div>
 <main class="grid" id="gallery">
-<article class="card"><div class="scene" data-variant="0"></div><div class="info"><h2>01 · Kuro Original</h2><p>La nave sencilla original, recuperada del diseño inicial. Incluida para comparar.</p><button data-pick="0" aria-pressed="false">Elegir original</button></div></article>
-<article class="card"><div class="scene" data-variant="1"></div><div class="info"><h2>02 · Pantera elegante</h2><p>Rostro felino compacto, orejas angulares y alas estrechas. Sobria y estilizada.</p><button data-pick="1" aria-pressed="false">Elegir pantera</button></div></article>
-<article class="card"><div class="scene" data-variant="2"></div><div class="info"><h2>03 · Kuro tierno</h2><p>Ojos escarlata grandes, mejillas mínimas y orejas redondeadas. Un toque kawaii sin exagerar.</p><button data-pick="2" aria-pressed="false">Elegir tierno</button></div></article>
-<article class="card"><div class="scene" data-variant="3"></div><div class="info"><h2>04 · Sombra sigilosa</h2><p>Casco aerodinámico, alas largas de murciélago y perfil bajo de cazador nocturno.</p><button data-pick="3" aria-pressed="false">Elegir sombra</button></div></article>
-<article class="card"><div class="scene" data-variant="4"></div><div class="info"><h2>05 · Guardián Ω</h2><p>Blindaje más marcado, silueta poderosa y núcleo rojo en forma de omega.</p><button data-pick="4" aria-pressed="false">Elegir guardián</button></div></article>
-<article class="card"><div class="scene" data-variant="5"></div><div class="info"><h2>06 · Nekomáquina</h2><p>Diseño robótico japonés, orejas mecánicas y pequeños bigotes rojos integrados al casco.</p><button data-pick="5" aria-pressed="false">Elegir nekomáquina</button></div></article>
-</main><div id="choice" role="status" aria-live="polite"></div>
+<article class="card" data-card="0"><div class="viewport" data-model="0" tabindex="0" aria-label="Modelo 1 Noctis, arrastrá para girar"><span class="serial">01 / 06</span><span class="chip">FELINO · ELEGANTE</span></div><div class="body"><h2>Noctis</h2><p>Pantera aerodinámica. Más estilizada, con orejas afinadas, mirada suave y alas en flecha.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="0" aria-pressed="false">Elegir Noctis</button></div></article>
+<article class="card" data-card="1"><div class="viewport" data-model="1" tabindex="0" aria-label="Modelo 2 Nube, arrastrá para girar"><span class="serial">02 / 06</span><span class="chip">KAWAII · FUTURISTA</span></div><div class="body"><h2>Nube</h2><p>Cara más pequeña y adorable, ojos luminosos grandes y alas cortas redondeadas, sin cachetes abultados.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="1" aria-pressed="false">Elegir Nube</button></div></article>
+<article class="card" data-card="2"><div class="viewport" data-model="2" tabindex="0" aria-label="Modelo 3 Vesper, arrastrá para girar"><span class="serial">03 / 06</span><span class="chip">VELOZ · SIGILOSO</span></div><div class="body"><h2>Vesper</h2><p>Interceptor afilado con orejas inclinadas y alas largas de caza. La variante más veloz.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="2" aria-pressed="false">Elegir Vesper</button></div></article>
+<article class="card" data-card="3"><div class="viewport" data-model="3" tabindex="0" aria-label="Modelo 4 Umbra, arrastrá para girar"><span class="serial">04 / 06</span><span class="chip">MÍSTICO · ETÉREO</span></div><div class="body"><h2>Umbra</h2><p>Inspirado en un gato de sombras: alas orgánicas, ojos finos y una silueta flotante misteriosa.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="3" aria-pressed="false">Elegir Umbra</button></div></article>
+<article class="card" data-card="4"><div class="viewport" data-model="4" tabindex="0" aria-label="Modelo 5 Omega, arrastrá para girar"><span class="serial">05 / 06</span><span class="chip">GUARDIÁN · Ω</span></div><div class="body"><h2>Omega</h2><p>Un guardián felino de blindaje sólido, alas protectoras y núcleo central escarlata.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="4" aria-pressed="false">Elegir Omega</button></div></article>
+<article class="card" data-card="5"><div class="viewport" data-model="5" tabindex="0" aria-label="Modelo 6 Kuro X, arrastrá para girar"><span class="serial">06 / 06</span><span class="chip">MECÁNICO · FELINO</span></div><div class="body"><h2>Kuro X</h2><p>Casco robótico de gato joven, paneles refinados y seis bigotes rojos grabados en el rostro.</p><div class="tools"><button class="front" data-angle="0">Frente</button><button class="side" data-angle="1.05">Perfil</button></div><button class="pick" data-choice="5" aria-pressed="false">Elegir Kuro X</button></div></article>
+</main><div id="selection" role="status" aria-live="polite"></div>
 <script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/+esm";
-const variants=[
- {name:'Original',head:1.0,round:.8,ear:.8,eye:.14,wing:1.7,spread:1.0,type:0},
- {name:'Pantera elegante',head:1.12,round:.64,ear:1.3,eye:.21,wing:1.4,spread:.85,type:1},
- {name:'Kuro tierno',head:1.08,round:1.08,ear:.95,eye:.28,wing:1.1,spread:.78,type:2},
- {name:'Sombra sigilosa',head:.93,round:.60,ear:1.0,eye:.15,wing:2.1,spread:1.27,type:3},
- {name:'Guardián Ω',head:1.15,round:.84,ear:1.18,eye:.18,wing:1.85,spread:1.13,type:4},
- {name:'Nekomáquina',head:1.05,round:.82,ear:1.18,eye:.23,wing:1.35,spread:.95,type:5}
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/+esm';
+const configs=[
+ {width:.95,round:.94,eye:.21,ear:1.1,wing:0,body:1.0,wingWidth:2.18,pink:0x9e2445},
+ {width:.92,round:1.03,eye:.32,ear:.78,wing:1,body:.84,wingWidth:1.68,pink:0xd72f62},
+ {width:.84,round:.78,eye:.16,ear:1.30,wing:2,body:1.12,wingWidth:3.00,pink:0xe12c54},
+ {width:.91,round:.91,eye:.18,ear:1.01,wing:3,body:1.0,wingWidth:2.50,pink:0xc02962},
+ {width:1.05,round:1.02,eye:.20,ear:1.22,wing:4,body:1.15,wingWidth:2.38,pink:0xdc2851},
+ {width:.96,round:.91,eye:.24,ear:1.1,wing:5,body:1.05,wingWidth:2.03,pink:0xe73561}
 ];
-const mat=(c,metal=.5,rough=.36)=>new THREE.MeshStandardMaterial({color:c,metalness:metal,roughness:rough,side:THREE.DoubleSide});
-const black=mat(0x151019,.68),dark=mat(0x07060b,.28),plate=mat(0x37212c,.55),red=mat(0xb82750,.4),eyes=new THREE.MeshBasicMaterial({color:0xff2157});
-const thin=new THREE.MeshBasicMaterial({color:0xd82756,side:THREE.DoubleSide});
-function part(parent,geo,material,x=0,y=0,z=0){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);parent.add(m);return m}
-function triangle(parent,a,b,c,material,depth=.08){
- const sh=new THREE.Shape();sh.moveTo(...a);sh.lineTo(...b);sh.lineTo(...c);sh.closePath();
- return part(parent,new THREE.ExtrudeGeometry(sh,{depth,bevelEnabled:false}),material);
+const V=THREE.Vector3;
+function M(color,metal=.4,rough=.42){return new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough,side:THREE.DoubleSide})}
+function mesh(parent,geo,mat,x=0,y=0,z=0){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);parent.add(m);return m}
+function shape(parent,s,mat,z=.5,depth=.09,bevel=.025){
+ const geo=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:bevel>0,bevelSize:bevel,bevelThickness:bevel,bevelSegments:3,curveSegments:14,steps:1});
+ return mesh(parent,geo,mat,0,0,z);
 }
-function bar(parent,pts,r=.02,material=red){
- const curve=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));
- return part(parent,new THREE.TubeGeometry(curve,16,r,5),material);
+function polygon(parent,pts,mat,z,depth=.07,bevel=.025){
+ const s=new THREE.Shape();s.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)s.lineTo(pts[i][0],pts[i][1]);s.closePath();return shape(parent,s,mat,z,depth,bevel)
 }
-function build(v){
- const g=new THREE.Group();
- const face=part(g,new THREE.SphereGeometry(1,30,22),black,0,.15,.44);
- face.scale.set(v.head,v.round,.74);
- const forehead=part(g,new THREE.SphereGeometry(.72,20,16),plate,0,.48,.70);
- forehead.scale.set(1,.33,.58);
- const body=part(g,new THREE.SphereGeometry(.72,26,16),black,0,-.1,-.75);
- body.scale.set(.85,.46,1.94);
- // orejas definidas por figura, no textura
- for(const sign of [-1,1]){
-   if(v.type===0){
-     const ear=part(g,new THREE.ConeGeometry(.45,.95,4),black,sign*.67,1.02,.45);ear.rotation.z=-sign*.22;
-   }else{
-     triangle(g,[sign*.51,.61],[sign*.91,1.15+v.ear*.58],[sign*1.04,.52],black,.18);
-     triangle(g,[sign*.66,.77],[sign*.89,1.0+v.ear*.45],[sign*.93,.69],v.type===2?red:plate,.19);
-   }
-   // Ojos: cambiar expresión según variante
-   const eye=part(g,new THREE.SphereGeometry(v.eye,20,14),eyes,sign*.42,.18,.44+v.round*.63);
-   eye.scale.set(v.type===2?1.40:1.65,v.type===2?1.2:.65,.35);
-   if(v.type===1||v.type===3){
-     bar(g,[[sign*.24,.39,1.10],[sign*.43,.46,1.08],[sign*.65,.36,1.02]],.028,red);
-   }
-   // Alas-placa: longitud, posición y dirección radicalmente distintas.
-   if(v.type===0){
-     const wing=part(g,new THREE.ConeGeometry(.50,2.95,3),black,sign*1.7,-.28,-.65);wing.rotation.z=-sign*1.3;
-   }else if(v.type===2){
-     triangle(g,[sign*.75,.10],[sign*(1.15+v.spread),.16],[sign*(1.02+v.spread),-.45],plate,.12);
-     triangle(g,[sign*.92,.08],[sign*(1.12+v.spread),-.06],[sign*1.27,-.3],red,.16);
-   }else if(v.type===3){
-     triangle(g,[sign*.73,.37],[sign*(1.15+v.spread),-.06],[sign*(.93+v.spread),-.87],black,.15);
-     triangle(g,[sign*1.01,.08],[sign*(1.0+v.spread),-.88],[sign*1.44,-.46],plate,.16);
-     bar(g,[[sign*.83,.2,.33],[sign*1.43,.01,.32],[sign*(1.12+v.spread),-.72,.29]],.023,red);
-   }else if(v.type===4){
-     triangle(g,[sign*.70,.34],[sign*(1.21+v.spread),.72],[sign*(1.12+v.spread),-.59],black,.18);
-     triangle(g,[sign*1.05,.23],[sign*(1.09+v.spread),.48],[sign*(1.00+v.spread),-.36],plate,.20);
-     bar(g,[[sign*.78,.31,.37],[sign*(1.16+v.spread),.58,.4]],.035,red);
-   }else{
-     triangle(g,[sign*.76,.28],[sign*(1.1+v.spread),.57],[sign*(1.04+v.spread),-.39],black,.16);
-     triangle(g,[sign*.95,.19],[sign*(1.04+v.spread),.40],[sign*(1.04+v.spread),-.08],red,.19);
-   }
- }
- if(v.type===5){
-   // Tres líneas 3D por lado, dentro del perfil de la cara.
-   for(const sign of [-1,1])for(let j=0;j<3;j++){
-     const y=-.15-j*.115;
-     bar(g,[[sign*.23,y,1.13],[sign*.43,y+.02-j*.006,1.14],[sign*.69,y+.06-j*.042,1.04]],.013,thin);
-   }
- }
- if(v.type===2){
-   const nose=part(g,new THREE.ConeGeometry(.105,.13,3),red,0,-.16,1.23);nose.rotation.z=Math.PI;
-   for(const sign of [-1,1]){
-     const blush=part(g,new THREE.SphereGeometry(.17,16,8),red,sign*.78,-.13,1.0);blush.scale.set(1,.33,.1);
-   }
- }else if(v.type===4){
-   const omega=part(g,new THREE.TorusGeometry(.2,.045,8,32,Math.PI*1.8),red,0,-.32,1.12);
-   omega.rotation.z=Math.PI;bar(g,[[-.23,-.52,1.12],[-.10,-.56,1.12]],.037);
-   bar(g,[[.10,-.56,1.12],[.23,-.52,1.12]],.037);
- }else{
-   triangle(g,[-.115,-.12],[.115,-.12],[0,-.25],v.type===5?red:plate,.045).position.z=1.18;
- }
- if(v.type===1){
-   bar(g,[[0,-.25,1.17],[0,-.43,1.14],[-.13,-.49,1.10]],.018,red);
-   bar(g,[[0,-.43,1.14],[.13,-.49,1.10]],.018,red);
- }
- if(v.type===5){
-   const crest=part(g,new THREE.BoxGeometry(.12,.62,.13),red,0,.78,.87);
-   const bridge=part(g,new THREE.BoxGeometry(.64,.08,.1),red,0,.59,.91);
- }
- const engine=part(g,new THREE.TorusGeometry(.34,.065,8,28),red,0,-.20,-2.16);engine.rotation.x=.2;
- return g;
+function line(parent,pts,mat,r=.012){
+ const curve=new THREE.CatmullRomCurve3(pts.map(p=>new V(...p)));
+ return mesh(parent,new THREE.TubeGeometry(curve,Math.max(20,pts.length*10),r,6,false),mat);
 }
-const viewports=[];const clock=new THREE.Clock();
-document.querySelectorAll('.scene').forEach(node=>{
- const id=+node.dataset.variant;
- const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
- renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
+function hullFace(w,h){
+ const s=new THREE.Shape();s.moveTo(0,1.05*h);
+ s.bezierCurveTo(.54*w,1.18*h,1.03*w,.69*h,1.03*w,.12*h);
+ s.bezierCurveTo(1.02*w,-.36*h,.65*w,-.83*h,0,-1.06*h);
+ s.bezierCurveTo(-.65*w,-.83*h,-1.02*w,-.36*h,-1.03*w,.12*h);
+ s.bezierCurveTo(-1.03*w,.69*h,-.54*w,1.18*h,0,1.05*h);return s;
+}
+function earShape(sign,height,rounded){
+ const s=new THREE.Shape();s.moveTo(sign*.49,.79);
+ if(rounded){s.bezierCurveTo(sign*.57,1.53,sign*.76,1.90,sign*.99,1.80);
+ s.bezierCurveTo(sign*1.11,1.79,sign*1.08,1.21,sign*.98,.66)}
+ else{s.bezierCurveTo(sign*.52,1.4,sign*.72,1.73+height,sign*1.09,1.74+height);
+ s.bezierCurveTo(sign*1.20,1.11,sign*1.12,.91,sign*.96,.65)}
+ s.quadraticCurveTo(sign*.73,.72,sign*.49,.79);return s;
+}
+function almond(w,h){
+ const s=new THREE.Shape();s.moveTo(-w,0);
+ s.bezierCurveTo(-w*.5,h,w*.18,h*1.24,w,0);
+ s.bezierCurveTo(w*.50,-h*.76,-w*.54,-h*.63,-w,0);return s;
+}
+function wings(parent,style,span,palette){
+ const {armor,inner,accent,jet}=palette;
+ for(const d of [-1,1]){
+  const g=new THREE.Group();parent.add(g);g.position.z=-.36;
+  const x=v=>d*v;const s=new THREE.Shape();
+  if(style===0){s.moveTo(x(.76),.38);s.bezierCurveTo(x(1.19),.71,x(span-.64),1.09,x(span),1.0);
+   s.quadraticCurveTo(x(span-.36),.22,x(span-.24),-.36);
+   s.quadraticCurveTo(x(1.58),-.56,x(.76),-.3)}
+  else if(style===1){s.moveTo(x(.74),.28);s.bezierCurveTo(x(1.16),.92,x(span),.84,x(span),.28);
+   s.bezierCurveTo(x(span),-.27,x(1.12),-.62,x(.74),-.22)}
+  else if(style===2){s.moveTo(x(.67),.37);s.lineTo(x(span),1.19);s.lineTo(x(span-.5),.12);
+   s.lineTo(x(span+.17),-.61);s.lineTo(x(1.31),-.40);s.lineTo(x(.67),-.19)}
+  else if(style===3){s.moveTo(x(.75),.43);s.bezierCurveTo(x(1.24),1.22,x(span-.28),1.20,x(span),.42);
+   s.quadraticCurveTo(x(span-.39),-.06,x(span-.25),-.37);
+   s.quadraticCurveTo(x(span-1.04),-.12,x(span-1.32),-.83);
+   s.quadraticCurveTo(x(1.10),-.75,x(.75),-.23)}
+  else if(style===4){s.moveTo(x(.67),.51);s.lineTo(x(1.25),1.0);s.lineTo(x(span),1.18);
+   s.lineTo(x(span-.13),-.43);s.lineTo(x(span-1.17),-.68);s.lineTo(x(.67),-.36)}
+  else{s.moveTo(x(.76),.41);s.lineTo(x(1.19),.75);s.lineTo(x(span),.65);
+   s.lineTo(x(span-.15),-.38);s.lineTo(x(1.35),-.45);s.lineTo(x(.76),-.24)}
+  s.closePath();
+  shape(g,s,armor,-.04,.22,.05);
+  // Rebaje interno que sigue la silueta y deja respirar los bordes.
+  polygon(g,[[x(.93),.3],[x(1.30),.43],[x(span-.39),style===2?.75:.59],
+     [x(span-.48),-.08],[x(1.26),-.25]],inner,.23,.035,.018);
+  line(g,[[x(.88),.31,.30],[x(1.30),.44,.31],
+      [x(span-.28),style===2?.92:style===4?.87:.66,.28]],accent,.023);
+  if(style===3){
+   line(g,[[x(1.24),.19,.31],[x(1.61),-.22,.30],[x(span-.47),-.2,.30]],accent,.014);
+  }
+  if(style===4){
+   polygon(g,[[x(1.49),.31],[x(span-.49),.49],[x(span-.59),-.21],[x(1.46),-.08]],armor,.34,.028,.015);
+  }
+  if(style===5){
+   for(let i=0;i<3;i++){
+    line(g,[[x(1.28),.16-i*.16,.35],[x(span-.37),.28-i*.19,.32]],accent,.014);
+   }
+  }
+  // Motor lateral que se aprecia al girar la nave.
+  const pod=mesh(parent,new THREE.CapsuleGeometry(.16,.85,5,12),inner,x(1.22),-.42,-.90);
+  pod.rotation.x=Math.PI/2;
+  const ring=mesh(parent,new THREE.TorusGeometry(.18,.05,8,22),jet,x(1.22),-.42,-1.52);
+  ring.rotation.y=Math.PI;
+ }
+}
+function buildModel(config,id){
+ const group=new THREE.Group();
+ const armor=M(id===1?0x1f1722:id===3?0x151320:0x17131a,.68,.3);
+ const inner=M(id===4?0x45303a:id===1?0x38242f:0x30202c,.51,.41);
+ const black=M(0x07070c,.2,.72), accent=M(config.pink,.25,.39);
+ const eyeMat=new THREE.MeshBasicMaterial({color:id===3?0xfa2d69:0xff2358,side:THREE.DoubleSide});
+ const glowMat=new THREE.MeshBasicMaterial({color:0xf89db9,side:THREE.DoubleSide});
+ const {width:w,round:h}=config;
+ const fuselage=mesh(group,new THREE.SphereGeometry(1,32,24),armor,0,-.04,-.78);
+ fuselage.scale.set(.80*config.body,.46,2.1*config.body);
+ const rib=mesh(group,new THREE.SphereGeometry(.7,20,14),inner,0,.25,-1.10);
+ rib.scale.set(.7,.21,1.65);
+ wings(group,config.wing,config.wingWidth,{armor,inner,accent,jet:eyeMat});
+ // Orejas detrás de la cara, con incrustaciones discretas.
+ for(const d of [-1,1]){
+  shape(group,earShape(d,config.ear,id===1),armor,.38,.27,.06);
+  const innerEar=new THREE.Shape();
+  innerEar.moveTo(d*.72,.9);innerEar.quadraticCurveTo(d*.78,1.45,d*.99,1.47+config.ear*.38);
+  innerEar.quadraticCurveTo(d*1.025,1.05,d*.94,.86);innerEar.closePath();
+  shape(group,innerEar,id===1?accent:inner,.71,.017,.01);
+ }
+ // Casco de una sola forma redondeada: sin mejillas/cubos adosados.
+ const face=shape(group,hullFace(w,h),armor,.72,.26,.08);
+ face.position.y=.06;
+ // Superficie superior continua como frontal de un interceptor.
+ const browShape=new THREE.Shape();browShape.moveTo(-.42,.78);
+ browShape.quadraticCurveTo(0,1.04,.42,.78);browShape.quadraticCurveTo(0,.82,-.42,.78);
+ shape(group,browShape,inner,1.09,.022,.012);
+ // Ojos embutidos: delineado oscuro y luz escarlata con volumen leve.
+ for(const d of [-1,1]){
+  const eye=new THREE.Group();eye.position.set(d*.46,.29,1.12);
+  eye.scale.x=d;group.add(eye);
+  const eyew=config.eye*(id===1?1.35:1.1),eyeh=config.eye*(id===1?1.02:id===2?.52:.72);
+  const socket=shape(eye,almond(eyew*1.12,eyeh*1.18),black,-.03,.018,.012);
+  const eyeFill=shape(eye,almond(eyew,eyeh),eyeMat,.012,.018,.008);
+  if(id!==2&&id!==3){
+   const shine=mesh(eye,new THREE.SphereGeometry(.033,9,8),glowMat,-eyew*.22,eyeh*.21,.058);
+   shine.scale.set(.8,.6,.5);
+  }
+  // Reborde superior, limpio y NO enfadado para el diseño tierno.
+  if(id===2||id===4)line(eye,[[-eyew,.015,-.002],[-eyew*.23,eyeh*.94,.006],[eyew*.97,.007,-.002]],accent,.014);
+ }
+ // Puente nasal y nariz pequeña y tierna, sin máscara de perro.
+ const nose=polygon(group,[[-.105,-.31],[.105,-.31],[0,-.42]],id===1?accent:inner,1.16,.018,.025);
+ if(id===1||id===5){
+  line(group,[[0,-.43,1.203],[0,-.55,1.201]],accent,.011);
+  line(group,[[0,-.55,1.202],[-.12,-.61,1.199]],accent,.009);
+  line(group,[[0,-.55,1.202],[.12,-.61,1.199]],accent,.009);
+ }
+ // Marcaciones rojas de bigotes sobre la superficie SOLO en Kuro X.
+ if(id===5)for(const d of [-1,1])for(let i=0;i<3;i++){
+  const y=-.20-i*.125;
+  line(group,[[d*.30,y,1.083],[d*.52,y+.02-i*.014,1.072],[d*.72,y+.04-i*.028,1.028]],accent,.012);
+ }
+ // Especificidad de cada identidad.
+ if(id===0){
+  line(group,[[0,.96,1.15],[0,.65,1.15]],accent,.018);
+  for(const d of [-1,1])line(group,[[d*.76,-.44,.99],[d*.88,-.23,.96]],accent,.017);
+ }
+ if(id===1){
+  for(const d of [-1,1]){
+   const blush=mesh(group,new THREE.SphereGeometry(.12,12,8),accent,d*.74,-.21,1.085);
+   blush.scale.set(1.2,.29,.18);
+  }
+ }
+ if(id===2){
+  const crest=polygon(group,[[-.27,.94],[0,1.28],[.27,.94]],inner,.97,.065,.02);
+  line(group,[[0,1.20,1.08],[0,.86,1.11]],accent,.026);
+ }
+ if(id===3){
+  for(const d of [-1,1]){
+    line(group,[[d*.63,.71,1.02],[d*.85,.45,.99]],accent,.018);
+    const moon=mesh(group,new THREE.TorusGeometry(.115,.02,6,30,Math.PI*1.7),accent,d*1.47,.11,.45);
+    moon.rotation.z=Math.PI*.27;
+  }
+ }
+ if(id===4){
+  const omega=mesh(group,new THREE.TorusGeometry(.22,.035,8,32,Math.PI*1.83),accent,0,-.70,1.01);
+  omega.rotation.z=Math.PI*.085;
+  for(const d of [-1,1])line(group,[[d*.20,-.84,1.02],[d*.26,-.67,1.01]],accent,.018);
+  const crest=polygon(group,[[-.38,.87],[0,1.19],[.38,.87]],inner,1.07,.075,.02);
+  line(group,[[-.31,.87,1.19],[0,1.11,1.2],[.31,.87,1.19]],accent,.019);
+ }
+ if(id===5){
+  for(const d of [-1,1]){
+   const bolt=mesh(group,new THREE.CylinderGeometry(.037,.037,.026,8),accent,d*.84,.71,1.05);
+   bolt.rotation.x=Math.PI/2;
+   line(group,[[d*.58,.91,.92],[d*.81,1.08,.86]],accent,.02);
+  }
+ }
+ const thrust=mesh(group,new THREE.CylinderGeometry(.32,.43,.53,12),inner,0,-.14,-2.70);
+ thrust.rotation.x=Math.PI/2;
+ const ring=mesh(group,new THREE.TorusGeometry(.37,.072,10,32),accent,0,-.14,-2.98);
+ const flame=mesh(group,new THREE.ConeGeometry(.25,.78,16),new THREE.MeshBasicMaterial({color:config.pink,transparent:true,opacity:.42}),0,-.14,-3.3);
+ flame.rotation.x=-Math.PI/2;
+ return {group,flame};
+}
+const viewports=[],reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const maxRatio=Math.min(devicePixelRatio||1,1.5);
+document.querySelectorAll('.viewport').forEach(node=>{
+ const index=Number(node.dataset.model),config=configs[index];
+ const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
+ renderer.setPixelRatio(maxRatio);
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;
+ renderer.toneMappingExposure=1.30;
  renderer.setSize(node.clientWidth,node.clientHeight);
  node.appendChild(renderer.domElement);
  const scene=new THREE.Scene();
- scene.add(new THREE.AmbientLight(0xd1a1b0,1.55));
- const a=new THREE.PointLight(0xe93260,62,24);a.position.set(4,2,7);scene.add(a);
- const b=new THREE.PointLight(0xffc6d8,46,22);b.position.set(-4,5,4);scene.add(b);
- const camera=new THREE.PerspectiveCamera(45,node.clientWidth/node.clientHeight,.1,100);
- camera.position.set(0,.10,8.4);
- const ship=build(variants[id]);scene.add(ship);
- let dragging=false,last=0,angle=-.06;
- const c=renderer.domElement;
- c.addEventListener('pointerdown',e=>{dragging=true;last=e.clientX;c.setPointerCapture(e.pointerId)});
- c.addEventListener('pointermove',e=>{if(!dragging)return;angle+=(e.clientX-last)*.009;last=e.clientX});
- c.addEventListener('pointerup',()=>dragging=false);
- c.addEventListener('pointercancel',()=>dragging=false);
- viewports.push({renderer,scene,camera,ship,node,getAngle:()=>angle});
-});
-const ro=new ResizeObserver(()=>viewports.forEach(v=>{const w=v.node.clientWidth,h=v.node.clientHeight;
- v.camera.aspect=w/h;v.camera.updateProjectionMatrix();v.renderer.setSize(w,h)}));
-viewports.forEach(v=>ro.observe(v.node));
-const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function draw(){
- const t=clock.getElapsedTime();
- for(const v of viewports){
-   v.ship.rotation.y=v.getAngle()+(reduce?0:Math.sin(t*.45)*.13);
-   v.ship.position.y=reduce?0:Math.sin(t*.95)*.08;
-   v.renderer.render(v.scene,v.camera);
+ scene.add(new THREE.HemisphereLight(0xdcc1d0,0x08040d,2.45));
+ const key=new THREE.DirectionalLight(0xffd3e1,3.2);key.position.set(-3,5,6);scene.add(key);
+ const rim=new THREE.DirectionalLight(config.pink,4.3);rim.position.set(4,1,-4);scene.add(rim);
+ const fill=new THREE.PointLight(0xd72857,70,19);fill.position.set(3,-2,5);scene.add(fill);
+ const camera=new THREE.PerspectiveCamera(38,node.clientWidth/node.clientHeight,.1,100);
+ camera.position.set(0,.16,9.75);camera.lookAt(0,.12,0);
+ const model=buildModel(config,index);scene.add(model.group);
+ // Halo espacial alrededor, aislado del cuerpo de la nave.
+ const halo=mesh(scene,new THREE.TorusGeometry(2.55,.006,4,128),
+  new THREE.MeshBasicMaterial({color:config.pink,transparent:true,opacity:.24}),0,0,-1.6);
+ halo.rotation.x=.22;
+ const points=new Float32Array(42*3);
+ for(let i=0;i<42;i++){
+  const a=i*2.399;const rad=2.8+(i%5)*.30;
+  points[3*i]=Math.cos(a)*rad;points[3*i+1]=Math.sin(a)*rad*.84;points[3*i+2]=-2.5+(i%6)*.09;
  }
- if(!reduce)requestAnimationFrame(draw);
+ const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(points,3));
+ const stars=new THREE.Points(geometry,new THREE.PointsMaterial({color:0xfa668e,size:.022,transparent:true,opacity:.65}));
+ scene.add(stars);
+ const state={node,renderer,scene,camera,model,halo,angle:-.12,target:-.12,active:true};
+ let origin=null;
+ const canvas=renderer.domElement;
+ canvas.addEventListener('pointerdown',e=>{origin={x:e.clientX,angle:state.target,id:e.pointerId};canvas.setPointerCapture(e.pointerId)});
+ canvas.addEventListener('pointermove',e=>{if(origin?.id!==e.pointerId)return;state.target=origin.angle+(e.clientX-origin.x)*.010;});
+ canvas.addEventListener('pointerup',()=>{origin=null});
+ canvas.addEventListener('pointercancel',()=>{origin=null});
+ node.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+  e.preventDefault();state.target+=(e.key==='ArrowLeft'?-1:1)*.22;
+ }});
+ node.closest('.card').querySelectorAll('[data-angle]').forEach(btn=>btn.addEventListener('click',()=>{
+  state.target=Number(btn.dataset.angle);if(reduced){state.angle=state.target;drawSingle(state,0)}
+ }));
+ viewports.push(state);
+});
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{
+ const v=viewports.find(x=>x.node===e.target);if(v)v.active=e.isIntersecting;
+}),{rootMargin:'160px'});
+const resize=new ResizeObserver(entries=>entries.forEach(e=>{
+ const v=viewports.find(x=>x.node===e.target);if(!v)return;
+ const w=Math.max(1,e.contentRect.width),h=Math.max(1,e.contentRect.height);
+ v.renderer.setSize(w,h);v.camera.aspect=w/h;v.camera.updateProjectionMatrix();
+ if(reduced)drawSingle(v,0);
+}));
+viewports.forEach(v=>{observer.observe(v.node);resize.observe(v.node)});
+let previous=0,clockStart=performance.now();
+function drawSingle(v,t){
+ v.model.group.rotation.y=v.angle;
+ v.model.group.rotation.x=Math.sin(v.angle)*.035;
+ v.model.group.position.y=reduced?0:Math.sin(t*.72+Number(v.node.dataset.model))*.035;
+ v.model.flame.scale.y=reduced?1:.92+Math.sin(t*8)*.11;
+ v.halo.rotation.z=t*.03;
+ v.renderer.render(v.scene,v.camera);
 }
-draw();
-const selection=document.getElementById('choice');
-document.querySelectorAll('[data-pick]').forEach(btn=>btn.addEventListener('click',()=>{
- document.querySelectorAll('[data-pick]').forEach(b=>b.setAttribute('aria-pressed','false'));
- btn.setAttribute('aria-pressed','true');
- const i=Number(btn.dataset.pick);
- selection.textContent='Elegiste «'+(i+1)+' · '+variants[i].name+'». Decime ese número en el chat y lo incorporamos a la página principal.';
- selection.classList.add('show');
+function animate(now){
+ const t=(now-clockStart)*.001,dt=Math.min((now-previous)*.001,.06);previous=now;
+ if(!document.hidden)for(const v of viewports){
+  if(!v.active)continue;
+  v.angle+=((v.target)-(v.angle))*Math.min(1,dt*7);
+  drawSingle(v,t);
+ }
+ if(!reduced)requestAnimationFrame(animate);
+}
+if(reduced){viewports.forEach(v=>drawSingle(v,0))}else requestAnimationFrame(animate);
+const toast=document.getElementById('selection');
+document.querySelectorAll('[data-choice]').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('[data-choice]').forEach(other=>{other.setAttribute('aria-pressed','false');other.closest('.card').classList.remove('selected')});
+ btn.setAttribute('aria-pressed','true');btn.closest('.card').classList.add('selected');
+ const i=Number(btn.dataset.choice);
+ toast.textContent='Seleccionaste el diseño '+String(i+1).padStart(2,'0')+' · '+btn.closest('.card').querySelector('h2').textContent+'. Decime ese número en el chat para continuar.';
+ toast.classList.add('show');
 }));
 </script></body></html>
