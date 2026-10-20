@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08070b"><title>Diseños de Kuro · Elegí la nave</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,Segoe UI,sans-serif;background:#07060a;color:#f7edf1}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#310b1c 0%,#09070d 45%,#050409 100%);min-height:100vh}
+header{padding:28px max(20px,5vw) 14px;max-width:1500px;margin:auto}h1{margin:12px 0 8px;font-size:clamp(1.8rem,4vw,3.4rem);letter-spacing:-.035em}
+p{color:#c5acb6;line-height:1.6}a{color:#ff6b8c;text-decoration:none}a:hover{text-decoration:underline}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:22px;max-width:1500px;margin:15px auto 70px;padding:0 max(20px,5vw)}
+.card{background:linear-gradient(145deg,#1a101c,#0b0910);border:1px solid #602438;border-radius:24px;overflow:hidden;transition:border-color .2s}
+.card:hover,.card:focus-within{border-color:#e6426d}.scene{height:310px;position:relative;background:radial-gradient(ellipse,#200d1d,#030307 65%)}
+.scene canvas{display:block;width:100%;height:100%;touch-action:pan-y}.scene::after{content:"ARRASTRÁ PARA GIRAR";pointer-events:none;position:absolute;bottom:12px;left:14px;font-size:.64rem;letter-spacing:.16em;color:#ae8d9a}
+.info{padding:19px 21px 23px}.info h2{margin:0;font-size:1.28rem}.info p{font-size:.88rem;min-height:70px}
+button{width:100%;padding:12px;border-radius:14px;border:1px solid #da4469;background:#351323;color:#fff;font:inherit;cursor:pointer}
+button[aria-pressed=true]{background:#a91e45;border-color:#ff7a94}
+#choice{position:fixed;z-index:20;bottom:14px;left:50%;transform:translateX(-50%);border:1px solid #9f3556;border-radius:16px;background:#170914ee;backdrop-filter:blur(12px);padding:12px 17px;max-width:calc(100% - 20px);font-size:.9rem;text-align:center;display:none}
+#choice.show{display:block}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head><body>
+<header><a href="./index.html">← Volver a Universo Kuro</a><h1>¿Cuál nave debería ser Kuro? 🐈‍⬛</h1>
+<p>Preparé <strong>seis diseños 3D diferentes</strong> para comparar. Podés arrastrarlos para verlos desde otros ángulos. Esto es un catálogo de pruebas: <strong>la nave de la página principal no cambia</strong> hasta que elijas una.</p></header>
+<main class="grid" id="gallery">
+<article class="card"><div class="scene" data-variant="0"></div><div class="info"><h2>01 · Kuro Original</h2><p>La nave sencilla original, recuperada del diseño inicial. Incluida para comparar.</p><button data-pick="0" aria-pressed="false">Elegir original</button></div></article>
+<article class="card"><div class="scene" data-variant="1"></div><div class="info"><h2>02 · Pantera elegante</h2><p>Rostro felino compacto, orejas angulares y alas estrechas. Sobria y estilizada.</p><button data-pick="1" aria-pressed="false">Elegir pantera</button></div></article>
+<article class="card"><div class="scene" data-variant="2"></div><div class="info"><h2>03 · Kuro tierno</h2><p>Ojos escarlata grandes, mejillas mínimas y orejas redondeadas. Un toque kawaii sin exagerar.</p><button data-pick="2" aria-pressed="false">Elegir tierno</button></div></article>
+<article class="card"><div class="scene" data-variant="3"></div><div class="info"><h2>04 · Sombra sigilosa</h2><p>Casco aerodinámico, alas largas de murciélago y perfil bajo de cazador nocturno.</p><button data-pick="3" aria-pressed="false">Elegir sombra</button></div></article>
+<article class="card"><div class="scene" data-variant="4"></div><div class="info"><h2>05 · Guardián Ω</h2><p>Blindaje más marcado, silueta poderosa y núcleo rojo en forma de omega.</p><button data-pick="4" aria-pressed="false">Elegir guardián</button></div></article>
+<article class="card"><div class="scene" data-variant="5"></div><div class="info"><h2>06 · Nekomáquina</h2><p>Diseño robótico japonés, orejas mecánicas y pequeños bigotes rojos integrados al casco.</p><button data-pick="5" aria-pressed="false">Elegir nekomáquina</button></div></article>
+</main><div id="choice" role="status" aria-live="polite"></div>
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/+esm";
+const variants=[
+ {name:'Original',head:1.0,round:.8,ear:.8,eye:.14,wing:1.7,spread:1.0,type:0},
+ {name:'Pantera elegante',head:1.12,round:.64,ear:1.3,eye:.21,wing:1.4,spread:.85,type:1},
+ {name:'Kuro tierno',head:1.08,round:1.08,ear:.95,eye:.28,wing:1.1,spread:.78,type:2},
+ {name:'Sombra sigilosa',head:.93,round:.60,ear:1.0,eye:.15,wing:2.1,spread:1.27,type:3},
+ {name:'Guardián Ω',head:1.15,round:.84,ear:1.18,eye:.18,wing:1.85,spread:1.13,type:4},
+ {name:'Nekomáquina',head:1.05,round:.82,ear:1.18,eye:.23,wing:1.35,spread:.95,type:5}
+];
+const mat=(c,metal=.5,rough=.36)=>new THREE.MeshStandardMaterial({color:c,metalness:metal,roughness:rough,side:THREE.DoubleSide});
+const black=mat(0x151019,.68),dark=mat(0x07060b,.28),plate=mat(0x37212c,.55),red=mat(0xb82750,.4),eyes=new THREE.MeshBasicMaterial({color:0xff2157});
+const thin=new THREE.MeshBasicMaterial({color:0xd82756,side:THREE.DoubleSide});
+function part(parent,geo,material,x=0,y=0,z=0){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);parent.add(m);return m}
+function triangle(parent,a,b,c,material,depth=.08){
+ const sh=new THREE.Shape();sh.moveTo(...a);sh.lineTo(...b);sh.lineTo(...c);sh.closePath();
+ return part(parent,new THREE.ExtrudeGeometry(sh,{depth,bevelEnabled:false}),material);
+}
+function bar(parent,pts,r=.02,material=red){
+ const curve=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));
+ return part(parent,new THREE.TubeGeometry(curve,16,r,5),material);
+}
+function build(v){
+ const g=new THREE.Group();
+ const face=part(g,new THREE.SphereGeometry(1,30,22),black,0,.15,.44);
+ face.scale.set(v.head,v.round,.74);
+ const forehead=part(g,new THREE.SphereGeometry(.72,20,16),plate,0,.48,.70);
+ forehead.scale.set(1,.33,.58);
+ const body=part(g,new THREE.SphereGeometry(.72,26,16),black,0,-.1,-.75);
+ body.scale.set(.85,.46,1.94);
+ // orejas definidas por figura, no textura
+ for(const sign of [-1,1]){
+   if(v.type===0){
+     const ear=part(g,new THREE.ConeGeometry(.45,.95,4),black,sign*.67,1.02,.45);ear.rotation.z=-sign*.22;
+   }else{
+     triangle(g,[sign*.51,.61],[sign*.91,1.15+v.ear*.58],[sign*1.04,.52],black,.18);
+     triangle(g,[sign*.66,.77],[sign*.89,1.0+v.ear*.45],[sign*.93,.69],v.type===2?red:plate,.19);
+   }
+   // Ojos: cambiar expresión según variante
+   const eye=part(g,new THREE.SphereGeometry(v.eye,20,14),eyes,sign*.42,.18,.44+v.round*.63);
+   eye.scale.set(v.type===2?1.40:1.65,v.type===2?1.2:.65,.35);
+   if(v.type===1||v.type===3){
+     bar(g,[[sign*.24,.39,1.10],[sign*.43,.46,1.08],[sign*.65,.36,1.02]],.028,red);
+   }
+   // Alas-placa: longitud, posición y dirección radicalmente distintas.
+   if(v.type===0){
+     const wing=part(g,new THREE.ConeGeometry(.50,2.95,3),black,sign*1.7,-.28,-.65);wing.rotation.z=-sign*1.3;
+   }else if(v.type===2){
+     triangle(g,[sign*.75,.10],[sign*(1.15+v.spread),.16],[sign*(1.02+v.spread),-.45],plate,.12);
+     triangle(g,[sign*.92,.08],[sign*(1.12+v.spread),-.06],[sign*1.27,-.3],red,.16);
+   }else if(v.type===3){
+     triangle(g,[sign*.73,.37],[sign*(1.15+v.spread),-.06],[sign*(.93+v.spread),-.87],black,.15);
+     triangle(g,[sign*1.01,.08],[sign*(1.0+v.spread),-.88],[sign*1.44,-.46],plate,.16);
+     bar(g,[[sign*.83,.2,.33],[sign*1.43,.01,.32],[sign*(1.12+v.spread),-.72,.29]],.023,red);
+   }else if(v.type===4){
+     triangle(g,[sign*.70,.34],[sign*(1.21+v.spread),.72],[sign*(1.12+v.spread),-.59],black,.18);
+     triangle(g,[sign*1.05,.23],[sign*(1.09+v.spread),.48],[sign*(1.00+v.spread),-.36],plate,.20);
+     bar(g,[[sign*.78,.31,.37],[sign*(1.16+v.spread),.58,.4]],.035,red);
+   }else{
+     triangle(g,[sign*.76,.28],[sign*(1.1+v.spread),.57],[sign*(1.04+v.spread),-.39],black,.16);
+     triangle(g,[sign*.95,.19],[sign*(1.04+v.spread),.40],[sign*(1.04+v.spread),-.08],red,.19);
+   }
+ }
+ if(v.type===5){
+   // Tres líneas 3D por lado, dentro del perfil de la cara.
+   for(const sign of [-1,1])for(let j=0;j<3;j++){
+     const y=-.15-j*.115;
+     bar(g,[[sign*.23,y,1.13],[sign*.43,y+.02-j*.006,1.14],[sign*.69,y+.06-j*.042,1.04]],.013,thin);
+   }
+ }
+ if(v.type===2){
+   const nose=part(g,new THREE.ConeGeometry(.105,.13,3),red,0,-.16,1.23);nose.rotation.z=Math.PI;
+   for(const sign of [-1,1]){
+     const blush=part(g,new THREE.SphereGeometry(.17,16,8),red,sign*.78,-.13,1.0);blush.scale.set(1,.33,.1);
+   }
+ }else if(v.type===4){
+   const omega=part(g,new THREE.TorusGeometry(.2,.045,8,32,Math.PI*1.8),red,0,-.32,1.12);
+   omega.rotation.z=Math.PI;bar(g,[[-.23,-.52,1.12],[-.10,-.56,1.12]],.037);
+   bar(g,[[.10,-.56,1.12],[.23,-.52,1.12]],.037);
+ }else{
+   triangle(g,[-.115,-.12],[.115,-.12],[0,-.25],v.type===5?red:plate,.045).position.z=1.18;
+ }
+ if(v.type===1){
+   bar(g,[[0,-.25,1.17],[0,-.43,1.14],[-.13,-.49,1.10]],.018,red);
+   bar(g,[[0,-.43,1.14],[.13,-.49,1.10]],.018,red);
+ }
+ if(v.type===5){
+   const crest=part(g,new THREE.BoxGeometry(.12,.62,.13),red,0,.78,.87);
+   const bridge=part(g,new THREE.BoxGeometry(.64,.08,.1),red,0,.59,.91);
+ }
+ const engine=part(g,new THREE.TorusGeometry(.34,.065,8,28),red,0,-.20,-2.16);engine.rotation.x=.2;
+ return g;
+}
+const viewports=[];const clock=new THREE.Clock();
+document.querySelectorAll('.scene').forEach(node=>{
+ const id=+node.dataset.variant;
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
+ renderer.setSize(node.clientWidth,node.clientHeight);
+ node.appendChild(renderer.domElement);
+ const scene=new THREE.Scene();
+ scene.add(new THREE.AmbientLight(0xd1a1b0,1.55));
+ const a=new THREE.PointLight(0xe93260,62,24);a.position.set(4,2,7);scene.add(a);
+ const b=new THREE.PointLight(0xffc6d8,46,22);b.position.set(-4,5,4);scene.add(b);
+ const camera=new THREE.PerspectiveCamera(45,node.clientWidth/node.clientHeight,.1,100);
+ camera.position.set(0,.10,8.4);
+ const ship=build(variants[id]);scene.add(ship);
+ let dragging=false,last=0,angle=-.06;
+ const c=renderer.domElement;
+ c.addEventListener('pointerdown',e=>{dragging=true;last=e.clientX;c.setPointerCapture(e.pointerId)});
+ c.addEventListener('pointermove',e=>{if(!dragging)return;angle+=(e.clientX-last)*.009;last=e.clientX});
+ c.addEventListener('pointerup',()=>dragging=false);
+ c.addEventListener('pointercancel',()=>dragging=false);
+ viewports.push({renderer,scene,camera,ship,node,getAngle:()=>angle});
+});
+const ro=new ResizeObserver(()=>viewports.forEach(v=>{const w=v.node.clientWidth,h=v.node.clientHeight;
+ v.camera.aspect=w/h;v.camera.updateProjectionMatrix();v.renderer.setSize(w,h)}));
+viewports.forEach(v=>ro.observe(v.node));
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function draw(){
+ const t=clock.getElapsedTime();
+ for(const v of viewports){
+   v.ship.rotation.y=v.getAngle()+(reduce?0:Math.sin(t*.45)*.13);
+   v.ship.position.y=reduce?0:Math.sin(t*.95)*.08;
+   v.renderer.render(v.scene,v.camera);
+ }
+ if(!reduce)requestAnimationFrame(draw);
+}
+draw();
+const selection=document.getElementById('choice');
+document.querySelectorAll('[data-pick]').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('[data-pick]').forEach(b=>b.setAttribute('aria-pressed','false'));
+ btn.setAttribute('aria-pressed','true');
+ const i=Number(btn.dataset.pick);
+ selection.textContent='Elegiste «'+(i+1)+' · '+variants[i].name+'». Decime ese número en el chat y lo incorporamos a la página principal.';
+ selection.classList.add('show');
+}));
+</script></body></html>
