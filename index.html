@@ -96,98 +96,83 @@ for(let n=0;n<5;n++){
  const z=1.2-n*.63;
  armor([[-.67,.47],[-.5,.82],[0,.95],[.5,.82],[.67,.47]],n%2?graphite:panel,z,craft,.045);
 }
-// Kuro v5: rostro felino estilizado, sin volúmenes abultados ni rombos grandes.
-// La silueta sigue siendo mecánica, pero el hocico es fino y más natural.
-const face=armor([[0,1.27],[.65,1.09],[1.02,.61],[1.16,-.14],
-  [.96,-.65],[.51,-1.02],[0,-1.23],[-.51,-1.02],[-.96,-.65],
-  [-1.16,-.14],[-1.02,.61],[-.65,1.09]],shell,2.46,craft,.19);
-armor([[-.63,.88],[0,1.16],[.63,.88],[.35,.73],[0,.82],[-.35,.73]],panel,2.70);
-armor([[-.32,.68],[0,.89],[.32,.68],[.12,.48],[0,.52],[-.12,.48]],graphite,2.78);
-// Pieza inferior discreta, no un mentón con forma de diamante.
-armor([[-.27,-.75],[0,-.93],[.27,-.75],[.18,-1.03],[0,-1.11],[-.18,-1.03]],graphite,2.73,craft,.035);
-// Nariz PEQUEÑA, triangular y de bordes redondeados: no un adorno brillante.
+// Kuro v6 · rostro felino joven: silueta estrecha, ojos suaves y 6 bigotes grabados.
+// El bigote es un acento ESCARLATA AL RAS DEL CASCO, nunca sobresale de la nave.
+const face=armor([
+ [0,1.23],[.63,1.07],[.93,.61],[1.01,-.04],[.78,-.55],
+ [.43,-.88],[0,-1.02],[-.43,-.88],[-.78,-.55],[-1.01,-.04],
+ [-.93,.61],[-.63,1.07]
+],shell,2.46,craft,.19);
+// Frente suave; sin placas anchas en los pómulos ni mandíbula puntiaguda.
+armor([[-.57,.90],[0,1.12],[.57,.90],[.28,.77],[0,.80],[-.28,.77]],panel,2.70,craft,.045);
+armor([[-.26,.70],[0,.84],[.26,.70],[.12,.54],[0,.58],[-.12,.54]],graphite,2.77,craft,.032);
+// Nariz minúscula triangular, color grafito con reflejo rojo tenue.
 const noseMat=new THREE.MeshStandardMaterial({
- color:0x69303f,emissive:0x300914,emissiveIntensity:.18,
- metalness:.22,roughness:.47,transparent:true,opacity:0,depthWrite:false,
- side:THREE.DoubleSide
+ color:0x752c44,emissive:0x380b18,emissiveIntensity:.22,
+ metalness:.22,roughness:.44,transparent:true,opacity:0,
+ depthWrite:false,side:THREE.DoubleSide
 });
 const noseShape=new THREE.Shape();
-noseShape.moveTo(-.21,-.41);
-noseShape.quadraticCurveTo(0,-.36,.21,-.41);
-noseShape.quadraticCurveTo(.24,-.45,.15,-.51);
-noseShape.quadraticCurveTo(.035,-.615,0,-.615);
-noseShape.quadraticCurveTo(-.035,-.615,-.15,-.51);
-noseShape.quadraticCurveTo(-.24,-.45,-.21,-.41);
-mesh(new THREE.ExtrudeGeometry(noseShape,{depth:.043,bevelEnabled:true,
- bevelThickness:.016,bevelSize:.012,bevelSegments:3,curveSegments:14}),
- noseMat,craft,0,0,3.07);
-// Boca con dos leves curvas, por debajo de la nariz; detalles casi negros.
-const mouthMat=new THREE.MeshBasicMaterial({color:0x482c37,transparent:true,opacity:0,depthWrite:false});
-line([[0,-.61,3.17],[0,-.75,3.165]],mouthMat,.011);
-line([[0,-.75,3.165],[-.14,-.81,3.15],[-.25,-.78,3.12]],mouthMat,.009);
-line([[0,-.75,3.165],[.14,-.81,3.15],[.25,-.78,3.12]],mouthMat,.009);
-// Seis pelos-bigote individuales y finos: tres a cada lado, separados y
-// ligeramente curvos. El radio decrece hasta una punta casi invisible.
-const whiskerMat=new THREE.MeshBasicMaterial({
- color:0xc5a5af,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false
+noseShape.moveTo(-.145,-.36);
+noseShape.quadraticCurveTo(0,-.32,.145,-.36);
+noseShape.quadraticCurveTo(.17,-.42,.11,-.455);
+noseShape.quadraticCurveTo(.015,-.53,0,-.53);
+noseShape.quadraticCurveTo(-.015,-.53,-.11,-.455);
+noseShape.quadraticCurveTo(-.17,-.42,-.145,-.36);
+mesh(new THREE.ExtrudeGeometry(noseShape,{
+ depth:.034,bevelEnabled:true,bevelThickness:.013,bevelSize:.010,
+ bevelSegments:3,curveSegments:14
+}),noseMat,craft,0,0,2.83);
+// Una boquita discreta con expresión agradable, sin hocico abultado.
+const mouthMat=new THREE.MeshBasicMaterial({
+ color:0x714253,transparent:true,opacity:0,depthWrite:false
 });
-function taperedWhisker(positions){
- const curve=new THREE.CatmullRomCurve3(positions.map(p=>new THREE.Vector3(...p)));
- const vertices=[],faces=[],sides=6,segments=30;
- for(let i=0;i<=segments;i++){
-  const t=i/segments,pos=curve.getPoint(t),tan=curve.getTangent(t);
-  const perpendicular=new THREE.Vector3(-tan.y,tan.x,0).normalize();
-  const radius=.015*Math.pow(1-t,1.22)+.0006;
-  for(let j=0;j<sides;j++){
-   const theta=j/sides*Math.PI*2;
-   const a=Math.cos(theta)*radius,bb=Math.sin(theta)*radius;
-   vertices.push(pos.x+perpendicular.x*a,pos.y+perpendicular.y*a,pos.z+bb);
-   if(i<segments){
-    const current=i*sides+j,next=i*sides+(j+1)%sides;
-    faces.push(current,next,current+sides,next,next+sides,current+sides);
-   }
-  }
- }
- const geometry=new THREE.BufferGeometry();
- geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
- geometry.setIndex(faces);geometry.computeVertexNormals();
- return mesh(geometry,whiskerMat,craft);
-}
-const whiskers=[];
+line([[0,-.53,2.89],[0,-.64,2.88]],mouthMat,.009);
+line([[0,-.64,2.88],[-.12,-.70,2.865],[-.22,-.66,2.85]],mouthMat,.008);
+line([[0,-.64,2.88],[.12,-.70,2.865],[.22,-.66,2.85]],mouthMat,.008);
+// Tres rayitas curvas a cada lado, como pelo-bigote futurista embutido.
+// Las seis terminan ANTES del borde de la mejilla: no hay líneas colgantes.
 for(const side of [-1,1]){
- for(let i=0;i<3;i++){
-  const startY=-.48-i*.105;
-  const endY=[-.12,-.60,-1.04][i];
-  whiskers.push(taperedWhisker([
-   [side*.33,startY,3.18],
-   [side*.64,startY+.015,3.23],
-   [side*1.19,(startY+endY)*.52,3.21],
-   [side*1.88,endY,3.17]
-  ]));
+ const strokes=[
+  [[.36,-.21,2.725],[.58,-.16,2.733],[.81,-.19,2.73]],
+  [[.38,-.35,2.73],[.59,-.35,2.735],[.82,-.38,2.73]],
+  [[.37,-.49,2.73],[.55,-.56,2.735],[.73,-.60,2.72]]
+ ];
+ for(const stroke of strokes){
+  line(stroke.map(([x,y,z])=>[side*x,y,z]),trim,.014);
  }
 }
-// Orejas felinas, proporcionalmente más bajas y enmarcadas en el casco.
+const eyeHighlights=[];
+// Orejas compactas y estilizadas; conservan la apariencia de nave felina.
 for(const side of [-1,1]){
- armor([[side*.58,.99],[side*.67,1.61],[side*1.15,2.13],
-  [side*1.15,.56],[side*.88,.61]],shell,2.33,craft,.16);
- armor([[side*.86,1.36],[side*1.10,1.91],[side*1.07,.89],
-  [side*.94,.91]],graphite,2.56,craft,.055);
- armor([[side*.95,1.28],[side*1.075,1.67],[side*1.04,1.02]],trim,2.61,craft,.020);
- line([[side*.70,1.08,2.60],[side*.77,1.57,2.59],
-   [side*1.14,2.08,2.56]],trim,.017);
- // Mejillas pequeñas: un solo relieve integrado, sin bloques ni bultos.
- armor([[side*.63,.02],[side*1.04,-.10],[side*.93,-.43],
-   [side*.48,-.58]],graphite,2.75,craft,.055);
- line([[side*.68,-.53,2.80],[side*.90,-.39,2.80]],trim,.012);
- // Ojos almendrados, cejas angulares como las de un felino.
- armor([[side*.18,.44],[side*.43,.62],[side*.85,.52],
-   [side*.72,.32],[side*.31,.32]],graphite,2.83,craft,.055);
- armor([[side*.24,.42],[side*.51,.53],[side*.82,.47],
-   [side*.66,.36],[side*.34,.33]],iris,2.99,craft,.024);
- line([[side*.23,.51,3.04],[side*.51,.65,2.96],
-   [side*.94,.53,2.91]],trim,.025);
+ armor([[side*.56,.96],[side*.67,1.58],[side*1.13,2.11],
+  [side*1.11,.59],[side*.85,.61]],shell,2.33,craft,.16);
+ armor([[side*.86,1.32],[side*1.08,1.84],[side*1.05,.9],
+  [side*.93,.91]],graphite,2.56,craft,.05);
+ armor([[side*.95,1.25],[side*1.065,1.63],[side*1.04,1.02]],trim,2.61,craft,.020);
+ line([[side*.7,1.07,2.60],[side*.77,1.55,2.59],
+  [side*1.13,2.07,2.56]],trim,.016);
+ // Sin placas sobre las mejillas: contorno limpio y ligeramente redondeado.
+ // Ojos rojos grandes, más redondeados y menos enojados.
+ armor([[side*.17,.42],[side*.4,.57],[side*.8,.55],
+  [side*.87,.38],[side*.68,.27],[side*.33,.29]],graphite,2.84,craft,.055);
+ const eyeShape=new THREE.Shape();
+ eyeShape.moveTo(side*.25,.40);
+ eyeShape.quadraticCurveTo(side*.51,.64,side*.79,.45);
+ eyeShape.quadraticCurveTo(side*.87,.34,side*.67,.32);
+ eyeShape.quadraticCurveTo(side*.40,.28,side*.25,.40);
+ mesh(new THREE.ExtrudeGeometry(eyeShape,{
+  depth:.024,bevelEnabled:true,bevelThickness:.012,bevelSize:.009,
+  bevelSegments:2,curveSegments:14
+ }),iris,craft,0,0,2.99);
+ // Un brillo rosado pequeño suaviza la mirada sin volverla blanca.
+ const glint=new THREE.Mesh(new THREE.SphereGeometry(.042,10,8),
+  new THREE.MeshBasicMaterial({color:0xffa0b4}));
+ glint.position.set(side*.44,.48,3.055);craft.add(glint);eyeHighlights.push(glint);
+ line([[side*.23,.47,3.045],[side*.48,.59,2.97],
+  [side*.83,.52,2.94]],trim,.017);
 }
-line([[0,1.08,2.78],[0,.87,2.85],[0,.73,2.88]],trim,.016);
+line([[0,1.04,2.76],[0,.88,2.83],[0,.77,2.87]],trim,.015);
 // Alas-garra: caen hacia atrás como hombros de un felino, NO salen horizontales.
 const wingRoots=[];
 for(const side of [-1,1]){
@@ -299,7 +284,8 @@ function frame(t){
  orbiters.forEach(o=>o.visible=universe>.15);
  // La nave sigue siendo casi invisible al principio; los ojos no desaparecen.
  shell.opacity=shipReveal;panel.opacity=shipReveal;trim.opacity=shipReveal;graphite.opacity=shipReveal;
- noseMat.opacity=shipReveal;whiskerMat.opacity=shipReveal;mouthMat.opacity=shipReveal*.65;
+ noseMat.opacity=shipReveal;mouthMat.opacity=shipReveal*.65;
+ eyeHighlights.forEach(highlight=>highlight.visible=shipReveal>.64);
  thrusterMat.opacity=.65*shipReveal;
  rim.intensity=52*shipReveal;
  key.intensity=65*shipReveal;
