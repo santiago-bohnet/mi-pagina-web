@@ -16,14 +16,16 @@
 body.intro-running{overflow:hidden}
 @keyframes kuro-approach{0%{opacity:0;transform:scale(.035)}12%{opacity:.28}35%{opacity:1;transform:scale(.15)}75%{opacity:1;transform:scale(.85)}100%{opacity:1;transform:scale(1.55)}}
 @media(prefers-reduced-motion:reduce){#intro-eyes{animation:none;transform:scale(1);opacity:1}}
+#replay-intro{position:fixed;top:50px;right:18px;z-index:6;background:#14070fdf;border:1px solid #a4324f;border-radius:18px;color:#f5d8e0;padding:10px 16px;font:inherit;cursor:pointer;backdrop-filter:blur(9px)}#replay-intro:hover{background:#451026}body.intro-running #replay-intro{visibility:hidden}@media(max-width:520px){#replay-intro{top:42px;right:10px;font-size:.8rem}}
 </style>
 </head>
 <body class="intro-running"><div id="intro-void" aria-label="Dos ojos rojos se acercan desde la oscuridad"><div id="intro-eyes"><span></span><span></span></div><button type="button" id="skip-intro">Saltar introducción</button></div>
 <canvas id="space" aria-hidden="true"></canvas>
+<button type="button" id="replay-intro" aria-label="Volver a ver la introducción">↻ Volver a la intro</button>
 <div id="scene-title">SECTOR 00 · ORIGEN</div>
 <div id="kuro-overlay" aria-label="Kuro, tu acompañante"><span id="catmark"><i class="eyes"></i></span><div><b>KURO</b><br><small id="kuro-speech">Sistemas despertando…</small></div></div>
 <main>
-<section class="stage" id="despertar"><p class="eyebrow">EXPEDICIÓN · ORIGEN</p><h1 class="lead">BIENVENIDO<br>A MI <span>UNIVERSO</span></h1><p class="desc">Seguí a Kuro y descubrí los mundos que esperan detrás del vacío.</p><a href="#explorar" class="action">Iniciar exploración ↓</a><span class="scroll">DESPLAZATE PARA VIAJAR</span></section>
+<section class="stage" id="despertar"><p class="eyebrow">EXPEDICIÓN · ORIGEN</p><h1 class="lead">EL DESPERTAR DE <span>KURO</span></h1><p class="desc">Seguí a Kuro y descubrí los mundos que esperan detrás del vacío.</p><a href="#explorar" class="action">Iniciar exploración ↓</a><span class="scroll">DESPLAZATE PARA VIAJAR</span></section>
 <section class="stage" id="explorar"><p class="eyebrow">01 / DESCUBRIMIENTO</p><h2>NO TODO LO QUE FLOTA<br>ESTÁ PERDIDO</h2><p class="desc">Mové el cursor o el dedo: el universo responde. Avanzá con el scroll para acercarte a su núcleo. El significado de los objetos flotantes todavía está por decidirse.</p><a class="action" href="#nucleo">Hacia el núcleo Ω ↓</a></section>
 <section class="stage" id="nucleo"><p class="eyebrow">02 / NÚCLEO</p><h2>EL CORAZÓN DEL <span style="color:#ff315b">Ω</span></h2><p class="desc">Una estructura tridimensional suspendida en el vacío. Más adelante será la puerta de entrada a mi identidad, proyectos y habilidades.</p><a class="action" href="#portales">Descubrir los portales ↓</a></section>
 <section class="stage" id="portales"><p class="eyebrow">03 / EXPANSIÓN</p><h2>LOS UMBRALES</h2><p class="desc">Cada portal evolucionará hacia un mundo con sus propias leyes, atmósfera y arquitectura. Por ahora podés explorar sus conceptos.</p><div class="worlds">
@@ -37,11 +39,22 @@ body.intro-running{overflow:hidden}
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">UMBRAL DESCUBIERTO</p><h2 id="world-heading"></h2><p id="world-desc"></p><p class="eyebrow">ESCENARIO COMPLETO · PENDIENTE DE DISEÑO</p><button id="close-scene" class="action">Volver al universo</button></div></div>
 <script>
 (()=>{
- const intro=document.getElementById("intro-void"),skip=document.getElementById("skip-intro");
- let ended=false;
- function finish(){if(ended)return;ended=true;intro.classList.add("finished");document.body.classList.remove("intro-running");setTimeout(()=>intro.remove(),1150);}
+ const intro=document.getElementById("intro-void"),skip=document.getElementById("skip-intro"),replay=document.getElementById("replay-intro"),eyes=document.getElementById("intro-eyes");
+ let timer,fadeTimer;
+ const duration=matchMedia("(prefers-reduced-motion: reduce)").matches?1200:5000;
+ function finish(){
+  clearTimeout(timer);clearTimeout(fadeTimer);
+  intro.classList.add("finished");document.body.classList.remove("intro-running");
+ }
+ function start(){
+  clearTimeout(timer);clearTimeout(fadeTimer);
+  intro.classList.remove("finished");document.body.classList.add("intro-running");
+  eyes.style.animation="none";void eyes.offsetWidth;eyes.style.animation="";
+  timer=setTimeout(finish,duration);
+ }
  skip.addEventListener("click",finish);
- setTimeout(finish,matchMedia("(prefers-reduced-motion: reduce)").matches?1200:5000);
+ replay.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"instant"});start()});
+ start();
 })();
 </script>
 <script type="module">
