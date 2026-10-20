@@ -101,7 +101,51 @@ const face=armor([[0,1.32],[.66,1.14],[1.05,.63],[1.21,-.11],[1.04,-.74],[.62,-1
 armor([[-.71,.89],[0,1.17],[.71,.89],[.39,.69],[0,.76],[-.39,.69]],panel,2.75);
 armor([[-.4,.7],[0,.93],[.4,.7],[.16,.48],[0,.52],[-.16,.48]],graphite,2.84);
 armor([[-.17,-.5],[0,-.59],[.17,-.5],[.29,-.83],[0,-1.16],[-.29,-.83]],panel,2.77);
-armor([[-.20,-.61],[0,-.46],[.20,-.61],[0,-.78]],trim,2.87);
+// Hocico de gato: dos almohadillas de blindaje redondeadas y nariz triangular invertida.
+for(const side of [-1,1]){
+ const muzzle=mesh(new THREE.SphereGeometry(.36,24,16),panel,craft,side*.31,-.79,2.91);
+ muzzle.scale.set(1.05,.64,.25);
+ const cheekHighlight=mesh(new THREE.SphereGeometry(.17,16,12),shell,craft,side*.48,-.85,3.015);
+ cheekHighlight.scale.set(1.1,.49,.24);
+}
+const noseShape=new THREE.Shape();
+noseShape.moveTo(-.25,-.52);
+noseShape.quadraticCurveTo(0,-.43,.25,-.52);
+noseShape.quadraticCurveTo(.32,-.59,.20,-.68);
+noseShape.quadraticCurveTo(.08,-.82,0,-.84);
+noseShape.quadraticCurveTo(-.08,-.82,-.20,-.68);
+noseShape.quadraticCurveTo(-.32,-.59,-.25,-.52);
+const noseMat=new THREE.MeshStandardMaterial({
+ color:0x8b4057,metalness:.32,roughness:.30,emissive:0x8c1738,
+ emissiveIntensity:.29,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false
+});
+mesh(new THREE.ExtrudeGeometry(noseShape,{
+ depth:.09,bevelEnabled:true,bevelThickness:.055,bevelSize:.033,bevelSegments:3,curveSegments:12
+}),noseMat,craft,0,0,3.08);
+// Surco vertical y boca pequeña en forma de Y invertida, como la de un gato.
+line([[0,-.79,3.26],[0,-.96,3.23]],trim,.018);
+line([[0,-.96,3.23],[-.17,-1.045,3.18],[-.31,-1.0,3.14]],trim,.015);
+line([[0,-.96,3.23],[.17,-1.045,3.18],[.31,-1.0,3.14]],trim,.015);
+// Seis bigotes 3D FINOS y curvos: tres de cada lado, conectados al hocico.
+const whiskerMat=new THREE.MeshStandardMaterial({
+ color:0xcf8998,emissive:0x9a2043,emissiveIntensity:.38,
+ metalness:.2,roughness:.62,transparent:true,opacity:0,depthWrite:false
+});
+const whiskers=[];
+for(const side of [-1,1]){
+ for(let i=0;i<3;i++){
+  const y=-.77-i*.13;
+  const curve=new THREE.CatmullRomCurve3([
+   new THREE.Vector3(side*.52,y,3.14),
+   new THREE.Vector3(side*.88,y+(.12-i*.11),3.17),
+   new THREE.Vector3(side*1.40,y+(.21-i*.18),3.15),
+   new THREE.Vector3(side*2.02,y+(.29-i*.24),3.10)
+  ]);
+  const whisker=mesh(new THREE.TubeGeometry(curve,25,.0125,6,false),whiskerMat,craft);
+  whiskers.push(whisker);
+ }
+}
+
 // Orejas grandes: la silueta tiene que leerse como gato incluso de lejos.
 for(const side of [-1,1]){
  armor([[side*.57,1.07],[side*.67,1.78],[side*1.27,2.48],[side*1.23,.58],[side*.91,.59]],shell,2.32,craft,.19);
@@ -231,6 +275,7 @@ function frame(t){
  orbiters.forEach(o=>o.visible=universe>.15);
  // La nave sigue siendo casi invisible al principio; los ojos no desaparecen.
  shell.opacity=shipReveal;panel.opacity=shipReveal;trim.opacity=shipReveal;graphite.opacity=shipReveal;
+ noseMat.opacity=shipReveal;whiskerMat.opacity=shipReveal;
  thrusterMat.opacity=.65*shipReveal;
  rim.intensity=52*shipReveal;
  key.intensity=65*shipReveal;
