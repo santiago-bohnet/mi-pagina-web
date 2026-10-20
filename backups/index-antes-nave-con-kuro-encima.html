@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05040a"><meta name="description" content="Universo personal interactivo: Kuro y los portales.">
+<title>Kuro · Universo interactivo</title>
+<style>
+:root{font-family:system-ui,Segoe UI,sans-serif;color:#f6edf3;background:#030308}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;overflow-x:hidden}canvas{display:block}#space{position:fixed;inset:0;width:100%;height:100%;z-index:0}body:before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 52% 48%,transparent 12%,#030309a6 90%);pointer-events:none;z-index:1}main{position:relative;z-index:2;pointer-events:none}.stage{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 1.5rem}.stage>*{pointer-events:auto}.eyebrow{font-size:.8rem;letter-spacing:.34em;text-transform:uppercase;color:#ff5474}.lead{font-size:clamp(3rem,9vw,7.6rem);letter-spacing:-.07em;line-height:1.04;margin:1rem 0;text-shadow:0 0 46px #dc144e6c}.lead span{color:#ff325c}.desc{max-width:610px;color:#d8bdce;font-size:clamp(1rem,2vw,1.23rem)}.action{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:12px 22px;border-radius:999px;border:1px solid #fa375e88;background:#1a0715ce;color:white;text-decoration:none;cursor:pointer;font:inherit;transition:background .2s,transform .2s}.action:hover{background:#521126;transform:translateY(-2px)}.scroll{position:absolute;bottom:30px;font-size:.76rem;color:#caa;letter-spacing:.24em}#kuro-overlay{display:flex;align-items:center;gap:13px;position:fixed;left:22px;bottom:21px;z-index:5;background:#0b0811d9;border:1px solid #96253b78;border-radius:18px;padding:8px 14px;backdrop-filter:blur(12px);font-size:.82rem}#kuro-overlay b{font-size:1rem}#kuro-overlay small{color:#c6a6b4}#catmark{width:36px;height:34px;background:#08070c;border:1px solid #d43c58;border-radius:8px 8px 45% 45%;position:relative;box-shadow:0 0 14px #e5235655}#catmark:before,#catmark:after{content:"";position:absolute;top:-8px;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:17px solid #08070c}#catmark:before{left:-4px}#catmark:after{right:-4px}.eyes{position:absolute;top:14px;left:7px;width:7px;height:5px;background:#ff174c;box-shadow:14px 0 #ff174c,0 0 8px red,14px 0 9px red}.worlds{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:18px;width:min(1120px,100%);margin:2rem auto}.portal{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:230px;padding:24px;border:1px solid #87566b66;border-radius:22px;background:linear-gradient(145deg,#1b1225c9,#08060fd9);backdrop-filter:blur(8px);color:#eee;text-align:center;cursor:pointer;transition:transform .25s,border-color .25s}.portal:hover,.portal:focus-visible{transform:translateY(-5px);border-color:#ff416d}.portal .ring{width:105px;height:105px;border:3px solid var(--portal);border-radius:50%;box-shadow:0 0 17px var(--portal),inset 0 0 28px var(--portal);margin-bottom:19px;display:grid;place-items:center;font-size:2rem}.portal strong{font-size:1.15rem}.portal small{color:#c9b7c0;margin-top:7px}h2{font-size:clamp(2rem,5vw,4rem);line-height:1.1}#scene-title{position:fixed;right:22px;top:20px;z-index:4;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:#ffa3b7}#scene-popup{position:fixed;inset:0;z-index:10;background:#05040ae8;backdrop-filter:blur(30px);display:grid;place-items:center;padding:24px}#scene-popup[hidden]{display:none}#scene-popup .inner{max-width:680px;text-align:center}#scene-popup h2{margin:.5rem 0}#scene-popup p{color:#d7bcc7}footer{text-align:center;padding:3rem 1rem;background:#07060bc7;color:#b899a7;pointer-events:auto}button{touch-action:manipulation}@media(max-width:520px){#kuro-overlay{left:10px;bottom:10px}#scene-title{right:12px;top:12px}.stage{padding:5rem 1rem}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+/* La introducción ES el comienzo de la página: se recorre con scroll, nunca caduca. */
+#despertar.intro-stage{min-height:260svh;padding:0;display:block;background:transparent}
+#despertar.intro-stage:focus{outline:none}
+#scene-title,#kuro-overlay{transition:opacity .2s ease}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#kuro-greeting{
+ position:fixed;z-index:5;top:40%;left:50%;
+ max-width:min(290px,62vw);padding:13px 18px;
+ border:1px solid #be37578f;border-radius:18px 18px 18px 5px;
+ background:linear-gradient(135deg,#160a14f2,#260c1af0);
+ color:#fff0f3;font-size:clamp(.95rem,1.65vw,1.18rem);line-height:1.35;
+ text-align:center;font-weight:550;
+ box-shadow:0 12px 34px #000b,0 0 22px #ef255525;
+ backdrop-filter:blur(12px);
+ transform:translate(12px,-110%) scale(.94);
+ opacity:0;visibility:hidden;pointer-events:none;
+}
+#kuro-greeting:after{content:"";position:absolute;bottom:-9px;left:21px;width:15px;height:15px;background:#200c18;border-right:1px solid #be37578f;border-bottom:1px solid #be37578f;transform:rotate(45deg)}
+#kuro-greeting.speaking{visibility:visible}
+@media(max-width:520px){#kuro-greeting{padding:12px 14px;max-width:62vw;font-size:1rem}}
+@media(prefers-reduced-motion:reduce){#despertar.intro-stage{min-height:125svh}}
+#compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
+</style>
+</head>
+<body>
+<canvas id="space" aria-hidden="true"></canvas>
+<div id="kuro-greeting" role="status" aria-live="off" aria-label="Kuro dice: Bienvenido a mi universo">Bienvenido a mi universo</div>
+<div id="scene-title">SECTOR 00 · ORIGEN</div>
+<div id="kuro-overlay" aria-label="Kuro, tu acompañante"><span id="catmark"><i class="eyes"></i></span><div><b>KURO</b><br><small id="kuro-speech">Sistemas despertando…</small></div></div>
+<a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
+<main>
+<section class="intro-stage" id="despertar" aria-label="Introducción interactiva: los ojos escarlata de Kuro se acercan, la nave emerge de la oscuridad y Kuro dice: Bienvenido a mi universo. Desplazate hacia abajo para continuar y hacia arriba para volver."><h1 class="sr-only">Kuro</h1></section>
+<section class="stage" id="explorar"><p class="eyebrow">01 / DESCUBRIMIENTO</p><h2>NO TODO LO QUE FLOTA<br>ESTÁ PERDIDO</h2><p class="desc">Mové el cursor o el dedo: el universo responde. Avanzá con el scroll para acercarte a su núcleo. El significado de los objetos flotantes todavía está por decidirse.</p><a class="action" href="#nucleo">Hacia el núcleo Ω ↓</a></section>
+<section class="stage" id="nucleo"><p class="eyebrow">02 / NÚCLEO</p><h2>EL CORAZÓN DEL <span style="color:#ff315b">Ω</span></h2><p class="desc">Una estructura tridimensional suspendida en el vacío. Más adelante será la puerta de entrada a mi identidad, proyectos y habilidades.</p><a class="action" href="#portales">Descubrir los portales ↓</a></section>
+<section class="stage" id="portales"><p class="eyebrow">03 / EXPANSIÓN</p><h2>LOS UMBRALES</h2><p class="desc">Cada portal evolucionará hacia un mundo con sus propias leyes, atmósfera y arquitectura. Por ahora podés explorar sus conceptos.</p><div class="worlds">
+<button class="portal" style="--portal:#ee4d21" data-world="Infierno" data-desc="Roca negra, brasas, estructuras volcánicas y una transformación cinematográfica del espacio."><span class="ring">🔥</span><strong>INFIERNO</strong><small>Arco de piedra y lava</small></button>
+<button class="portal" style="--portal:#e2c88d" data-world="Cielo" data-desc="Columnas monumentales, nubes luminosas, estructuras doradas y un cambio total de atmósfera."><span class="ring">✧</span><strong>CIELO</strong><small>Arquitectura entre nubes</small></button>
+<button class="portal" style="--portal:#8e98cf" data-world="Mundo de los muertos" data-desc="Puertas antiguas, niebla y ruinas misteriosas. Hades y el inframundo quedan como mundos por definir por separado."><span class="ring">☽</span><strong>MUNDO DE LOS MUERTOS</strong><small>Ruinas entre la niebla</small></button>
+<button class="portal" style="--portal:#5bd9ac" data-world="Inteligencias artificiales" data-desc="Geometrías tecnológicas que se desarman y reconstruyen; futuras rutas para IA benévola y maligna."><span class="ring">⌘</span><strong>IA</strong><small>Conciencias contrapuestas</small></button>
+</div><p class="desc">Otros destinos previstos: Tierra y culturas, extraterrestres, Hades, inframundo, militar y Vaticano.</p></section>
+<footer>UNIVERSO KURO · Experiencia conceptual inicial — Más mundos en desarrollo</footer>
+</main>
+<div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">UMBRAL DESCUBIERTO</p><h2 id="world-heading"></h2><p id="world-desc"></p><p class="eyebrow">ESCENARIO COMPLETO · PENDIENTE DE DISEÑO</p><button id="close-scene" class="action">Volver al universo</button></div></div>
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/+esm";
+(()=>{'use strict';
+const canvas=document.getElementById('space'),label=document.getElementById('scene-title'),msg=document.getElementById('kuro-speech'),greeting=document.getElementById('kuro-greeting');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const scene=new THREE.Scene();scene.background=new THREE.Color('#000000');scene.fog=new THREE.FogExp2(0x06030e,.011);
+const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,900);camera.position.set(0,1,35);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);
+const root=new THREE.Group();scene.add(root);
+const ambient=new THREE.AmbientLight(0x8b6075,1.2);scene.add(ambient);const red=new THREE.PointLight(0xff2050,140,75);red.position.set(8,5,-8);scene.add(red);
+const starCount=1900;const xyz=new Float32Array(starCount*3);for(let i=0;i<starCount;i++){xyz[3*i]=(Math.random()-.5)*280;xyz[3*i+1]=(Math.random()-.5)*180;xyz[3*i+2]=-Math.random()*410+25}
+const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(xyz,3));
+const starMaterial=new THREE.PointsMaterial({color:0xe2b2ca,size:.48,transparent:true,opacity:0,sizeAttenuation:true,depthWrite:false});
+scene.add(new THREE.Points(geo,starMaterial));
+const core=new THREE.Group();core.position.set(0,0,-80);scene.add(core);
+const torusMat=new THREE.MeshStandardMaterial({color:0x24020b,metalness:.82,roughness:.2,emissive:0xba143b,emissiveIntensity:.7});
+for(let i=0;i<3;i++){let mesh=new THREE.Mesh(new THREE.TorusGeometry(8+i*2,.18,10,90),torusMat);mesh.rotation.set(i*.6,i*.55,i*.27);core.add(mesh)}
+const central=new THREE.Mesh(new THREE.IcosahedronGeometry(3,2),new THREE.MeshStandardMaterial({color:0x11070f,metalness:.7,roughness:.25,emissive:0x941139,emissiveIntensity:.55,wireframe:true}));core.add(central);
+const orbiters=[];for(let i=0;i<22;i++){let m=new THREE.Mesh(new THREE.OctahedronGeometry(.3+Math.random()*1.2),new THREE.MeshStandardMaterial({color:0x211423,metalness:.6,roughness:.3,emissive:0x491127,emissiveIntensity:.4}));m.position.set((Math.random()-.5)*65,(Math.random()-.5)*40,-10-Math.random()*140);m.rotation.set(Math.random()*2,Math.random()*2,Math.random()*2);scene.add(m);orbiters.push(m)}
+// Kuro v2: nave felina que se desarma y recompone en un gato tridimensional.
+// Piezas independientes: ninguna transformación depende de esconder el modelo entero.
+const kuro=new THREE.Group();scene.add(kuro);kuro.position.set(0,-1,12);
+const shell=new THREE.MeshStandardMaterial({color:0x06050a,metalness:.94,roughness:.16});
+const fur=new THREE.MeshStandardMaterial({color:0x030306,metalness:.16,roughness:.75});
+const trim=new THREE.MeshStandardMaterial({color:0x501025,metalness:.92,roughness:.2,emissive:0x8b102c,emissiveIntensity:.32});
+const iris=new THREE.MeshBasicMaterial({color:0xff174a});
+const gold=new THREE.MeshBasicMaterial({color:0xffbc80});
+function mesh(g,m,p,x=0,y=0,z=0){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);p.add(o);return o}
+const craft=new THREE.Group(),catBody=new THREE.Group();kuro.add(craft,catBody);
+const hull=mesh(new THREE.CapsuleGeometry(.62,2.9,6,16),shell,craft,0,0,-.65);hull.rotation.x=Math.PI/2;
+const cockpit=mesh(new THREE.SphereGeometry(.72,24,16),shell,craft,0,.12,.45);cockpit.scale.set(1,.62,1.22);
+const fins=[];
+for(const side of [-1,1]){
+ const fin=mesh(new THREE.ConeGeometry(.64,2.65,4),shell,craft,side*1.2,.18,-.6);
+ fin.rotation.z=side*Math.PI*.51;fin.rotation.x=.3;fins.push(fin);
+ const edge=mesh(new THREE.BoxGeometry(.055,.065,2.0),trim,fin,0,.15,0);
+ const ear=mesh(new THREE.ConeGeometry(.48,1.05,3),shell,craft,side*.53,.77,.6);
+ ear.rotation.z=-side*.2;fins.push(ear);
+ mesh(new THREE.SphereGeometry(.12,12,8),iris,craft,side*.34,.18,1.29);
+}
+const engine=mesh(new THREE.TorusGeometry(.42,.07,8,28),trim,craft,0,-.1,-2.4);
+const thrust=mesh(new THREE.ConeGeometry(.38,1.1,24),new THREE.MeshBasicMaterial({color:0xff3352,transparent:true,opacity:.72}),craft,0,-.1,-2.95);thrust.rotation.x=-Math.PI/2;
+const catHead=mesh(new THREE.SphereGeometry(.96,32,24),fur,catBody,0,.63,.3);catHead.scale.set(1,.86,.8);
+const cheeks=[-1,1].map(side=>mesh(new THREE.SphereGeometry(.42,20,12),fur,catBody,side*.53,.27,.71));
+for(const side of [-1,1]){
+ const ear=mesh(new THREE.ConeGeometry(.39,.91,4),fur,catBody,side*.65,1.36,.25);ear.rotation.z=-side*.2;
+ const inner=mesh(new THREE.ConeGeometry(.17,.48,4),trim,catBody,side*.65,1.36,.57);inner.rotation.z=-side*.2;
+ const eye=mesh(new THREE.SphereGeometry(.18,16,12),iris,catBody,side*.37,.69,1.016);eye.scale.set(1.3,.62,.45);
+ const pupil=mesh(new THREE.SphereGeometry(.055,10,8),shell,catBody,side*.37,.69,1.098);pupil.scale.set(.45,1.5,.4);
+}
+const nose=mesh(new THREE.ConeGeometry(.095,.15,3),trim,catBody,0,.28,1.07);nose.rotation.z=Math.PI;
+const torso=mesh(new THREE.SphereGeometry(.73,28,18),fur,catBody,0,-.73,-.13);torso.scale.set(.85,1.25,.75);
+const paws=[];
+for(const side of [-1,1])for(const front of [-1,1]){
+ const leg=mesh(new THREE.CapsuleGeometry(.2,.51,5,12),fur,catBody,side*.47,-1.4,front*.4);paws.push(leg);
+}
+const tailSeg=[];for(let i=0;i<7;i++){const seg=mesh(new THREE.SphereGeometry(.18-i*.013,12,10),fur,catBody,-.65-i*.19,-1.07+i*.2,-.52);tailSeg.push(seg)}
+// Fragmentos intermedios independientes: sensación de desarmado y reconstrucción.
+const shards=[];for(let i=0;i<12;i++){const shard=mesh(new THREE.TetrahedronGeometry(.13+i%3*.055),i%3===0?trim:shell,kuro);shards.push(shard)}
+const ease=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
+function evolveKuro(t,progress){
+ const p=ease((progress-.025)/.19);
+ craft.scale.setScalar(Math.max(.001,1-p));catBody.scale.setScalar(Math.max(.001,p));
+ craft.visible=p<.997;catBody.visible=p>.003;
+ craft.rotation.y=p*Math.PI*1.4;
+ catBody.rotation.y=(1-p)*-Math.PI*1.3;
+ catBody.position.y=Math.sin(Math.PI*p)*.12;
+ thrust.scale.y=.82+Math.sin(t*18)*.24;
+ tailSeg.forEach((seg,i)=>{seg.position.x=-.65-i*.17+Math.sin(t*2+i*.55)*.09*p;seg.position.y=-1.07+i*.22+Math.sin(t*2.5+i*.6)*.08*p});
+ shards.forEach((sh,i)=>{
+   const angle=i*Math.PI*2/shards.length+t*.7,burst=Math.sin(Math.PI*p);
+   sh.visible=burst>.02;
+   sh.position.set(Math.cos(angle)*(1.1+burst*1.8),Math.sin(angle)*(1.0+burst*1.55),Math.cos(angle*2)*.7);
+   sh.rotation.set(t*1.7+i,t*.9+i,angle);
+   sh.scale.setScalar(burst);
+ });
+ return p;
+}
+let mx=0,my=0,sy=0;
+const intro=document.getElementById('despertar');
+addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
+function progress(){
+ const introLength=Math.max(1,intro.offsetTop+intro.offsetHeight-innerHeight);
+ const maxScroll=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+ const introduction=Math.max(0,Math.min(1,scrollY/introLength));
+ const journey=Math.max(0,Math.min(1,(scrollY-introLength)/Math.max(1,maxScroll-introLength)));
+ return {introduction,journey};
+}
+function frame(t){
+ t*=.001;
+ const {introduction:p,journey:j}=progress();
+ const universe=ease((p-.68)/.32);
+ const shipReveal=ease((p-.25)/.49);
+ const distance=27-19.5*ease(p);
+ // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
+ const targetZ=35-j*116;
+ camera.position.z+=(targetZ-camera.position.z)*.05;
+ camera.position.x+=((mx*(.3+universe*2.1))-camera.position.x)*.045;
+ camera.position.y+=((1-my*(.2+universe*1.6))-camera.position.y)*.045;
+ camera.lookAt(camera.position.x*.4,0,camera.position.z-30);
+ camera.updateMatrixWorld();
+ scene.background.setRGB(.011*universe,.005*universe,.022*universe);
+ starMaterial.opacity=.83*universe;
+ core.visible=universe>.1;
+ orbiters.forEach(o=>o.visible=universe>.15);
+ // La nave sigue siendo casi invisible al principio; los ojos no desaparecen.
+ // Se conservan los materiales originales de la nave (commit histórico).
+ // Para la introducción, ocultar geometría al principio sin ocultar los ojos.
+ craft.children.forEach(part=>{
+  if(part.isMesh&&part.material!==iris)part.visible=shipReveal>.02;
+ });
+
+ ambient.intensity=.15+universe*1.05;
+ red.intensity=140*universe;
+ core.rotation.y+=.002;core.rotation.x+=.001;central.rotation.y+=.005;
+ for(let i=0;i<orbiters.length;i++){
+  const o=orbiters[i];o.rotation.x+=.0015;o.rotation.y+=.003;
+  o.position.y+=Math.sin(t+i)*.0015;
+ }
+ // Su presencia es el título visual: las palabras aparecen como un diálogo suyo.
+ const travel=ease((p-.72)/.28);
+ kuro.position.z=camera.position.z-(distance*(1-travel)+12*travel);
+ kuro.position.x=camera.position.x+Math.sin(t*.65)*(.05+.48*universe);
+ kuro.position.y=camera.position.y-.08-2.1*universe+Math.cos(t*1.2)*.05;
+ kuro.rotation.y=mx*(.025+.19*universe);
+ // Evitar que las alas se corten en celulares estrechos.
+ kuro.scale.setScalar((innerWidth<550?.77:innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
+ const cat=evolveKuro(t,j)>.5;
+ const greetingIn=ease((p-.66)/.1),greetingOut=1-ease((p-.91)/.09);
+ const greetingOpacity=Math.min(greetingIn,greetingOut);
+ greeting.classList.toggle('speaking',greetingOpacity>.015);
+ greeting.style.opacity=String(greetingOpacity);
+ // Anclar la frase a la propia nave, no al centro de la página como un encabezado.
+ const anchor=kuro.localToWorld(new THREE.Vector3(.8,.72,1.5));
+ anchor.project(camera);
+ const availableWidth=innerWidth;
+ const gx=Math.max(availableWidth*.17,Math.min(availableWidth*.76,(anchor.x*.5+.5)*availableWidth+38));
+ const gy=Math.max(112,Math.min(innerHeight*.83,(1-anchor.y)*.5*innerHeight-15));
+ greeting.style.left=gx+'px';
+ greeting.style.top=gy+'px';
+ label.style.opacity=String(universe);
+ document.getElementById('kuro-overlay').style.opacity=String(universe);
+ if(j>.75){label.textContent='SECTOR 03 · UMBRALES';msg.textContent='Elegí un portal.'}
+ else if(j>.48){label.textContent='SECTOR 02 · NÚCLEO Ω';msg.textContent='Algo nos está observando…'}
+ else if(j>.12){label.textContent='SECTOR 01 · EXPLORACIÓN';msg.textContent='Seguí explorando.'}
+ else{label.textContent='SECTOR 00 · ORIGEN';msg.textContent=cat?'Kuro te acompaña.':'Kuro · Despertando…'}
+ renderer.render(scene,camera);
+ if(!reduced)requestAnimationFrame(frame);
+}
+if(reduced){frame(0);addEventListener('scroll',()=>frame(performance.now()),{passive:true})}
+else requestAnimationFrame(frame);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)},{passive:true});
+})();
+const popup=document.getElementById('scene-popup'),close=document.getElementById('close-scene');let last;
+document.querySelectorAll('[data-world]').forEach(btn=>btn.addEventListener('click',()=>{last=btn;document.getElementById('world-heading').textContent=btn.dataset.world;document.getElementById('world-desc').textContent=btn.dataset.desc;popup.hidden=false;close.focus()}));
+function dismiss(){popup.hidden=true;last?.focus()}close.addEventListener('click',dismiss);addEventListener('keydown',e=>{if(e.key==='Escape'&&!popup.hidden)dismiss()});
+</script>
+</body></html>
