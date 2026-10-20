@@ -117,16 +117,32 @@ const catBody=new THREE.Group();catBody.position.set(0,1.04,-.19);kuro.add(catBo
 orb(catBody,fur,0,-.17,-.11,.35,.46,.36);
 // Cabeza apenas más grande y redondita, sin agrandar el hocico.
 const catHead=orb(catBody,fur,0,.60,.17,.60,.55,.48);
-// Orejas un poco más cortas y redondeadas, ojos dulces y patas pequeñas.
-const eyeGlint=fade(new THREE.MeshBasicMaterial({color:0xffb4c7}));
+// Kuro v16: ojos expresivos con iris escarlata, pupila felina,
+// delineado sutil y reflejos. Misma nave y mismas proporciones del gato.
+const eyeSocket=fade(new THREE.MeshStandardMaterial({color:0x1b0d19,roughness:.58}));
+const pupilMat=fade(new THREE.MeshBasicMaterial({color:0x200710}));
+const eyeHighlight=fade(new THREE.MeshBasicMaterial({color:0xffd7df}));
+const secondaryGlint=fade(new THREE.MeshBasicMaterial({color:0xff829d}));
+const irisEdge=fade(new THREE.MeshBasicMaterial({color:0x9c173d}));
+const blinkEyes=[];
 for(const d of [-1,1]){
  const ear=mesh(new THREE.ConeGeometry(.225,.44,6),fur,catBody,d*.35,1.19,.14);ear.rotation.z=-d*.15;
  const inside=mesh(new THREE.ConeGeometry(.105,.255,5),earMat,catBody,d*.35,1.19,.33);inside.rotation.z=-d*.15;
  orb(catBody,fur,d*.25,-.58,.24,.17,.135,.21);
- // Mirada algo más redonda y ligeramente más grande; mantiene el rojo escarlata.
- orb(catBody,iris,d*.255,.67,.63,.187,.152,.078);
- // Reflejo mínimo rosado, visible solo cuando aparece el personaje.
- orb(catBody,eyeGlint,d*.205,.735,.706,.041,.034,.016);
+ // Una pequeña cuenca delineada hace que la mirada sea nítida y no dos bolas rojas.
+ const eyeGroup=new THREE.Group();
+ eyeGroup.position.set(d*.255,.675,.615);
+ eyeGroup.rotation.z=-d*.085;
+ catBody.add(eyeGroup);
+ blinkEyes.push(eyeGroup);
+ orb(eyeGroup,eyeSocket,0,0,.017,.215,.176,.082);
+ // Mantener dos puntos escarlata visibles durante el vacío inicial.
+ orb(eyeGroup,irisEdge,0,-.004,.082,.184,.153,.055);
+ orb(eyeGroup,iris,0,-.006,.101,.171,.143,.047);
+ // Pupila vertical de gato, suavizada por dos brillos cálidos.
+ orb(eyeGroup,pupilMat,d*.011,-.009,.150,.040,.103,.018);
+ orb(eyeGroup,eyeHighlight,-.059,.057,.150,.042,.046,.013);
+ orb(eyeGroup,secondaryGlint,.071,-.076,.149,.021,.023,.012);
 }
 orb(catBody,fur,0,.32,.59,.18,.105,.10);
 const catNose=mesh(new THREE.ConeGeometry(.056,.076,3),earMat,catBody,0,.31,.71);catNose.rotation.z=Math.PI;
@@ -143,12 +159,21 @@ ctx.fillStyle=grad;ctx.fillRect(0,0,128,128);
 const glowTex=new THREE.CanvasTexture(cv),eyeGlows=[];
 for(const d of [-1,1]){
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
- sp.position.set(d*.255,.67,.755);sp.scale.set(.48,.37,1);catBody.add(sp);eyeGlows.push(sp);
+ sp.position.set(d*.255,.675,.792);sp.scale.set(.52,.41,1);catBody.add(sp);eyeGlows.push(sp);
 }
 const shipLight=new THREE.PointLight(0xff527e,0,13,1.5);shipLight.position.set(2.2,2.7,2.1);kuro.add(shipLight);
 const shipFill=new THREE.PointLight(0xba92a6,0,14,1.4);shipFill.position.set(-2.8,2.6,3.6);kuro.add(shipFill);
 const ease=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
-function animateKuro(t){catHead.rotation.y=Math.sin(t*.75)*.08;tail.rotation.y=Math.sin(t*1.25)*.16;catBody.rotation.z=Math.sin(t*.8)*.025}
+function animateKuro(t){
+ catHead.rotation.y=Math.sin(t*.75)*.08;
+ tail.rotation.y=Math.sin(t*1.25)*.16;
+ catBody.rotation.z=Math.sin(t*.8)*.025;
+ // Parpadeo breve cada pocos segundos sin perder los dos ojos de la introducción.
+ const phase=t%7.8;
+ const blink=phase>6.75&&phase<6.95?Math.sin((phase-6.75)/.20*Math.PI):0;
+ blinkEyes.forEach(group=>group.scale.y=1-blink*.89);
+ eyeGlows.forEach(sprite=>sprite.scale.y=.41*(1-blink*.7));
+}
 let mx=0,my=0,sy=0;
 const intro=document.getElementById('despertar');
 addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
