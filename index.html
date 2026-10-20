@@ -25,12 +25,12 @@
 <footer>UNIVERSO KURO · Experiencia conceptual inicial — Más mundos en desarrollo</footer>
 </main>
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">UMBRAL DESCUBIERTO</p><h2 id="world-heading"></h2><p id="world-desc"></p><p class="eyebrow">ESCENARIO COMPLETO · PENDIENTE DE DISEÑO</p><button id="close-scene" class="action">Volver al universo</button></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r160/three.min.js"></script>
-<script>
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/+esm";
 (()=>{'use strict';
 const canvas=document.getElementById('space'),label=document.getElementById('scene-title'),msg=document.getElementById('kuro-speech');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(!window.THREE){const c=canvas.getContext('2d');c.fillStyle='#07030d';c.fillRect(0,0,innerWidth,innerHeight);msg.textContent='Modo de exploración simplificado';return}
+
 const scene=new THREE.Scene();scene.background=new THREE.Color('#030309');scene.fog=new THREE.FogExp2(0x06030e,.011);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,900);camera.position.set(0,1,35);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);
