@@ -29,7 +29,7 @@
 @media(prefers-reduced-motion:reduce){#despertar.intro-stage{min-height:125svh}}
 #compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
 .tunnel-stage{height:230svh;position:relative;pointer-events:none}.tunnel-caption{position:sticky;top:22vh;width:min(300px,40vw);padding:12px;pointer-events:auto}.tunnel-caption.left{margin-left:7vw}.tunnel-caption.right{margin-left:auto;margin-right:7vw}.tunnel-caption .portal{background:linear-gradient(145deg,#080911b3,#08091144);min-height:210px;width:100%;border-color:var(--portal)}.tunnel-caption .eyebrow{color:var(--portal)}.tunnel-note{color:#e3dce6;font-size:.9rem;line-height:1.6;text-shadow:0 2px 8px #000}.descent-hint{position:absolute;bottom:14vh;width:100%;text-align:center;color:#d2c7dc;font-size:.85rem;letter-spacing:.09em}#compare-kuro{display:none}.scroll-guide{position:fixed;bottom:28px;right:22px;z-index:5;font-size:.75rem;color:#c7b8c9;letter-spacing:.1em}#skip-intro{position:fixed;top:20px;left:20px;z-index:6;color:#dfced7;text-decoration:none;font-size:.8rem}#scene-popup .inner{border:1px solid #584254;border-radius:24px;padding:36px;background:#100c18}body:before{background:radial-gradient(ellipse at center,transparent 25%,#03030977 100%)}@media(max-width:600px){.tunnel-caption{width:48vw;top:18vh;padding:6px}.tunnel-caption.left{margin-left:3vw}.tunnel-caption.right{margin-right:3vw}.tunnel-caption .portal{min-height:175px;padding:14px}.portal .ring{width:75px;height:90px}.tunnel-note{font-size:.78rem}.scroll-guide{bottom:85px;right:12px;max-width:160px;text-align:right}}
-.no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}.no-webgl .tunnel-stage:after{content:"";position:absolute;bottom:0;left:42%;width:16%;height:45vh;background:repeating-linear-gradient(0deg,#0a0811 0 45px,#463644 46px 48px);border-radius:50% 50% 0 0;z-index:-1}</style>
+.no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}</style>
 <link rel="stylesheet" href="./assets/portals.css">
 </head>
 <body class="no-webgl">
@@ -40,10 +40,11 @@
 <a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
 <a href="#tunel-0" id="skip-intro">Entrar a los túneles ↓</a><div class="scroll-guide">SCROLL ↓ · DESCENDÉ CON KURO</div><main>
 <section class="intro-stage" id="despertar" aria-label="Introducción interactiva: los ojos escarlata de Kuro se acercan, la nave emerge de la oscuridad y Kuro dice: Bienvenido a mi universo. Desplazate hacia abajo para continuar y hacia arriba para volver."><h1 class="sr-only">Kuro</h1></section>
-<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><div class="tunnel-caption left"><p class="eyebrow">NIVEL 01 · 0 M</p><button class="portal" style="--portal:#e2c88d" data-world="Cielo" data-desc="Columnas de mármol, polvo dorado y luz entre las nubes."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>CIELO</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Columnas de mármol, polvo dorado y luz entre las nubes.</p></div><div class="descent-hint">Seguí bajando · El pozo lleva al siguiente túnel ↓</div></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><div class="tunnel-caption right"><p class="eyebrow">NIVEL 02 · 32 M</p><button class="portal" style="--portal:#f45124" data-world="Infierno" data-desc="Basalto, grietas encendidas y brasas suspendidas."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>INFIERNO</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Basalto, grietas encendidas y brasas suspendidas.</p></div><div class="descent-hint">Seguí bajando · El pozo lleva al siguiente túnel ↓</div></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><div class="tunnel-caption left"><p class="eyebrow">NIVEL 03 · 64 M</p><button class="portal" style="--portal:#a17bea" data-world="Inframundo" data-desc="Ruinas antiguas, cristales y niebla violeta."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>INFRAMUNDO</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Ruinas antiguas, cristales y niebla violeta.</p></div><div class="descent-hint">Seguí bajando · El pozo lleva al siguiente túnel ↓</div></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><p class="eyebrow">NIVEL 04 · 96 M</p><button class="portal" style="--portal:#58dfbd" data-world="Extraterrestre" data-desc="Estructuras desconocidas y energía bioluminiscente."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>EXTRATERRESTRE</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Estructuras desconocidas y energía bioluminiscente.</p></div><div class="descent-hint">Llegaste al último nivel · Subí para volver ↑</div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><div class="tunnel-caption left"><p class="eyebrow">NIVEL 01 · 0 M</p><button class="portal" style="--portal:#e2c88d" data-world="Cielo" data-desc="Columnas de mármol, polvo dorado y luz entre las nubes."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>CIELO</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Columnas de mármol, polvo dorado y luz entre las nubes.</p></div><div class="descent-hint">Una abertura en el piso · Bajá al siguiente nivel ↓</div></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><div class="tunnel-caption right"><p class="eyebrow">NIVEL 02 · 32 M</p><button class="portal" style="--portal:#f45124" data-world="Infierno" data-desc="Basalto, grietas encendidas y brasas suspendidas."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>INFIERNO</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Basalto, grietas encendidas y brasas suspendidas.</p></div><div class="descent-hint">Una abertura en el piso · Bajá al siguiente nivel ↓</div></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><div class="tunnel-caption left"><p class="eyebrow">NIVEL 03 · 64 M</p><button class="portal" style="--portal:#a17bea" data-world="Inframundo" data-desc="Ruinas antiguas, cristales y niebla violeta."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>INFRAMUNDO</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Ruinas antiguas, cristales y niebla violeta.</p></div><div class="descent-hint">Una abertura en el piso · Bajá al siguiente nivel ↓</div></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><p class="eyebrow">NIVEL 04 · 96 M</p><button class="portal" style="--portal:#58dfbd" data-world="Extraterrestre" data-desc="Estructuras desconocidas y energía bioluminiscente."><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><strong>EXTRATERRESTRE</strong><small>Mirar el portal ↗</small></button><p class="tunnel-note">Estructuras desconocidas y energía bioluminiscente.</p></div><div class="descent-hint">Llegaste al último nivel · Subí para volver ↑</div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">UMBRAL DESCUBIERTO</p><h2 id="world-heading"></h2><p id="world-desc"></p><img class="world-art" id="world-art" src="./assets/portal-inferno.webp" alt="Portal ovalado de fuego en un túnel volcánico" hidden><p class="eyebrow">EL VIAJE CONTINÚA EN LOS TÚNELES</p><button id="close-scene" class="action">Volver al universo</button></div></div>
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js';
+import { OPENING, openingsForLevel, insideOpening, createOpenTunnel, addOpeningEdge } from './assets/tunnel-openings.js';
 let THREE;
 try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/+esm'); }
 catch { document.getElementById('kuro-speech').textContent = 'Kuro te acompaña. Explorá los túneles con scroll.'; }
@@ -180,9 +181,11 @@ const portalSystem=createPortalSystem(THREE,tunnels,{reduced,onReady:()=>{if(red
 tunnelWorlds.forEach((w,i)=>{
  const y=-i*32,side=i%2?1:-1,color=new THREE.Color(w[1]);
  const rock=new THREE.MeshStandardMaterial({color:i===0?0x807b70:0x191521,roughness:.92,side:THREE.BackSide});
- const hall=mesh(new THREE.CylinderGeometry(11,11,52,12,1,true),rock,tunnels,0,y,0);hall.rotation.z=Math.PI/2;
+ const openings=openingsForLevel(i);
+ const hall=createOpenTunnel(THREE,i,rock);hall.position.y=y;tunnels.add(hall);
  const edgeMat=new THREE.MeshStandardMaterial({color:color,emissive:color,emissiveIntensity:.6,metalness:.45,roughness:.4});
  for(let a=-24;a<=24;a+=6){
+  if([openings.floor,openings.ceiling].some(h=>h&&Math.abs(a-h.x)<h.radius+.3))continue;
   const arch=mesh(new THREE.TorusGeometry(10.7,.13,6,40),edgeMat,tunnels,a,y,0);arch.rotation.y=Math.PI/2;
  }
  const px=side*11;
@@ -191,16 +194,11 @@ tunnelWorlds.forEach((w,i)=>{
  for(let a=0;a<14;a++){
   const x=-24+a*3.7;
   const pillar=mesh(new THREE.CylinderGeometry(.35,.55,14,i===0?12:5),new THREE.MeshStandardMaterial({color:i===0?0xb9b4a6:0x33283d,roughness:.8}),tunnels,x,y,-8);
-  if(i===1){const lava=mesh(new THREE.BoxGeometry(2,.045,.25),edgeMat,tunnels,x,y-8,1+Math.sin(a)*3);lava.rotation.y=a;}
+  if(i===1&&!insideOpening(x,1+Math.sin(a)*3,openings.floor,1.2)){const lava=mesh(new THREE.BoxGeometry(2,.045,.25),edgeMat,tunnels,x,y-8,1+Math.sin(a)*3);lava.rotation.y=a;}
   if(i===2||i===3){const crystal=mesh(new THREE.OctahedronGeometry(.6,0),edgeMat,tunnels,x,y-5+Math.sin(a)*3,-5);crystal.scale.y=2;}
  }
- if(i<3){
-  const hx=-side*14;
-  const shaft=mesh(new THREE.CylinderGeometry(6.5,6.5,32,14,1,true),new THREE.MeshStandardMaterial({color:0x15131c,side:THREE.BackSide,roughness:.9}),tunnels,hx,y-16,1);
-  for(let a=0;a<=32;a+=4){
-   const rim=mesh(new THREE.TorusGeometry(6.3,.1,6,40),edgeMat,tunnels,hx,y-a,1);rim.rotation.x=Math.PI/2;
-  }
- }
+ if(openings.floor)addOpeningEdge(THREE,tunnels,openings.floor,y,i===0?0x8b8273:0x332a30);
+
 });
 const tunnelColor=new THREE.Color();
 function journeyState(){
@@ -210,9 +208,12 @@ function journeyState(){
  const crossing=ease((f-.42)/.24),fall=level<3?ease((f-.68)/.32):0;
  const startX=side*(innerWidth<600?11:innerWidth<900?8.5:6);
  const entryX=THREE.MathUtils.lerp(level===0?startX:side*14,startX,ease(f/.14));
- return {level,f,fall,x:THREE.MathUtils.lerp(entryX,-side*14,crossing),y:-32*level-32*fall,active:scrollY>first.offsetTop-innerHeight*.8};
+ const arrivalZ=THREE.MathUtils.lerp(level===0?7:OPENING.z,7,ease(f/.14));
+ const z=level<3?THREE.MathUtils.lerp(arrivalZ,OPENING.z,ease((f-.52)/.14)):arrivalZ;
+ return {level,f,fall,z,x:THREE.MathUtils.lerp(entryX,-side*14,crossing),y:-32*level-32*fall,active:scrollY>first.offsetTop-innerHeight*.8};
 }
 
+const guideOffset=new THREE.Vector3();
 let mx=0,my=0,sy=0;
 const intro=document.getElementById('despertar');
 addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
@@ -232,11 +233,13 @@ function frame(t){
  // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
  const state=journeyState();
  const enter=ease(j*20);
- const targetZ=35-28*enter;
+ const targetZ=state.active?THREE.MathUtils.lerp(35,state.z,enter):35-28*enter;
  camera.position.z+=(targetZ-camera.position.z)*(reduced?1:.07);
  camera.position.x+=((state.active?state.x:mx*.3)-camera.position.x)*(reduced?1:.09);
  camera.position.y+=((state.active?state.y-1:1-my*.2)-camera.position.y)*(reduced?1:.09);
- camera.lookAt(camera.position.x,camera.position.y-(state.active?(state.f>.68&&state.level<3?7:3):0),camera.position.z-30);
+ const dropLook=state.active&&state.level<3?ease((state.f-.58)/.12)*(1-ease((state.f-.88)/.12)):0;
+ const lookDown=state.active?3+24*dropLook:0;
+ camera.lookAt(camera.position.x,camera.position.y-lookDown,camera.position.z-(30-26*dropLook));
  camera.updateMatrixWorld();
  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
  starMaterial.opacity=.83*universe*(1-enter);
@@ -257,10 +260,11 @@ function frame(t){
  }
  // Su presencia es el título visual: las palabras aparecen como un diálogo suyo.
  const travel=ease((p-.72)/.28);
- kuro.position.z=camera.position.z-(distance*(1-travel)+12*travel);
- kuro.position.x=camera.position.x+(state.active?(state.level%2?-2:2):0)+Math.sin(t*.65)*.08;
- kuro.position.y=camera.position.y-.08-2.7*universe+Math.cos(t*1.2)*.05;
- kuro.rotation.y=mx*(.025+.19*universe);
+ guideOffset.set((state.active?(state.level%2?-2:2):0)+Math.sin(t*.65)*.08,
+  -.08-2.7*universe+Math.cos(t*1.2)*.05,-(distance*(1-travel)+12*travel));
+ guideOffset.applyQuaternion(camera.quaternion);
+ kuro.position.copy(camera.position).add(guideOffset);
+ kuro.quaternion.copy(camera.quaternion);kuro.rotateY(mx*(.025+.19*universe));
  // Evitar que las alas se corten en celulares estrechos.
  kuro.scale.setScalar((innerWidth<550?(state.active?.5:.77):innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
  animateKuro(t);
@@ -278,7 +282,7 @@ function frame(t){
  greeting.style.top=gy+'px';
  label.style.opacity=String(universe);
  document.getElementById('kuro-overlay').style.opacity=String(universe);
- if(state.active){label.textContent='NIVEL 0'+(state.level+1)+' · '+tunnelWorlds[state.level][0];msg.textContent=state.f>.68&&state.level<3?'Bajemos por el pozo…':state.level===3?'Las estrellas también tienen secretos.':'Este túnel tiene su propia historia.'}
+ if(state.active){label.textContent='NIVEL 0'+(state.level+1)+' · '+tunnelWorlds[state.level][0];msg.textContent=state.f>.68&&state.level<3?'Por esta abertura bajamos al siguiente nivel…':state.level===3?'Las estrellas también tienen secretos.':'Este túnel tiene su propia historia.'}
  else{label.textContent='ORIGEN';msg.textContent='Seguí mis ojos. Te mostraré el camino.'}
  document.getElementById('skip-intro').style.display=state.active?'none':'block';
  renderer.render(scene,camera);
