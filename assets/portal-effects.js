@@ -166,7 +166,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
       const portal = portals[i];
       portal.material.uniforms.uTime.value = clock;
       portal.sparkMaterial.uniforms.uTime.value = clock;
-      const available = active && i === level && f < 0.67;
+      const available = active && i === level && f < 0.40;
       portal.group.visible = active && Math.abs(i - level) <= 1;
       center.copy(portal.group.position).project(camera);
       corner.copy(portal.group.position).add(halfSize).project(camera);
@@ -183,7 +183,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
         button.style.height = height + 'px';
         button.style.left = ((center.x * 0.5 + 0.5) * innerWidth - width / 2) + 'px';
         button.style.top = ((0.5 - center.y * 0.5) * innerHeight - height / 2) + 'px';
-        button.style.opacity = String(1 - Math.max(0, (f - 0.46) / 0.21));
+        button.style.opacity = String(1 - Math.max(0, (f - 0.30) / 0.10));
       }
     }
   }
