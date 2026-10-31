@@ -14,6 +14,7 @@ const fragmentShader = `
   uniform float uTime;
   uniform float uInferno;
   uniform float uArtworkReady;
+  uniform float uHover;
   uniform vec3 uColor;
   uniform sampler2D uArtwork;
 
@@ -73,6 +74,7 @@ const fragmentShader = `
       rgb = art * pulse + vec3(1.0, 0.2, 0.02) * strands * 0.08;
       alpha = 1.0 - smoothstep(0.80, 1.0, r);
     }
+    rgb *= 1.0 + uHover * 0.22;
     alpha *= 1.0 - smoothstep(0.92, 1.0, r);
     if (alpha < 0.005) discard;
     gl_FragColor = vec4(rgb, alpha);
@@ -129,7 +131,8 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
       uniforms: {
         uTime: { value: 0 }, uColor: { value: new THREE.Color(color) },
         uInferno: { value: inferno ? 1 : 0 }, uArtwork: { value: artwork },
-        uArtworkReady: { value: artwork.image ? 1 : 0 }
+        uArtworkReady: { value: artwork.image ? 1 : 0 },
+        uHover: { value: 0 }
       },
       vertexShader, fragmentShader,
       transparent: true, depthWrite: false, side: THREE.DoubleSide
@@ -154,7 +157,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     // The vertex shader supplies positions; CPU bounds would otherwise be empty.
     sparks.frustumCulled = false;
     group.add(sparks);
-    portals[index] = { group, material, sparkMaterial, button };
+    portals[index] = { group, material, sparkMaterial, button, hover: 0, lastUpdate: 0 };
     return surface;
   }
 
@@ -167,6 +170,13 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
       if (!portal) continue;
       portal.material.uniforms.uTime.value = clock;
       portal.sparkMaterial.uniforms.uTime.value = clock;
+      // Suave realce visual al apuntar al portal, sin alterar la trayectoria.
+      const hovered = !reduced && portal.button.matches(':hover, :focus-visible') && portal.button.style.visibility !== 'hidden';
+      const delta = portal.lastUpdate ? Math.min(.05, Math.max(0, time - portal.lastUpdate)) : 1 / 60;
+      portal.lastUpdate = time;
+      portal.hover += ((hovered ? 1 : 0) - portal.hover) * (reduced ? 1 : 1 - Math.exp(-11 * delta));
+      portal.group.scale.setScalar(1 + .035 * portal.hover);
+      portal.material.uniforms.uHover.value = portal.hover;
       const available = active && i === level && f < 0.67;
       portal.group.visible = active && Math.abs(i - level) <= 1;
       center.copy(portal.group.position).project(camera);
