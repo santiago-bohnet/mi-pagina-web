@@ -28,7 +28,7 @@
 @media(max-width:520px){#kuro-greeting{padding:12px 14px;max-width:62vw;font-size:1rem}}
 @media(prefers-reduced-motion:reduce){#despertar.intro-stage{min-height:125svh}}
 #compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
-.tunnel-stage{height:230svh;position:relative;pointer-events:none}.tunnel-caption{position:sticky;top:22vh;width:min(300px,40vw);padding:12px;pointer-events:auto}.tunnel-caption.left{margin-left:7vw}.tunnel-caption.right{margin-left:auto;margin-right:7vw}.tunnel-caption .portal{background:linear-gradient(145deg,#080911b3,#08091144);min-height:210px;width:100%;border-color:var(--portal)}.tunnel-caption .eyebrow{color:var(--portal)}.tunnel-note{color:#e3dce6;font-size:.9rem;line-height:1.6;text-shadow:0 2px 8px #000}.descent-hint{position:absolute;bottom:14vh;width:100%;text-align:center;color:#d2c7dc;font-size:.85rem;letter-spacing:.09em}#compare-kuro{display:none}.scroll-guide{position:fixed;bottom:28px;right:22px;z-index:5;font-size:.75rem;color:#c7b8c9;letter-spacing:.1em}#skip-intro{position:fixed;top:20px;left:20px;z-index:6;color:#dfced7;text-decoration:none;font-size:.8rem}#scene-popup .inner{border:1px solid #584254;border-radius:24px;padding:36px;background:#100c18}body:before{background:radial-gradient(ellipse at center,transparent 25%,#03030977 100%)}@media(max-width:600px){.tunnel-caption{width:48vw;top:18vh;padding:6px}.tunnel-caption.left{margin-left:3vw}.tunnel-caption.right{margin-right:3vw}.tunnel-caption .portal{min-height:175px;padding:14px}.portal .ring{width:75px;height:90px}.tunnel-note{font-size:.78rem}.scroll-guide{bottom:85px;right:12px;max-width:160px;text-align:right}}
+.tunnel-stage{height:464.6svh;position:relative;pointer-events:none}.tunnel-caption{position:sticky;top:22vh;width:min(300px,40vw);padding:12px;pointer-events:auto}.tunnel-caption.left{margin-left:7vw}.tunnel-caption.right{margin-left:auto;margin-right:7vw}.tunnel-caption .portal{background:linear-gradient(145deg,#080911b3,#08091144);min-height:210px;width:100%;border-color:var(--portal)}.tunnel-caption .eyebrow{color:var(--portal)}.tunnel-note{color:#e3dce6;font-size:.9rem;line-height:1.6;text-shadow:0 2px 8px #000}.descent-hint{position:absolute;bottom:14vh;width:100%;text-align:center;color:#d2c7dc;font-size:.85rem;letter-spacing:.09em}#compare-kuro{display:none}.scroll-guide{position:fixed;bottom:28px;right:22px;z-index:5;font-size:.75rem;color:#c7b8c9;letter-spacing:.1em}#skip-intro{position:fixed;top:20px;left:20px;z-index:6;color:#dfced7;text-decoration:none;font-size:.8rem}#scene-popup .inner{border:1px solid #584254;border-radius:24px;padding:36px;background:#100c18}body:before{background:radial-gradient(ellipse at center,transparent 25%,#03030977 100%)}@media(max-width:600px){.tunnel-caption{width:48vw;top:18vh;padding:6px}.tunnel-caption.left{margin-left:3vw}.tunnel-caption.right{margin-right:3vw}.tunnel-caption .portal{min-height:175px;padding:14px}.portal .ring{width:75px;height:90px}.tunnel-note{font-size:.78rem}.scroll-guide{bottom:85px;right:12px;max-width:160px;text-align:right}}
 .no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}</style>
 <link rel="stylesheet" href="./assets/portals.css">
 </head>
@@ -45,7 +45,7 @@
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js';
 import { readJourney } from './assets/journey-motion.js';
-import { OPENING, openingsForLevel, insideOpening, createOpenTunnel, addOpeningEdge } from './assets/tunnel-openings.js';
+import { OPENING, TUNNEL, openingsForLevel, insideOpening, createOpenTunnel, addOpeningEdge } from './assets/tunnel-openings.js';
 let THREE;
 try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/+esm'); }
 catch { document.getElementById('kuro-speech').textContent = 'Kuro te acompaña. Explorá los túneles con scroll.'; }
@@ -185,15 +185,15 @@ tunnelWorlds.forEach((w,i)=>{
  const openings=openingsForLevel(i);
  const hall=createOpenTunnel(THREE,i,rock);hall.position.y=y;tunnels.add(hall);
  const edgeMat=new THREE.MeshStandardMaterial({color:color,emissive:color,emissiveIntensity:.6,metalness:.45,roughness:.4});
- for(let a=-24;a<=24;a+=6){
+ for(let a=-TUNNEL.length/2+5;a<=TUNNEL.length/2-5;a+=6){
   if([openings.floor,openings.ceiling].some(h=>h&&Math.abs(a-h.x)<h.radius+.3))continue;
   const arch=mesh(new THREE.TorusGeometry(10.7,.13,6,40),edgeMat,tunnels,a,y,0);arch.rotation.y=Math.PI/2;
  }
- const px=side*11;
+ const px=side*TUNNEL.portalOffset;
  portalSystem.add({color:w[1],x:px,y:y-2.4,z:-5.8,inferno:i===1,button:portalButtons[i]});
  const light=new THREE.PointLight(color,180,30,1.5);light.position.set(px,y,-2);tunnels.add(light);
- for(let a=0;a<14;a++){
-  const x=-24+a*3.7;
+ for(let a=0;a<Math.ceil((TUNNEL.length-4)/3.7);a++){
+  const x=-TUNNEL.length/2+2+a*3.7;
   const pillar=mesh(new THREE.CylinderGeometry(.35,.55,14,i===0?12:5),new THREE.MeshStandardMaterial({color:i===0?0xb9b4a6:0x33283d,roughness:.8}),tunnels,x,y,-8);
   if(i===1&&!insideOpening(x,1+Math.sin(a)*3,openings.floor,1.2)){const lava=mesh(new THREE.BoxGeometry(2,.045,.25),edgeMat,tunnels,x,y-8,1+Math.sin(a)*3);lava.rotation.y=a;}
   if(i===2||i===3){const crystal=mesh(new THREE.OctahedronGeometry(.6,0),edgeMat,tunnels,x,y-5+Math.sin(a)*3,-5);crystal.scale.y=2;}

@@ -1,3 +1,5 @@
+import { TUNNEL } from './tunnel-openings.js';
+
 export const smooth = value => {
   const n = Math.max(0, Math.min(1, value));
   return n * n * (3 - 2 * n);
@@ -8,18 +10,23 @@ const mix = (a, b, t) => a + (b - a) * t;
 export function journeyAt({ scroll, firstTop, stageHeight, viewportHeight, viewportWidth }) {
   const raw = Math.max(0, (scroll - firstTop) / Math.max(1, stageHeight));
   const level = Math.min(3, Math.floor(raw));
-  const f = Math.min(1, raw - level), side = level % 2 ? 1 : -1;
+  const elapsed = Math.min(1, raw - level), side = level % 2 ? 1 : -1;
+  // Stretch time spent in the corridor; keep the approved drop duration unchanged.
+  const f = elapsed < TUNNEL.corridorShare
+    ? elapsed / TUNNEL.corridorShare * TUNNEL.corridorEnd
+    : TUNNEL.corridorEnd + (elapsed - TUNNEL.corridorShare) / (1 - TUNNEL.corridorShare) * (1 - TUNNEL.corridorEnd);
   const hasDrop = level < 3;
   const crossing = hasDrop ? smooth((f - .42) / .24) : 0;
   const fall = hasDrop ? smooth((f - .68) / .32) : 0;
-  const startX = side * (viewportWidth < 600 ? 11 : viewportWidth < 900 ? 8.5 : 6);
-  const entryX = mix(level === 0 ? startX : side * 14, startX, smooth(f / .14));
+  const portalInset = viewportWidth < 600 ? 0 : viewportWidth < 900 ? 2.5 : 5;
+  const startX = side * (TUNNEL.portalOffset - portalInset);
+  const entryX = mix(level === 0 ? startX : side * TUNNEL.openingOffset, startX, smooth(f / .14));
   return {
     level, f, side, fall,
-    x: mix(entryX, -side * 14, crossing),
+    x: mix(entryX, -side * TUNNEL.openingOffset, crossing),
     y: -32 * level - 32 * fall,
     z: 7,
-    holeX: -side * 14,
+    holeX: -side * TUNNEL.openingOffset,
     depth: level * 32 + fall * 32,
     active: scroll > firstTop - viewportHeight * .8
   };
