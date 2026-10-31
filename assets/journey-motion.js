@@ -1,4 +1,4 @@
-import { TUNNEL } from './tunnel-openings.js';
+import { TUNNEL } from './tunnel-openings.js?v=tunnels25';
 
 export const smooth = value => {
   const n = Math.max(0, Math.min(1, value));
