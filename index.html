@@ -28,7 +28,8 @@
 @media(max-width:520px){#kuro-greeting{padding:12px 14px;max-width:62vw;font-size:1rem}}
 @media(prefers-reduced-motion:reduce){#despertar.intro-stage{min-height:125svh}}
 #compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
-</style>
+.tunnel-stage{height:230svh;position:relative;pointer-events:none}.tunnel-caption{position:sticky;top:22vh;width:min(300px,40vw);padding:12px;pointer-events:auto}.tunnel-caption.left{margin-left:7vw}.tunnel-caption.right{margin-left:auto;margin-right:7vw}.tunnel-caption .portal{background:linear-gradient(145deg,#080911b3,#08091144);min-height:210px;width:100%;border-color:var(--portal)}.tunnel-caption .eyebrow{color:var(--portal)}.tunnel-note{color:#e3dce6;font-size:.9rem;line-height:1.6;text-shadow:0 2px 8px #000}.descent-hint{position:absolute;bottom:14vh;width:100%;text-align:center;color:#d2c7dc;font-size:.85rem;letter-spacing:.09em}#compare-kuro{display:none}.scroll-guide{position:fixed;bottom:28px;right:22px;z-index:5;font-size:.75rem;color:#c7b8c9;letter-spacing:.1em}#skip-intro{position:fixed;top:20px;left:20px;z-index:6;color:#dfced7;text-decoration:none;font-size:.8rem}#scene-popup .inner{border:1px solid #584254;border-radius:24px;padding:36px;background:#100c18}body:before{background:radial-gradient(ellipse at center,transparent 25%,#03030977 100%)}@media(max-width:600px){.tunnel-caption{width:48vw;top:18vh;padding:6px}.tunnel-caption.left{margin-left:3vw}.tunnel-caption.right{margin-right:3vw}.tunnel-caption .portal{min-height:175px;padding:14px}.portal .ring{width:75px;height:90px}.tunnel-note{font-size:.78rem}.scroll-guide{bottom:85px;right:12px;max-width:160px;text-align:right}}
+.no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}.no-webgl .tunnel-stage:after{content:"";position:absolute;bottom:0;left:42%;width:16%;height:45vh;background:repeating-linear-gradient(0deg,#0a0811 0 45px,#463644 46px 48px);border-radius:50% 50% 0 0;z-index:-1}</style>
 </head>
 <body>
 <canvas id="space" aria-hidden="true"></canvas>
@@ -36,19 +37,10 @@
 <div id="scene-title">SECTOR 00 · ORIGEN</div>
 <div id="kuro-overlay" aria-label="Kuro, tu acompañante"><span id="catmark"><i class="eyes"></i></span><div><b>KURO</b><br><small id="kuro-speech">Sistemas despertando…</small></div></div>
 <a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
-<main>
+<a href="#tunel-0" id="skip-intro">Entrar a los túneles ↓</a><div class="scroll-guide">SCROLL ↓ · DESCENDÉ CON KURO</div><main>
 <section class="intro-stage" id="despertar" aria-label="Introducción interactiva: los ojos escarlata de Kuro se acercan, la nave emerge de la oscuridad y Kuro dice: Bienvenido a mi universo. Desplazate hacia abajo para continuar y hacia arriba para volver."><h1 class="sr-only">Kuro</h1></section>
-<section class="stage" id="explorar"><p class="eyebrow">01 / DESCUBRIMIENTO</p><h2>NO TODO LO QUE FLOTA<br>ESTÁ PERDIDO</h2><p class="desc">Mové el cursor o el dedo: el universo responde. Avanzá con el scroll para acercarte a su núcleo. El significado de los objetos flotantes todavía está por decidirse.</p><a class="action" href="#nucleo">Hacia el núcleo Ω ↓</a></section>
-<section class="stage" id="nucleo"><p class="eyebrow">02 / NÚCLEO</p><h2>EL CORAZÓN DEL <span style="color:#ff315b">Ω</span></h2><p class="desc">Una estructura tridimensional suspendida en el vacío. Más adelante será la puerta de entrada a mi identidad, proyectos y habilidades.</p><a class="action" href="#portales">Descubrir los portales ↓</a></section>
-<section class="stage" id="portales"><p class="eyebrow">03 / EXPANSIÓN</p><h2>LOS UMBRALES</h2><p class="desc">Cada portal evolucionará hacia un mundo con sus propias leyes, atmósfera y arquitectura. Por ahora podés explorar sus conceptos.</p><div class="worlds">
-<button class="portal" style="--portal:#ee4d21" data-world="Infierno" data-desc="Roca negra, brasas, estructuras volcánicas y una transformación cinematográfica del espacio."><span class="ring">🔥</span><strong>INFIERNO</strong><small>Arco de piedra y lava</small></button>
-<button class="portal" style="--portal:#e2c88d" data-world="Cielo" data-desc="Columnas monumentales, nubes luminosas, estructuras doradas y un cambio total de atmósfera."><span class="ring">✧</span><strong>CIELO</strong><small>Arquitectura entre nubes</small></button>
-<button class="portal" style="--portal:#8e98cf" data-world="Mundo de los muertos" data-desc="Puertas antiguas, niebla y ruinas misteriosas. Hades y el inframundo quedan como mundos por definir por separado."><span class="ring">☽</span><strong>MUNDO DE LOS MUERTOS</strong><small>Ruinas entre la niebla</small></button>
-<button class="portal" style="--portal:#5bd9ac" data-world="Inteligencias artificiales" data-desc="Geometrías tecnológicas que se desarman y reconstruyen; futuras rutas para IA benévola y maligna."><span class="ring">⌘</span><strong>IA</strong><small>Conciencias contrapuestas</small></button>
-</div><p class="desc">Otros destinos previstos: Tierra y culturas, extraterrestres, Hades, inframundo, militar y Vaticano.</p></section>
-<footer>UNIVERSO KURO · Experiencia conceptual inicial — Más mundos en desarrollo</footer>
-</main>
-<div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">UMBRAL DESCUBIERTO</p><h2 id="world-heading"></h2><p id="world-desc"></p><p class="eyebrow">ESCENARIO COMPLETO · PENDIENTE DE DISEÑO</p><button id="close-scene" class="action">Volver al universo</button></div></div>
+<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><div class="tunnel-caption left"><p class="eyebrow">NIVEL 01 · 0 M</p><button class="portal" style="--portal:#e2c88d" data-world="Cielo" data-desc="Columnas de mármol, polvo dorado y luz entre las nubes."><span class="ring">✧</span><strong>CIELO</strong><small>Explorar el umbral ↗</small></button><p class="tunnel-note">Columnas de mármol, polvo dorado y luz entre las nubes.</p></div><div class="descent-hint">Seguí bajando · El pozo lleva al siguiente túnel ↓</div></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><div class="tunnel-caption right"><p class="eyebrow">NIVEL 02 · 32 M</p><button class="portal" style="--portal:#f45124" data-world="Infierno" data-desc="Basalto, grietas encendidas y brasas suspendidas."><span class="ring">♨</span><strong>INFIERNO</strong><small>Explorar el umbral ↗</small></button><p class="tunnel-note">Basalto, grietas encendidas y brasas suspendidas.</p></div><div class="descent-hint">Seguí bajando · El pozo lleva al siguiente túnel ↓</div></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><div class="tunnel-caption left"><p class="eyebrow">NIVEL 03 · 64 M</p><button class="portal" style="--portal:#a17bea" data-world="Inframundo" data-desc="Ruinas antiguas, cristales y niebla violeta."><span class="ring">☽</span><strong>INFRAMUNDO</strong><small>Explorar el umbral ↗</small></button><p class="tunnel-note">Ruinas antiguas, cristales y niebla violeta.</p></div><div class="descent-hint">Seguí bajando · El pozo lleva al siguiente túnel ↓</div></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><p class="eyebrow">NIVEL 04 · 96 M</p><button class="portal" style="--portal:#58dfbd" data-world="Extraterrestre" data-desc="Estructuras desconocidas y energía bioluminiscente."><span class="ring">⌘</span><strong>EXTRATERRESTRE</strong><small>Explorar el umbral ↗</small></button><p class="tunnel-note">Estructuras desconocidas y energía bioluminiscente.</p></div><div class="descent-hint">Llegaste al último nivel · Subí para volver ↑</div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">UMBRAL DESCUBIERTO</p><h2 id="world-heading"></h2><p id="world-desc"></p><p class="eyebrow">EL VIAJE CONTINÚA EN LOS TÚNELES</p><button id="close-scene" class="action">Volver al universo</button></div></div>
 <script type="module">
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/+esm";
 (()=>{'use strict';
@@ -57,7 +49,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const scene=new THREE.Scene();scene.background=new THREE.Color('#000000');scene.fog=new THREE.FogExp2(0x06030e,.011);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,900);camera.position.set(0,1,35);
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);
+let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(error){document.body.classList.add('no-webgl');msg.textContent='Modo liviano · Explorá los túneles con scroll.';return;}renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);
 const root=new THREE.Group();scene.add(root);
 const ambient=new THREE.AmbientLight(0x8b6075,1.2);scene.add(ambient);const red=new THREE.PointLight(0xff2050,140,75);red.position.set(8,5,-8);scene.add(red);
 const starCount=1900;const xyz=new Float32Array(starCount*3);for(let i=0;i<starCount;i++){xyz[3*i]=(Math.random()-.5)*280;xyz[3*i+1]=(Math.random()-.5)*180;xyz[3*i+2]=-Math.random()*410+25}
@@ -174,6 +166,45 @@ function animateKuro(t){
  blinkEyes.forEach(group=>group.scale.y=1-blink*.89);
  eyeGlows.forEach(sprite=>sprite.scale.y=.41*(1-blink*.7));
 }
+
+const tunnelWorlds=[["Cielo","#e2c88d","✧","Columnas de mármol, polvo dorado y luz entre las nubes."],["Infierno","#f45124","♨","Basalto, grietas encendidas y brasas suspendidas."],["Inframundo","#a17bea","☽","Ruinas antiguas, cristales y niebla violeta."],["Extraterrestre","#58dfbd","⌘","Estructuras desconocidas y energía bioluminiscente."]];
+const tunnels=new THREE.Group();scene.add(tunnels);
+const portalRings=[];
+tunnelWorlds.forEach((w,i)=>{
+ const y=-i*32,side=i%2?1:-1,color=new THREE.Color(w[1]);
+ const rock=new THREE.MeshStandardMaterial({color:i===0?0x807b70:0x191521,roughness:.92,side:THREE.BackSide});
+ const hall=mesh(new THREE.CylinderGeometry(11,11,52,12,1,true),rock,tunnels,0,y,0);hall.rotation.z=Math.PI/2;
+ const edgeMat=new THREE.MeshStandardMaterial({color:color,emissive:color,emissiveIntensity:.6,metalness:.45,roughness:.4});
+ for(let a=-24;a<=24;a+=6){
+  const arch=mesh(new THREE.TorusGeometry(10.7,.13,6,40),edgeMat,tunnels,a,y,0);arch.rotation.y=Math.PI/2;
+ }
+ const px=side*11;
+ const ring=mesh(new THREE.TorusGeometry(3,.22,12,72),edgeMat,tunnels,px,y,-6);ring.scale.y=1.35;portalRings.push(ring);
+ const veil=mesh(new THREE.CircleGeometry(2.95,64),new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:.24,side:THREE.DoubleSide}),tunnels,px,y,-6.05);veil.scale.y=1.35;
+ const light=new THREE.PointLight(color,180,30,1.5);light.position.set(px,y,-2);tunnels.add(light);
+ for(let a=0;a<14;a++){
+  const x=-24+a*3.7;
+  const pillar=mesh(new THREE.CylinderGeometry(.35,.55,14,i===0?12:5),new THREE.MeshStandardMaterial({color:i===0?0xb9b4a6:0x33283d,roughness:.8}),tunnels,x,y,-8);
+  if(i===1){const lava=mesh(new THREE.BoxGeometry(2,.045,.25),edgeMat,tunnels,x,y-8,1+Math.sin(a)*3);lava.rotation.y=a;}
+  if(i===2||i===3){const crystal=mesh(new THREE.OctahedronGeometry(.6,0),edgeMat,tunnels,x,y-5+Math.sin(a)*3,-5);crystal.scale.y=2;}
+ }
+ if(i<3){
+  const hx=-side*14;
+  const shaft=mesh(new THREE.CylinderGeometry(6.5,6.5,32,14,1,true),new THREE.MeshStandardMaterial({color:0x15131c,side:THREE.BackSide,roughness:.9}),tunnels,hx,y-16,1);
+  for(let a=0;a<=32;a+=4){
+   const rim=mesh(new THREE.TorusGeometry(6.3,.1,6,40),edgeMat,tunnels,hx,y-a,1);rim.rotation.x=Math.PI/2;
+  }
+ }
+});
+const tunnelColor=new THREE.Color();
+function journeyState(){
+ const first=document.getElementById('tunel-0');
+ const raw=Math.max(0,(scrollY-first.offsetTop)/(innerHeight*2.3));
+ const level=Math.min(3,Math.floor(raw)),f=Math.min(1,raw-level),side=level%2?1:-1;
+ const crossing=ease((f-.15)/.43),fall=level<3?ease((f-.68)/.32):0;
+ return {level,f,fall,x:THREE.MathUtils.lerp(side*6,-side*14,crossing),y:-32*level-32*fall,active:scrollY>first.offsetTop-innerHeight*.8};
+}
+
 let mx=0,my=0,sy=0;
 const intro=document.getElementById('despertar');
 addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
@@ -191,21 +222,25 @@ function frame(t){
  const shipReveal=ease((p-.22)/.54);
  const distance=27-19.5*ease(p);
  // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
- const targetZ=35-j*116;
+ const state=journeyState();
+ const enter=ease(j*20);
+ const targetZ=35-28*enter;
  camera.position.z+=(targetZ-camera.position.z)*.05;
- camera.position.x+=((mx*(.3+universe*2.1))-camera.position.x)*.045;
- camera.position.y+=((1-my*(.2+universe*1.6))-camera.position.y)*.045;
- camera.lookAt(camera.position.x*.4,0,camera.position.z-30);
+ camera.position.x+=((state.active?state.x:mx*.3)-camera.position.x)*(reduced?1:.09);
+ camera.position.y+=((state.active?state.y+1:1-my*.2)-camera.position.y)*(reduced?1:.09);
+ camera.lookAt(camera.position.x,camera.position.y-(state.f>.68&&state.level<3?5:0),camera.position.z-30);
  camera.updateMatrixWorld();
  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
- starMaterial.opacity=.83*universe;
- core.visible=universe>.1;
- orbiters.forEach(o=>o.visible=universe>.15);
+ starMaterial.opacity=.83*universe*(1-enter);
+ tunnels.visible=state.active;core.visible=false;
+ orbiters.forEach(o=>o.visible=false);
  // First Kuro's eyes, then reveal cat and spacecraft gradually.
  fadeMats.forEach(mat=>mat.opacity=shipReveal);
  shipLight.intensity=38*shipReveal;shipFill.intensity=42*shipReveal;
  eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
- ambient.intensity=.15+universe*1.05;
+ ambient.intensity=.15+universe*(state.level===0?2:1.2);
+ if(state.active){tunnelColor.set(tunnelWorlds[state.level][1]).multiplyScalar(.035);scene.background.copy(tunnelColor);scene.fog.color.copy(tunnelColor);}
+ portalRings.forEach((ring,i)=>{ring.rotation.z=reduced?0:t*.12;ring.material.emissiveIntensity=.6+(reduced?0:Math.sin(t*1.6+i)*.15)});
  red.intensity=140*universe;
  core.rotation.y+=.002;core.rotation.x+=.001;central.rotation.y+=.005;
  for(let i=0;i<orbiters.length;i++){
@@ -215,8 +250,8 @@ function frame(t){
  // Su presencia es el título visual: las palabras aparecen como un diálogo suyo.
  const travel=ease((p-.72)/.28);
  kuro.position.z=camera.position.z-(distance*(1-travel)+12*travel);
- kuro.position.x=camera.position.x+Math.sin(t*.65)*(.05+.48*universe);
- kuro.position.y=camera.position.y-.08-2.1*universe+Math.cos(t*1.2)*.05;
+ kuro.position.x=camera.position.x+(state.active?(state.level%2?-2:2):0)+Math.sin(t*.65)*.08;
+ kuro.position.y=camera.position.y-.08-2.7*universe+Math.cos(t*1.2)*.05;
  kuro.rotation.y=mx*(.025+.19*universe);
  // Evitar que las alas se corten en celulares estrechos.
  kuro.scale.setScalar((innerWidth<550?.77:innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
@@ -235,10 +270,9 @@ function frame(t){
  greeting.style.top=gy+'px';
  label.style.opacity=String(universe);
  document.getElementById('kuro-overlay').style.opacity=String(universe);
- if(j>.75){label.textContent='SECTOR 03 · UMBRALES';msg.textContent='Elegí un portal.'}
- else if(j>.48){label.textContent='SECTOR 02 · NÚCLEO Ω';msg.textContent='Algo nos está observando…'}
- else if(j>.12){label.textContent='SECTOR 01 · EXPLORACIÓN';msg.textContent='Seguí explorando.'}
- else{label.textContent='SECTOR 00 · ORIGEN';msg.textContent='Kuro te acompaña.'}
+ if(state.active){label.textContent='NIVEL 0'+(state.level+1)+' · '+tunnelWorlds[state.level][0];msg.textContent=state.f>.68&&state.level<3?'Bajemos por el pozo…':state.level===3?'Las estrellas también tienen secretos.':'Este túnel tiene su propia historia.'}
+ else{label.textContent='ORIGEN';msg.textContent='Seguí mis ojos. Te mostraré el camino.'}
+ document.getElementById('skip-intro').style.display=state.active?'none':'block';
  renderer.render(scene,camera);
  if(!reduced)requestAnimationFrame(frame);
 }
