@@ -335,3 +335,18 @@
   .prelude-content .desc { font-size: .95rem; max-width: 90vw; }
   .core-preview { left: 9vw; right: auto; top: 48svh; width: 82vw; height: 32svh; opacity: .65; }
 }
+
+/* Recorrido pausado: más scroll por etapa, sin cambiar el diseño ni su distribución. */
+#despertar.intro-stage,
+.no-webgl #despertar.intro-stage { min-height: 260svh !important; }
+.prelude-stage { min-height: 180svh; }
+@media (prefers-reduced-motion: reduce) {
+  #despertar.intro-stage, .no-webgl #despertar.intro-stage { min-height: 180svh !important; }
+}
+/* Portal CSS cuando WebGL no está disponible. */
+.no-webgl .tunnel-caption .portal { transition: transform .32s ease; }
+.no-webgl .tunnel-caption .portal:hover,
+.no-webgl .tunnel-caption .portal:focus-visible { transform: scale(1.035); }
+.portal-art { transition: filter .32s ease; }
+.portal:hover .portal-art,
+.portal:focus-visible .portal-art { filter: drop-shadow(0 0 32px var(--portal)) brightness(1.18); }
