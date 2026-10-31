@@ -1,4 +1,4 @@
-import { readJourney } from './journey-motion.js?v=kuro-dialogue';
+import { readJourney } from './journey-motion.js?v=signs-origin';
 
 export const DIMENSIONS = Object.freeze([
   { theme: 'light', name: 'Dimensión de la luz', color: '#e2c88d',
@@ -11,22 +11,41 @@ export const DIMENSIONS = Object.freeze([
     description: 'Esta es la dimensión cósmica. Aquí encontrarás estructuras extrañas y energía de otros mundos.' }
 ]);
 
-export function guideLine({ progress, entry, level, f, fall }) {
+export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimensions', level, f, fall }) {
   if (progress < .28) return 'Hola, soy Kuro.';
-  if (progress < 1) return 'Seré tu guía. Ven, tengo algo que mostrarte.';
-  if (entry < .99) return 'Estas son las dimensiones que compartimos mi dueño y yo.';
+  if (progress < 1 || zone === 'intro') return 'Seré tu guía. Ven, tengo algo que mostrarte.';
+  if (zone === 'exploration') return 'No todo lo que flota está perdido. Aquí comienza nuestro recorrido.';
+  if (zone === 'nucleus' && portalEntry < .20) return 'Este es el núcleo Ω, el corazón de nuestro universo.';
+  if (portalEntry < .99) return 'Estas son las dimensiones que compartimos mi dueño y yo.';
   if (level === 0 && f < .08) return 'Puedes echar un vistazo.';
   if (fall > 0) return 'Por esta abertura llegamos a la siguiente dimensión. ¡Sígueme!';
   if (level === 3 && f > .94) return 'Puedes volver a explorar las dimensiones subiendo. Yo te acompaño.';
   return DIMENSIONS[level].description;
 }
 
+let sequenceLayout;
 export function readIntro() {
-  const intro = document.getElementById('despertar');
-  const length = Math.max(1, intro.offsetHeight - innerHeight);
+  if (!sequenceLayout || sequenceLayout.width !== innerWidth || sequenceLayout.height !== innerHeight) {
+    const bounds = id => {
+      const rect = document.getElementById(id).getBoundingClientRect();
+      return { top: rect.top + scrollY, height: rect.height };
+    };
+    sequenceLayout = { width: innerWidth, height: innerHeight, intro: bounds('despertar'),
+      exploration: bounds('explorar'), nucleus: bounds('nucleo'), dimensions: bounds('tunel-0') };
+  }
+  const clamp = n => Math.max(0, Math.min(1, n));
+  const layout = sequenceLayout;
+  const length = Math.max(1, layout.intro.height - innerHeight);
   const progress = Math.max(0, Math.min(1, scrollY / length));
-  const entry = Math.max(0, Math.min(1, (scrollY - length) / innerHeight));
-  return { progress, entry };
+  const entry = clamp((scrollY - length) / innerHeight);
+  const portalEntry = clamp((scrollY - layout.dimensions.top + innerHeight) / innerHeight);
+  const viewportCenter = scrollY + innerHeight * .4;
+  const zone = viewportCenter < layout.exploration.top ? 'intro'
+    : viewportCenter < layout.nucleus.top ? 'exploration'
+    : viewportCenter < layout.dimensions.top ? 'nucleus' : 'dimensions';
+  return { progress, entry, portalEntry, zone,
+    exploration: clamp((scrollY + innerHeight * .6 - layout.exploration.top) / layout.exploration.height),
+    nucleus: clamp((scrollY + innerHeight * .6 - layout.nucleus.top) / layout.nucleus.height) };
 }
 
 export function createKuroGuide() {
@@ -83,6 +102,17 @@ export function createKuroGuide() {
   }
   addEventListener('scroll', schedule, { passive: true });
   addEventListener('resize', schedule, { passive: true });
+  let pointerFrame = 0, pointerX = 0, pointerY = 0;
+  addEventListener('pointermove', event => {
+    if (document.body.classList.contains('has-webgl')) return;
+    pointerX = (event.clientX / innerWidth - .5) * 18;
+    pointerY = (event.clientY / innerHeight - .5) * 14;
+    if (!pointerFrame) pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = 0;
+      document.documentElement.style.setProperty('--space-x', pointerX + 'px');
+      document.documentElement.style.setProperty('--space-y', pointerY + 'px');
+    });
+  }, { passive: true });
   update();
   return { placeAnchor, useFallback };
 }

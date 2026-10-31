@@ -1,7 +1,7 @@
-import { OPENING, TUNNEL, openingsForLevel, insideOpening, createOpenTunnel, addOpeningEdge } from './tunnel-openings.js?v=kuro-dialogue';
+import { OPENING, TUNNEL, openingsForLevel, insideOpening, createOpenTunnel, addOpeningEdge } from './tunnel-openings.js?v=signs-origin';
 
-export function createDimensionScenes(THREE, parent, portalSystem, buttons, dimensions, onError) {
-  const rooms = [], pending = [];
+export function createDimensionScenes(THREE, parent, portalSystem, buttons, dimensions, onError, onReady = () => {}) {
+  const rooms = [], pending = [], signs = [];
   let queue = Promise.resolve();
   const afterPaint = () => new Promise(resolve => requestAnimationFrame(resolve));
   const geometries = {
@@ -9,7 +9,8 @@ export function createDimensionScenes(THREE, parent, portalSystem, buttons, dime
     marble: new THREE.CylinderGeometry(.35, .55, 14, 12),
     stone: new THREE.CylinderGeometry(.35, .55, 14, 5),
     lava: new THREE.BoxGeometry(2, .045, .25),
-    crystal: new THREE.OctahedronGeometry(.6, 0)
+    crystal: new THREE.OctahedronGeometry(.6, 0),
+    sign: new THREE.PlaneGeometry(2.7, 2.7 * 190 / 140)
   };
   const transform = new THREE.Object3D();
   function instances(room, geometry, material, entries) {
@@ -54,7 +55,16 @@ export function createDimensionScenes(THREE, parent, portalSystem, buttons, dime
     instances(room, geometries.lava, edge, lava);
     instances(room, geometries.crystal, edge, crystals);
     await afterPaint();
-    if (openings.floor) addOpeningEdge(THREE, room, openings.floor, y, level === 0 ? 0x8b8273 : 0x332a30);
+    if (openings.floor) {
+      addOpeningEdge(THREE, room, openings.floor, y, level === 0 ? 0x8b8273 : 0x332a30);
+      const link = document.querySelector('#tunel-' + level + ' .dimension-arrow');
+      const texture = new THREE.TextureLoader().load(link.querySelector('img').src, onReady);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      const sign = new THREE.Mesh(geometries.sign, new THREE.MeshBasicMaterial({ map: texture,
+        transparent: true, depthWrite: false, side: THREE.DoubleSide }));
+      sign.position.set(openings.floor.x, y - 4.5, -2); room.add(sign);
+      signs[level] = { sign, link };
+    }
     portalSystem.add({ color: theme.color, x: side * TUNNEL.portalOffset, y: y - 2.4, z: -5.8,
       inferno: theme.theme === 'fire', button: buttons[level], parent: room, index: level });
     rooms[level] = room;
@@ -67,11 +77,26 @@ export function createDimensionScenes(THREE, parent, portalSystem, buttons, dime
     }
     return pending[level];
   }
-  function update(state, entry) {
+  const projected = new THREE.Vector3(), corner = new THREE.Vector3();
+  const halfSign = new THREE.Vector3(1.35, 1.35 * 190 / 140, 0);
+  function update(state, entry, camera) {
     prepare(state.level).catch(() => {});
     if (state.f > .30) prepare(state.level + 1).catch(() => {});
     rooms.forEach((room, i) => {
       room.visible = entry > .001 && (i === state.level || (state.fall > 0 && i === state.level + 1));
+    });
+    signs.forEach(({ sign, link }, level) => {
+      projected.copy(sign.position).project(camera);
+      corner.copy(sign.position).add(halfSign).project(camera);
+      const visible = entry > .001 && level === state.level && state.fall < .5
+        && projected.z > -1 && projected.z < 1 && Math.abs(projected.x) < 1.25 && Math.abs(projected.y) < 1.25;
+      sign.visible = visible; link.style.visibility = visible ? 'visible' : 'hidden'; link.inert = !visible;
+      if (!visible) return;
+      const width = Math.abs(corner.x - projected.x) * innerWidth;
+      const height = Math.abs(corner.y - projected.y) * innerHeight;
+      link.style.width = width + 'px'; link.style.height = height + 'px';
+      link.style.left = ((projected.x * .5 + .5) * innerWidth - width / 2) + 'px';
+      link.style.top = ((.5 - projected.y * .5) * innerHeight - height / 2) + 'px';
     });
   }
   return { prepare, update };

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="190" viewBox="0 0 140 190">
+  <defs>
+    <linearGradient id="stone" x2="1" y2="1"><stop stop-color="#5b506d"/><stop offset=".5" stop-color="#241e35"/><stop offset="1" stop-color="#100e1c"/></linearGradient>
+    <linearGradient id="crystal" x2="0" y2="1"><stop stop-color="#e9dbff"/><stop offset="1" stop-color="#a17bea"/></linearGradient>
+    <clipPath id="arrow"><path d="M34 8 106 8 108 91 132 91 70 178 8 91 32 91Z"/></clipPath>
+  </defs>
+  <path d="M34 13 106 13 108 96 132 96 70 183 8 96 32 96Z" fill="#08070e"/>
+  <path d="M34 8 106 8 108 91 132 91 70 178 8 91 32 91Z" fill="url(#stone)" stroke="#9c84c7" stroke-width="2.5" stroke-linejoin="round"/>
+  <g clip-path="url(#arrow)" fill="none" stroke="#76618e" stroke-width="1">
+    <path d="m38 9 8 33-9 24 12 30-14 17m68-97-15 24 13 28-10 24 15 19M29 102l24 11 6 25M111 99l-22 15-6 28"/>
+    <path d="m70 24-12 21 12 22 12-22Z" stroke="url(#crystal)" stroke-width="2"/>
+    <path d="M70 24v43m-12-22h24" stroke="#d8bfff" opacity=".5"/>
+    <path d="M42 78h56M48 84h44" stroke="#b79bd9" opacity=".6"/>
+  </g>
+  <path d="m47 106 23 34 23-34" fill="none" stroke="#dcc3ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="43" cy="25" r="3" fill="#9280ac"/><circle cx="97" cy="25" r="3" fill="#9280ac"/>
+</svg>

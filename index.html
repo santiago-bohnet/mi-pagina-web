@@ -30,7 +30,7 @@
 #compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
 .tunnel-stage{height:464.6svh;position:relative;pointer-events:none}.tunnel-caption{position:sticky;top:22vh;width:min(300px,40vw);padding:12px;pointer-events:auto}.tunnel-caption.left{margin-left:7vw}.tunnel-caption.right{margin-left:auto;margin-right:7vw}.tunnel-caption .portal{background:linear-gradient(145deg,#080911b3,#08091144);min-height:210px;width:100%;border-color:var(--portal)}.tunnel-caption .eyebrow{color:var(--portal)}.tunnel-note{color:#e3dce6;font-size:.9rem;line-height:1.6;text-shadow:0 2px 8px #000}.descent-hint{position:absolute;bottom:14vh;width:100%;text-align:center;color:#d2c7dc;font-size:.85rem;letter-spacing:.09em}#compare-kuro{display:none}.scroll-guide{position:fixed;bottom:28px;right:22px;z-index:5;font-size:.75rem;color:#c7b8c9;letter-spacing:.1em}#skip-intro{position:fixed;top:20px;left:20px;z-index:6;color:#dfced7;text-decoration:none;font-size:.8rem}#scene-popup .inner{border:1px solid #584254;border-radius:24px;padding:36px;background:#100c18}body:before{background:radial-gradient(ellipse at center,transparent 25%,#03030977 100%)}@media(max-width:600px){.tunnel-caption{width:48vw;top:18vh;padding:6px}.tunnel-caption.left{margin-left:3vw}.tunnel-caption.right{margin-right:3vw}.tunnel-caption .portal{min-height:175px;padding:14px}.portal .ring{width:75px;height:90px}.tunnel-note{font-size:.78rem}.scroll-guide{bottom:85px;right:12px;max-width:160px;text-align:right}}
 .no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}</style>
-<link rel="stylesheet" href="./assets/portals.css?v=kuro-dialogue">
+<link rel="stylesheet" href="./assets/portals.css?v=signs-origin">
 </head>
 <body class="no-webgl">
 <canvas id="space" aria-hidden="true"></canvas>
@@ -38,18 +38,28 @@
 
 <div id="kuro-overlay" aria-hidden="true"><span id="catmark"><i class="eyes"></i></span></div>
 <a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
-<a href="#tunel-0" id="skip-intro">Entrar a los túneles ↓</a><div class="scroll-guide">SCROLL ↓ · SIGUE A KURO</div><main>
+<a href="#explorar" id="skip-intro">Explorar con Kuro ↓</a><div class="scroll-guide">SCROLL ↓ · SIGUE A KURO</div><main>
 <section class="intro-stage" id="despertar" aria-label="Kuro se acerca y se presenta. Desplázate para explorar sus dimensiones."><h1 class="sr-only">Kuro</h1><span id="intro-eyes" aria-hidden="true"><i></i><i></i></span></section>
-<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><span id="bajada-0" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><div class="descent-hint">Una abertura en el piso · Bajá al siguiente nivel ↓</div></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><span id="bajada-1" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><div class="descent-hint">Una abertura en el piso · Bajá al siguiente nivel ↓</div></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><span id="bajada-2" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><div class="descent-hint">Una abertura en el piso · Bajá al siguiente nivel ↓</div></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><div class="descent-hint">Llegaste al último nivel · Subí para volver ↑</div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+
+<section class="stage prelude-stage" id="explorar" aria-labelledby="exploration-heading">
+<div class="fragment-field" aria-hidden="true"><i style="--x:8%;--y:8%;--s:12px;--r:0deg;--delay:-0s"></i><i style="--x:25%;--y:37%;--s:19px;--r:31deg;--delay:-1s"></i><i style="--x:42%;--y:66%;--s:26px;--r:62deg;--delay:-2s"></i><i style="--x:59%;--y:15%;--s:33px;--r:93deg;--delay:-3s"></i><i style="--x:76%;--y:44%;--s:14px;--r:124deg;--delay:-4s"></i><i style="--x:8%;--y:73%;--s:21px;--r:155deg;--delay:-5s"></i><i style="--x:25%;--y:22%;--s:28px;--r:186deg;--delay:-6s"></i><i style="--x:42%;--y:51%;--s:35px;--r:217deg;--delay:-0s"></i><i style="--x:59%;--y:80%;--s:16px;--r:248deg;--delay:-1s"></i><i style="--x:76%;--y:29%;--s:23px;--r:279deg;--delay:-2s"></i><i style="--x:8%;--y:58%;--s:30px;--r:310deg;--delay:-3s"></i><i style="--x:25%;--y:87%;--s:37px;--r:341deg;--delay:-4s"></i></div>
+<div class="prelude-content"><p class="eyebrow">01 / DESCUBRIMIENTO</p><h2 id="exploration-heading">NO TODO LO QUE FLOTA<br>ESTÁ PERDIDO</h2><p class="desc">Mové el cursor o el dedo: el universo responde. Avanzá con el scroll para acercarte a su núcleo.</p><a class="action" href="#nucleo">Hacia el núcleo Ω ↓</a></div>
+</section>
+<section class="stage prelude-stage" id="nucleo" aria-labelledby="core-heading">
+<div class="core-preview" aria-hidden="true"><i></i><i></i><i></i><b>Ω</b></div>
+<div class="prelude-content"><p class="eyebrow">02 / NÚCLEO</p><h2 id="core-heading">EL CORAZÓN DEL <span class="omega-accent">Ω</span></h2><p class="desc">Una estructura suspendida en el vacío. El corazón de este universo conecta todas sus dimensiones.</p><a class="action" href="#portales">Descubrir los portales ↓</a></div>
+</section><span id="portales" aria-hidden="true"></span>
+<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><span id="bajada-0" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-fire" href="#tunel-1" aria-label="Ir a la dimensión del fuego"><img src="./assets/sign-fire.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><span id="bajada-1" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-shadow" href="#tunel-2" aria-label="Ir a la dimensión de las sombras"><img src="./assets/sign-shadow.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><span id="bajada-2" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-cosmos" href="#tunel-3" aria-label="Ir a la dimensión cósmica"><img src="./assets/sign-cosmos.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">KURO TE MUESTRA</p><h2 id="world-heading"></h2><p id="world-desc"></p><img class="world-art" id="world-art" src="./assets/portal-inferno.webp" alt="Portal ovalado de energía escarlata en una dimensión volcánica" hidden><p class="eyebrow">PUEDES SEGUIR EXPLORANDO</p><button id="close-scene" class="action">Seguir con Kuro</button></div></div>
 <script type="module">
-import { createPortalSystem } from './assets/portal-effects.js?v=kuro-dialogue';
-import { readJourney } from './assets/journey-motion.js?v=kuro-dialogue';
-import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=kuro-dialogue';
-import { createDimensionScenes } from './assets/dimension-scenes.js?v=kuro-dialogue';
+import { createPortalSystem } from './assets/portal-effects.js?v=signs-origin';
+import { readJourney } from './assets/journey-motion.js?v=signs-origin';
+import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=signs-origin';
+import { createDimensionScenes } from './assets/dimension-scenes.js?v=signs-origin';
+import { createOriginSequence } from './assets/origin-sequence.js?v=signs-origin';
 const guide=createKuroGuide();
 installPortalInteractions();
-import { TUNNEL } from './assets/tunnel-openings.js?v=kuro-dialogue';
+import { TUNNEL } from './assets/tunnel-openings.js?v=signs-origin';
 let THREE;
 try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/+esm'); }
 catch { guide.useFallback(); }
@@ -182,7 +192,8 @@ canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();useFal
 const tunnels=new THREE.Group();scene.add(tunnels);
 const portalButtons=[...document.querySelectorAll('.tunnel-caption .portal')];
 const portalSystem=createPortalSystem(THREE,tunnels,{reduced,onReady:()=>{if(reduced)scheduleFrame()}});
-const scenes=createDimensionScenes(THREE,tunnels,portalSystem,portalButtons,DIMENSIONS,useFallback);
+const scenes=createDimensionScenes(THREE,tunnels,portalSystem,portalButtons,DIMENSIONS,useFallback,scheduleFrame);
+const originSequence=createOriginSequence(THREE,scene,reduced);
 scenes.prepare(0).catch(()=>{});
 const portalLight=new THREE.PointLight(0xffffff,180,30,1.5);scene.add(portalLight);
 const tunnelColor=new THREE.Color();
@@ -195,13 +206,14 @@ function frame(t){
  frameRequest=0;if(lostContext||document.hidden)return;
  t*=.001;const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
  const follow=reduced?1:1-Math.exp(-12*dt);
- const {progress:p,entry:enter}=readIntro();
+ const sequence=readIntro();
+ const {progress:p,entry:exit,portalEntry:enter}=sequence;
  const universe=ease((p-.40)/.60);
  const shipReveal=ease((p-.06)/.62);
  const distance=24-12*p;
  // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
  const state=journeyState();
- const targetZ=35-28*enter;
+ const targetZ=35-28*exit;
  camera.position.z+=(targetZ-camera.position.z)*follow;
  camera.position.x+=((THREE.MathUtils.lerp(mx*.3,state.x,enter))-camera.position.x)*follow;
  camera.position.y+=((THREE.MathUtils.lerp(1-my*.2,state.y-1,enter))-camera.position.y)*follow;
@@ -212,7 +224,8 @@ function frame(t){
  camera.updateMatrixWorld();
  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
  starMaterial.opacity=.83*universe*(1-enter);stars.visible=universe>.01&&enter<.999;
- tunnels.visible=enter>.001;scenes.update(state,enter);
+ tunnels.visible=enter>.001;scenes.update(state,enter,camera);
+ originSequence.update(t,sequence,mx,my);
  // First Kuro's eyes, then reveal cat and spacecraft gradually.
  fadeMats.forEach(mat=>{mat.opacity=shipReveal;mat.depthWrite=shipReveal>.995;mat.visible=shipReveal>.001});
  shipLight.intensity=38*shipReveal;shipFill.intensity=42*shipReveal;
