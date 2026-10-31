@@ -76,14 +76,14 @@
   opacity: .35;
   filter: blur(11px);
 }
-.portal[data-world='Infierno'] .portal-art {
+.portal[data-theme='fire'] .portal-art {
   background: url('./portal-inferno.webp') 50% 0 / 238% 111% no-repeat;
   -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 68%, transparent 100%);
   mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 68%, transparent 100%);
   animation: inferno-breathe 6s ease-in-out infinite;
 }
-.portal[data-world='Infierno'] .portal-depth { display: none; }
-.portal[data-world='Infierno'] .portal-flow { opacity: .14; mix-blend-mode: screen; }
+.portal[data-theme='fire'] .portal-depth { display: none; }
+.portal[data-theme='fire'] .portal-flow { opacity: .14; mix-blend-mode: screen; }
 .portal-sparks {
   position: absolute;
   inset: 0;
@@ -148,7 +148,7 @@
   height: 100svh;
   margin-bottom: -100svh;
   background: linear-gradient(#05020899, #05020899), url('./portal-inferno.webp') 50% 50% / cover;
-  filter: blur(22px) brightness(.55);
+  filter: blur(12px) brightness(.55);
   pointer-events: none;
 }
 .no-webgl .tunnel-stage::after {
@@ -195,3 +195,79 @@
 }
 
 .descent-anchor { position:absolute; top:92.08%; left:0; width:1px; height:1px; pointer-events:none; }
+
+/* Kuro speaks; the scenery carries the theme without fixed world titles. */
+#despertar.intro-stage { min-height: 180svh; position: relative; }
+.no-webgl #despertar.intro-stage { min-height: 180svh !important; background: none !important; }
+#intro-eyes {
+  position: fixed;
+  top: 45svh;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  gap: 38px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+#intro-eyes i {
+  width: 13px;
+  height: 8px;
+  border-radius: 60% 60% 55% 55%;
+  background: #ff174b;
+  box-shadow: 0 0 13px #ff164a99;
+}
+.has-webgl #intro-eyes { display: none; }
+#kuro-greeting {
+  position: fixed;
+  top: auto;
+  left: 18px;
+  bottom: 92px;
+  width: min(330px, calc(100vw - 36px));
+  max-width: none;
+  padding: 14px 17px 16px;
+  border: 1px solid #de507c88;
+  border-radius: 20px 20px 20px 6px;
+  background: linear-gradient(135deg, #20101ff7, #160d18fc);
+  color: #fff2f5;
+  font-size: clamp(.96rem, 1.5vw, 1.08rem);
+  line-height: 1.45;
+  font-weight: 450;
+  text-align: left;
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: none;
+  box-shadow: 0 10px 26px #0008;
+  pointer-events: none;
+}
+#kuro-greeting::after {
+  left: var(--tail-left, 26px);
+  background: #1a0e1a;
+}
+.kuro-name { display: block; margin-bottom: 6px; color: #ff789a; font-size: .66rem; font-weight: 650; letter-spacing: .22em; }
+.has-webgl #kuro-greeting { bottom: auto; }
+#kuro-overlay {
+  left: 25px;
+  bottom: 28px;
+  padding: 0;
+  width: 48px;
+  height: 43px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  backdrop-filter: none;
+}
+#catmark { width: 44px; height: 38px; }
+#catmark .eyes { top: 16px; left: 10px; }
+.has-webgl #kuro-overlay { display: none; }
+#skip-intro[hidden] { display: none; }
+.tunnel-stage:not(.is-active) .portal-art,
+.tunnel-stage:not(.is-active) .portal-flow::before,
+.tunnel-stage:not(.is-active) .portal-flow::after,
+.tunnel-stage:not(.is-active) .portal-sparks::before,
+.tunnel-stage:not(.is-active) .portal-sparks::after { animation-play-state: paused; }
+@media (max-width: 600px) {
+  #kuro-greeting { left: 14px; bottom: 88px; width: min(330px, calc(100vw - 28px)); padding: 12px 15px 14px; }
+  #kuro-overlay { left: 22px; bottom: 25px; }
+  .scroll-guide { bottom: 24px; max-width: 220px; font-size: .64rem; }
+}

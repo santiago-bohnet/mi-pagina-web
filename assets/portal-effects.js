@@ -86,7 +86,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
   const artwork = new THREE.TextureLoader().load(
     new URL('./portal-inferno.webp', import.meta.url).href,
     () => {
-      for (const portal of portals) portal.material.uniforms.uArtworkReady.value = 1;
+      for (const portal of portals) if (portal) portal.material.uniforms.uArtworkReady.value = 1;
       onReady();
     }
   );
@@ -121,10 +121,10 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     }
   `;
 
-  function add({ color, x, y, z, inferno = false, button }) {
+  function add({ color, x, y, z, inferno = false, button, parent = scene, index = portals.length }) {
     const group = new THREE.Group();
     group.position.set(x, y, z);
-    scene.add(group);
+    parent.add(group);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 }, uColor: { value: new THREE.Color(color) },
@@ -154,7 +154,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     // The vertex shader supplies positions; CPU bounds would otherwise be empty.
     sparks.frustumCulled = false;
     group.add(sparks);
-    portals.push({ group, material, sparkMaterial, button });
+    portals[index] = { group, material, sparkMaterial, button };
     return surface;
   }
 
@@ -164,6 +164,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     const clock = reduced ? 0 : time;
     for (let i = 0; i < portals.length; i++) {
       const portal = portals[i];
+      if (!portal) continue;
       portal.material.uniforms.uTime.value = clock;
       portal.sparkMaterial.uniforms.uTime.value = clock;
       const available = active && i === level && f < 0.67;
