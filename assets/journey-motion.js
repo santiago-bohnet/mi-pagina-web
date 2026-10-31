@@ -4,23 +4,21 @@ export const smooth = value => {
 };
 const mix = (a, b, t) => a + (b - a) * t;
 
-// One scroll model for the room camera, the external descent view and mobile.
+// Keep the original room layout. Drops pan vertically at a constant viewing distance.
 export function journeyAt({ scroll, firstTop, stageHeight, viewportHeight, viewportWidth }) {
   const raw = Math.max(0, (scroll - firstTop) / Math.max(1, stageHeight));
   const level = Math.min(3, Math.floor(raw));
   const f = Math.min(1, raw - level), side = level % 2 ? 1 : -1;
   const hasDrop = level < 3;
-  const crossing = hasDrop ? smooth((f - .30) / .14) : 0;
-  const fall = hasDrop ? smooth((f - .54) / .34) : 0;
-  const observer = hasDrop ? smooth((f - .40) / .10) * (1 - smooth((f - .94) / .06)) : 0;
+  const crossing = hasDrop ? smooth((f - .42) / .24) : 0;
+  const fall = hasDrop ? smooth((f - .68) / .32) : 0;
   const startX = side * (viewportWidth < 600 ? 11 : viewportWidth < 900 ? 8.5 : 6);
   const entryX = mix(level === 0 ? startX : side * 14, startX, smooth(f / .14));
-  const arrivalZ = mix(level === 0 ? 7 : 3.2, 7, smooth(f / .14));
   return {
-    level, f, side, fall, observer,
+    level, f, side, fall,
     x: mix(entryX, -side * 14, crossing),
     y: -32 * level - 32 * fall,
-    z: hasDrop ? mix(arrivalZ, 3.2, smooth((f - .37) / .08)) : arrivalZ,
+    z: 7,
     holeX: -side * 14,
     depth: level * 32 + fall * 32,
     active: scroll > firstTop - viewportHeight * .8

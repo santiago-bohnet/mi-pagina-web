@@ -1,32 +1,4 @@
 /* Energy doorways, shared by the 3D scene and its lightweight fallback. */
-.tunnel-stage { height: 360svh; }
-.descent-anchor { position: absolute; top: 70%; left: 0; width: 1px; height: 1px; pointer-events: none; }
-#descent-view {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
-  pointer-events: none;
-  opacity: 0;
-}
-#descent-caption {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 6;
-  color: #eee4df;
-  font-size: .82rem;
-  letter-spacing: .04em;
-  text-align: center;
-  text-shadow: 0 2px 12px #000;
-  pointer-events: none;
-  opacity: 0;
-}
-.showing-descent .tunnel-caption,
-.showing-descent .descent-hint { visibility: hidden; }
-.showing-descent .scroll-guide { opacity: 0; }
 .tunnel-caption {
   width: min(400px, 46vw);
   top: 9svh;
@@ -207,7 +179,6 @@
   50% { filter: drop-shadow(0 0 26px #ed310a88) brightness(1.08); }
 }
 @media (max-width: 600px) {
-  #descent-caption { bottom: 110px; width: 85vw; font-size: .77rem; }
   .tunnel-caption { width: min(74vw, 310px); top: 12svh; }
   .tunnel-caption.left { margin-left: 3vw; }
   .tunnel-caption.right { margin-right: 3vw; }
@@ -222,3 +193,5 @@
   .portal-art, .portal-flow::before, .portal-flow::after,
   .portal-sparks::before, .portal-sparks::after { animation: none !important; }
 }
+
+.descent-anchor { position:absolute; top:84%; left:0; width:1px; height:1px; pointer-events:none; }
