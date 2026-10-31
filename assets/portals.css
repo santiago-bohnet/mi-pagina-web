@@ -1,0 +1,178 @@
+/* Energy doorways, shared by the 3D scene and its lightweight fallback. */
+.tunnel-caption {
+  width: min(400px, 46vw);
+  top: 9svh;
+  padding: 0;
+  text-align: center;
+}
+.tunnel-caption.left { margin-left: 10vw; }
+.tunnel-caption.right { margin-right: 10vw; }
+.tunnel-caption .eyebrow { font-size: .66rem; letter-spacing: .3em; }
+.tunnel-caption .portal,
+.tunnel-caption .portal:hover,
+.tunnel-caption .portal:focus-visible {
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 8.8 / 13;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  backdrop-filter: none;
+  transform: none;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.portal:focus-visible { outline: 2px solid var(--portal); outline-offset: 9px; }
+.portal-art {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  isolation: isolate;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--portal) 45%, transparent));
+  transition: filter .3s ease;
+  pointer-events: none;
+}
+.portal:hover .portal-art { filter: drop-shadow(0 0 30px var(--portal)) brightness(1.12); }
+.portal-depth {
+  position: absolute;
+  inset: 15% 16%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 46%, #03010a 5%, #090414 37%, var(--portal) 87%, transparent);
+  box-shadow: inset 0 0 70px #000;
+}
+.portal-flow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  -webkit-mask-image: radial-gradient(ellipse, transparent 25%, #000 46%, #000 57%, transparent 72%);
+  mask-image: radial-gradient(ellipse, transparent 25%, #000 46%, #000 57%, transparent 72%);
+}
+.portal-flow::before,
+.portal-flow::after {
+  content: '';
+  position: absolute;
+  width: 190%;
+  height: 190%;
+  left: -45%;
+  top: -45%;
+  background: repeating-conic-gradient(from 20deg, transparent 0deg 12deg,
+    var(--portal) 22deg, #fff1d4 25deg, var(--portal) 28deg, transparent 37deg 60deg);
+  animation: portal-swirl 22s linear infinite;
+  filter: blur(6px);
+  opacity: .85;
+}
+.portal-flow::after { animation-duration: 33s; animation-direction: reverse; filter: blur(2px); opacity: .55; }
+.portal-art::before {
+  content: '';
+  position: absolute;
+  inset: 8% 9%;
+  border-radius: 50%;
+  box-shadow: 0 0 27px var(--portal), inset 0 0 30px var(--portal);
+  opacity: .35;
+  filter: blur(11px);
+}
+.portal[data-world='Infierno'] .portal-art {
+  background: url('./portal-inferno.webp') 50% 0 / 238% 111% no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 68%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 68%, transparent 100%);
+  animation: inferno-breathe 6s ease-in-out infinite;
+}
+.portal[data-world='Infierno'] .portal-depth { display: none; }
+.portal[data-world='Infierno'] .portal-flow { opacity: .14; mix-blend-mode: screen; }
+.portal-sparks {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+}
+.portal-sparks::before,
+.portal-sparks::after {
+  content: '';
+  position: absolute;
+  left: 48%;
+  top: 92%;
+  width: 2px;
+  height: 2px;
+  color: var(--portal);
+  background: #fff5d6;
+  border-radius: 50%;
+  box-shadow: -105px -60px 3px, 90px -100px 2px, -70px -160px 2px,
+    112px -230px 4px, -95px -280px 2px, 45px -350px 2px,
+    -40px -390px 3px, 80px -420px 2px, -125px -200px 2px;
+  animation: portal-embers 9s linear infinite;
+}
+.portal-sparks::after { animation-delay: -4.5s; left: 55%; opacity: .7; }
+.portal strong,
+.portal small {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  text-shadow: 0 2px 15px #000, 0 0 22px #000;
+  pointer-events: none;
+}
+.portal strong { bottom: -14px; font-size: clamp(1rem, 2vw, 1.5rem); letter-spacing: .18em; font-weight: 550; }
+.portal small { bottom: -38px; font-size: .72rem; letter-spacing: .1em; color: #e6d5ca; }
+.tunnel-note { max-width: 310px; margin: 58px auto 0; font-size: .82rem; color: #d3c3ca; }
+.has-webgl .tunnel-caption { position: static; margin: 0; padding: 0; width: auto; pointer-events: none; }
+.has-webgl .tunnel-caption > .eyebrow,
+.has-webgl .tunnel-caption > .tunnel-note,
+.has-webgl .portal-art { display: none; }
+.has-webgl .tunnel-caption .portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  visibility: hidden;
+  pointer-events: auto;
+}
+.has-webgl .portal:hover strong { color: var(--portal); }
+.has-webgl .portal small { bottom: 3%; }
+.has-webgl .portal strong { bottom: 8%; }
+.world-art { width: 100%; max-height: 52svh; object-fit: contain; border-radius: 12px; margin: 12px 0; }
+.world-art[hidden] { display: none; }
+#scene-popup .inner { width: min(850px, 100%); max-width: 850px; max-height: 90svh; overflow-y: auto; padding: 24px; }
+#scene-popup h2 { font-size: clamp(1.8rem, 5vw, 3rem); }
+.no-webgl #tunel-1 { background: radial-gradient(ellipse at 65% 25%, #54170b44, #030309 65%); }
+.no-webgl #tunel-1::before {
+  content: '';
+  position: sticky;
+  display: block;
+  top: 0;
+  height: 100svh;
+  margin-bottom: -100svh;
+  background: linear-gradient(#05020899, #05020899), url('./portal-inferno.webp') 50% 50% / cover;
+  filter: blur(22px) brightness(.55);
+  pointer-events: none;
+}
+@keyframes portal-swirl { to { transform: rotate(360deg); } }
+@keyframes portal-embers {
+  0% { transform: translateY(20px) rotate(-8deg); opacity: 0; }
+  15%, 75% { opacity: .9; }
+  100% { transform: translateY(-100px) rotate(12deg); opacity: 0; }
+}
+@keyframes inferno-breathe {
+  0%, 100% { filter: drop-shadow(0 0 16px #ed310a66) brightness(1); }
+  50% { filter: drop-shadow(0 0 26px #ed310a88) brightness(1.08); }
+}
+@media (max-width: 600px) {
+  .tunnel-caption { width: min(74vw, 310px); top: 12svh; }
+  .tunnel-caption.left { margin-left: 3vw; }
+  .tunnel-caption.right { margin-right: 3vw; }
+  .portal strong { font-size: 1rem; letter-spacing: .12em; }
+  .portal small { font-size: .65rem; }
+  .tunnel-note { max-width: 230px; font-size: .76rem; }
+  #scene-popup .inner { padding: 18px; }
+  #scene-title { max-width: 65vw; text-align: right; font-size: .66rem; }
+  #kuro-overlay small { display: block; max-width: 230px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portal-art, .portal-flow::before, .portal-flow::after,
+  .portal-sparks::before, .portal-sparks::after { animation: none !important; }
+}
