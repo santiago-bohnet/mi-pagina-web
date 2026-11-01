@@ -66,7 +66,7 @@ export function createDimensionScenes(THREE, parent, portalSystem, buttons, dime
       signs[level] = { sign, link };
     }
     portalSystem.add({ color: theme.color, x: side * TUNNEL.portalOffset, y: y - 2.4, z: -5.8,
-      inferno: theme.theme === 'fire', button: buttons[level], parent: room, index: level });
+      inferno: theme.theme === 'fire', light: theme.theme === 'light', button: buttons[level], parent: room, index: level });
     rooms[level] = room;
   }
   function prepare(level) {
