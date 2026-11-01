@@ -13,6 +13,9 @@ const fragmentShader = `
   varying vec2 vUv;
   uniform float uTime;
   uniform float uInferno;
+  uniform float uLight;
+  uniform float uLightReady;
+  uniform sampler2D uLightArtwork;
   uniform float uArtworkReady;
   uniform float uHover;
   uniform vec3 uColor;
@@ -74,6 +77,13 @@ const fragmentShader = `
       rgb = art * pulse + vec3(1.0, 0.2, 0.02) * strands * 0.08;
       alpha = 1.0 - smoothstep(0.80, 1.0, r);
     }
+    if (uLight > 0.5 && uLightReady > 0.5) {
+      vec2 tangent = vec2(-p.y, p.x);
+      vec2 drift = tangent * sin(uTime * 0.65 + r * 12.0) * 0.003;
+      vec2 imageUv = vec2(0.06 + vUv.x * 0.88, 0.02 + vUv.y * 0.96) + drift;
+      rgb = texture2D(uLightArtwork, imageUv).rgb * (1.0 + sin(uTime * 1.1) * 0.025);
+      alpha = 1.0 - smoothstep(0.80, 1.0, r);
+    }
     rgb *= 1.0 + uHover * 0.22;
     alpha *= 1.0 - smoothstep(0.92, 1.0, r);
     if (alpha < 0.005) discard;
@@ -93,6 +103,14 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     }
   );
   artwork.colorSpace = THREE.SRGBColorSpace;
+  const lightArtwork = new THREE.TextureLoader().load(
+    new URL('./portal-luz.jpg', import.meta.url).href,
+    () => {
+      for (const portal of portals) if (portal?.light) portal.material.uniforms.uLightReady.value = 1;
+      onReady();
+    }, undefined, () => {} // Conserva el portal energético si la imagen aún no fue subida.
+  );
+  lightArtwork.colorSpace = THREE.SRGBColorSpace;
   const planeGeometry = new THREE.PlaneGeometry(8.8, 13);
   const sparkCount = 180;
   const sparkVertex = `
@@ -123,14 +141,16 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     }
   `;
 
-  function add({ color, x, y, z, inferno = false, button, parent = scene, index = portals.length }) {
+  function add({ color, x, y, z, inferno = false, light = false, button, parent = scene, index = portals.length }) {
     const group = new THREE.Group();
     group.position.set(x, y, z);
     parent.add(group);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 }, uColor: { value: new THREE.Color(color) },
-        uInferno: { value: inferno ? 1 : 0 }, uArtwork: { value: artwork },
+        uInferno: { value: inferno ? 1 : 0 }, uLight: { value: light ? 1 : 0 },
+        uLightArtwork: { value: lightArtwork }, uLightReady: { value: lightArtwork.image ? 1 : 0 },
+        uArtwork: { value: artwork },
         uArtworkReady: { value: artwork.image ? 1 : 0 },
         uHover: { value: 0 }
       },
@@ -157,7 +177,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     // The vertex shader supplies positions; CPU bounds would otherwise be empty.
     sparks.frustumCulled = false;
     group.add(sparks);
-    portals[index] = { group, material, sparkMaterial, button, hover: 0, lastUpdate: 0 };
+    portals[index] = { group, material, sparkMaterial, button, light, hover: 0, lastUpdate: 0 };
     return surface;
   }
 
