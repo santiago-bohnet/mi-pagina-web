@@ -75,17 +75,47 @@ const fragmentShader = `
       rgb = art * pulse + vec3(1.0, 0.2, 0.02) * strands * 0.08;
       alpha = 1.0 - smoothstep(0.80, 1.0, r);
     }
-    // Luz: torbellino de energía generado en tiempo real, sin imágenes.
+    // Portal de luz: reinterpretación procedural del arco dorado y la energía ovalada.
+    // Sin usar imágenes: filigrana, anillos luminosos, rayos y un interior celestial.
     if (uLight > 0.5) {
-      float rays = pow(max(0.0, sin(angle * 13.0 + r * 28.0 - clock * 4.5 + turbulence * 5.0)), 8.0);
-      float glow = rim * (1.25 + 0.4 * sin(uTime * 1.8));
-      vec3 gold = vec3(1.0, 0.77, 0.33);
-      vec3 white = vec3(1.0, 0.98, 0.90);
-      rgb = mix(gold, white, clamp(glow + rays * 0.75, 0.0, 1.0)) * (glow * 1.2 + strands * 1.4 + rays * 0.33 + halo);
-      rgb += white * inward * 1.2;
-      float core = 1.0 - smoothstep(0.30, 0.72, r);
-      rgb = mix(vec3(0.018, 0.014, 0.034) + gold * inward * 1.4, rgb, smoothstep(0.12, 0.64, r));
-      alpha = max(alpha, core * 0.94);
+      float t = uTime;
+      float pulse = 0.94 + 0.06 * sin(t * 1.65);
+      vec3 dark = vec3(0.016, 0.013, 0.032);
+      vec3 gold = vec3(1.0, 0.63, 0.19);
+      vec3 paleGold = vec3(1.0, 0.85, 0.48);
+      vec3 ivory = vec3(1.0, 0.98, 0.88);
+      vec3 azure = vec3(0.27, 0.62, 0.97);
+      float ir = r + 0.009 * sin(angle * 19.0 - t * 0.8) + 0.009 * (turbulence - 0.5);
+      float outer = exp(-pow((ir - 0.82) * 39.0, 2.0));
+      float outerLine = exp(-pow((ir - 0.88) * 80.0, 2.0));
+      float middle = exp(-pow((ir - 0.73) * 48.0, 2.0));
+      float inner = exp(-pow((ir - 0.64) * 34.0, 2.0));
+      float runeBand = exp(-pow((ir - 0.78) * 50.0, 2.0));
+      float rune = pow(max(0.0, sin(angle * 48.0 + sin(angle * 12.0) * 2.0)), 17.0) * runeBand;
+      float filigree = pow(max(0.0, sin(angle * 14.0 + ir * 42.0)), 12.0) * runeBand;
+      float rotatingArc = pow(max(0.0, sin(angle * 9.0 - t * 0.5 + ir * 22.0 + turbulence * 3.0)), 7.0) * smoothstep(0.40, 0.64, r);
+      float energyEdge = (outer * 1.7 + middle * 1.8 + inner * 1.3 + outerLine * 0.95) * pulse;
+      float diffuseGlow = exp(-pow((r - 0.76) * 7.0, 2.0)) * 0.6;
+      float interior = 1.0 - smoothstep(0.60, 0.70, r);
+      // Profundidad en tonos azul cielo, con luminosidad concentrada hacia un horizonte.
+      float horizon = exp(-pow((p.y + 0.10) * 5.5, 2.0));
+      float heavenly = 0.18 + 0.32 * (0.5 + 0.5 * sin(p.y * 6.0 + t * 0.13));
+      vec3 sky = mix(vec3(0.08, 0.18, 0.35), azure, heavenly);
+      sky = mix(sky, ivory, horizon * 0.82);
+      float columns = pow(max(0.0, sin(p.x * 32.0 + sin(p.y * 7.0) * 0.3)), 20.0)
+                    * smoothstep(-0.48, 0.25, p.y) * (1.0 - smoothstep(0.48, 0.64, p.y));
+      sky += paleGold * columns * 0.55;
+      float beam = exp(-pow(p.x * (13.0 + 4.0 * sin(t * 0.2)), 2.0)) * (0.5 + horizon);
+      sky += ivory * beam * (0.48 + 0.12 * sin(t));
+      float sparks = pow(max(0.0, sin(p.x * 87.0 + p.y * 51.0 + t * 0.6)
+                   * sin(p.y * 97.0 - p.x * 38.0 - t * 0.5)), 30.0);
+      rgb = mix(dark, sky, interior);
+      rgb += gold * (diffuseGlow * 0.65 + outerLine + filigree * 0.68 + rune * 0.8);
+      rgb += paleGold * (outer * 1.0 + rotatingArc * 0.50 + strands * 0.42);
+      rgb += ivory * (middle * 1.25 + inner * 1.05 + sparks * 0.32 + energyEdge * 0.56);
+      alpha = max(interior * 0.98, clamp(energyEdge + diffuseGlow + rune * 0.7 + rotatingArc * 0.45, 0.0, 1.0));
+      // Antialias de la silueta elíptica: el entorno sigue transparente.
+      alpha *= 1.0 - smoothstep(0.89, 0.99, r);
     }
     rgb *= 1.0 + uHover * 0.22;
     alpha *= 1.0 - smoothstep(0.92, 1.0, r);
