@@ -1,3 +1,4 @@
+import { createCelestialTexture } from './light-portal-art.js';
 // Upright energy vortices. Rotation happens in UV space: the doorway stays vertical.
 // The Inferno samples the approved artwork; the other worlds share the same effect.
 const vertexShader = `
@@ -18,6 +19,7 @@ const fragmentShader = `
   uniform float uHover;
   uniform vec3 uColor;
   uniform sampler2D uArtwork;
+  uniform sampler2D uLightArtwork;
 
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -75,83 +77,15 @@ const fragmentShader = `
       rgb = art * pulse + vec3(1.0, 0.2, 0.02) * strands * 0.08;
       alpha = 1.0 - smoothstep(0.80, 1.0, r);
     }
-    // Portal de luz: reinterpretación procedural del arco dorado y la energía ovalada.
-    // Sin usar imágenes: filigrana, anillos luminosos, rayos y un interior celestial.
+    // El centro muestra una ciudad celestial creada por código, sin archivos de imagen.
     if (uLight > 0.5) {
-      float t = uTime;
-      float pulse = 0.94 + 0.06 * sin(t * 1.65);
-      vec3 dark = vec3(0.016, 0.013, 0.032);
-      vec3 gold = vec3(1.0, 0.63, 0.19);
-      vec3 paleGold = vec3(1.0, 0.85, 0.48);
-      vec3 ivory = vec3(1.0, 0.98, 0.88);
-      vec3 azure = vec3(0.27, 0.62, 0.97);
-      float ir = r + 0.009 * sin(angle * 19.0 - t * 0.8) + 0.009 * (turbulence - 0.5);
-      float outer = exp(-pow((ir - 0.82) * 39.0, 2.0));
-      float outerLine = exp(-pow((ir - 0.88) * 80.0, 2.0));
-      float middle = exp(-pow((ir - 0.73) * 48.0, 2.0));
-      float inner = exp(-pow((ir - 0.64) * 34.0, 2.0));
-      float runeBand = exp(-pow((ir - 0.78) * 50.0, 2.0));
-      float rune = pow(max(0.0, sin(angle * 48.0 + sin(angle * 12.0) * 2.0)), 17.0) * runeBand;
-      float filigree = pow(max(0.0, sin(angle * 14.0 + ir * 42.0)), 12.0) * runeBand;
-      float rotatingArc = pow(max(0.0, sin(angle * 9.0 - t * 0.5 + ir * 22.0 + turbulence * 3.0)), 7.0) * smoothstep(0.40, 0.64, r);
-      float energyEdge = (outer * 1.7 + middle * 1.8 + inner * 1.3 + outerLine * 0.95) * pulse;
-      float diffuseGlow = exp(-pow((r - 0.76) * 7.0, 2.0)) * 0.6;
-      float interior = 1.0 - smoothstep(0.60, 0.70, r);
-      // Un paisaje al otro lado del umbral, NO un agujero negro ni un remolino.
-      // Cielo azul claro, nubes blancas flotantes, agujas doradas y camino de luz.
-      vec2 landscape = p / 0.65;
-      float sun = exp(-pow(length((landscape - vec2(0.0, 0.10)) * vec2(1.0, 1.35)) * 2.0, 2.0));
-      vec3 sky = mix(vec3(0.43, 0.72, 0.96), vec3(0.91, 0.96, 1.0),
-                     clamp(0.53 - landscape.y * 0.34, 0.0, 1.0));
-      sky += vec3(1.0, 0.91, 0.72) * sun * 0.50;
-      float horizon = exp(-pow((landscape.y + 0.22) * 8.0, 2.0));
-      sky = mix(sky, vec3(1.0, 0.96, 0.83), horizon * 0.65);
-      float cloudField = fbm(vec2(landscape.x * 3.8 + t * 0.018, landscape.y * 5.1));
-      float cloudBands = sin(landscape.x * 7.0 + cloudField * 4.0) * 0.10;
-      float clouds = 1.0 - smoothstep(0.12, 0.50,
-          abs(landscape.y + 0.48 + cloudBands + cloudField * 0.25));
-      clouds *= 0.94;
-      sky = mix(sky, vec3(1.0, 0.99, 0.94), clouds);
-      // Torres celestiales de diferentes alturas a la distancia, sin geometría adicional.
-      float towers = 0.0;
-      float highlights = 0.0;
-      for (int i = 0; i < 13; i++) {
-        float j = float(i);
-        float tx = (j - 6.0) * 0.135;
-        float distanceFromCenter = abs(tx);
-        float height = 0.20 + 0.23 * (1.0 - distanceFromCenter);
-        height += 0.11 * sin(j * 4.3);
-        float width = 0.016 + 0.013 * (1.0 - distanceFromCenter);
-        float spire = smoothstep(width * 0.25, width * 0.95, abs(landscape.x - tx));
-        float vertical = 1.0 - smoothstep(-0.18 + height - 0.055, -0.18 + height + 0.06,
-                              landscape.y + abs(landscape.x - tx) * 2.2);
-        float body = (1.0 - smoothstep(width * 0.74, width, abs(landscape.x - tx))) *
-                     smoothstep(-0.48, -0.38, landscape.y) * vertical;
-        towers = max(towers, body);
-        highlights = max(highlights, body * (1.0 - spire));
-      }
-      sky = mix(sky, vec3(0.93, 0.88, 0.69), towers * 0.86);
-      sky += ivory * highlights * 0.28;
-      float beam = exp(-pow(landscape.x * 8.0, 2.0)) * (0.35 + sun);
-      sky += ivory * beam * (0.16 + 0.04 * sin(t));
-      // Sendero luminoso que converge hacia el horizonte celestial.
-      float roadExtent = max(0.0, -landscape.y - 0.20);
-      float roadWidth = 0.035 + 0.46 * roadExtent;
-      float road = (1.0 - smoothstep(roadWidth * 0.75, roadWidth, abs(landscape.x))) *
-                    smoothstep(0.005, 0.08, roadExtent);
-      sky = mix(sky, vec3(1.0, 0.91, 0.66), road * 0.75);
-      float roadGlint = exp(-pow(landscape.x * (16.0 - 9.0 * roadExtent), 2.0)) * road;
-      sky += ivory * roadGlint * 0.6;
-      float sparks = pow(max(0.0, sin(p.x * 87.0 + p.y * 51.0 + t * 0.6)
-                   * sin(p.y * 97.0 - p.x * 38.0 - t * 0.5)), 30.0);
-      rgb = mix(vec3(0.11, 0.17, 0.26), sky, interior);
-      rgb += sky * (1.0 - smoothstep(0.6, 0.9, r)) * 0.11;
-      rgb += gold * (diffuseGlow * 0.65 + outerLine + filigree * 0.68 + rune * 0.8);
-      rgb += paleGold * (outer * 1.0 + rotatingArc * 0.50 + strands * 0.42);
-      rgb += ivory * (middle * 1.25 + inner * 1.05 + sparks * 0.32 + energyEdge * 0.56);
-      alpha = max(interior * 0.98, clamp(energyEdge + diffuseGlow + rune * 0.7 + rotatingArc * 0.45, 0.0, 1.0));
-      // Antialias de la silueta elíptica: el entorno sigue transparente.
-      alpha *= 1.0 - smoothstep(0.89, 0.99, r);
+      vec4 celestial = texture2D(uLightArtwork, vUv);
+      float breath = 0.985 + 0.025 * sin(uTime * 1.25);
+      // Una leve energía circula por el marco; el paisaje no gira ni se oscurece.
+      float arc = pow(max(0.0, sin(angle * 10.0 - uTime * 0.6 + r * 18.0)), 14.0);
+      float edge = exp(-pow((r - 0.81) * 22.0, 2.0));
+      rgb = celestial.rgb * breath + vec3(1.0, 0.82, 0.48) * arc * edge * 0.065;
+      alpha = celestial.a;
     }
     rgb *= 1.0 + uHover * 0.22;
     alpha *= 1.0 - smoothstep(0.92, 1.0, r);
@@ -164,6 +98,7 @@ const fragmentShader = `
 
 export function createPortalSystem(THREE, scene, { reduced = false, onReady = () => {} } = {}) {
   const portals = [];
+  let celestialTexture = null; // Only paint when visiting the light dimension.
   const artwork = new THREE.TextureLoader().load(
     new URL('./portal-inferno.webp', import.meta.url).href,
     () => {
@@ -203,6 +138,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
   `;
 
   function add({ color, x, y, z, inferno = false, light = false, button, parent = scene, index = portals.length }) {
+    if (light && !celestialTexture) celestialTexture = createCelestialTexture(THREE);
     const group = new THREE.Group();
     group.position.set(x, y, z);
     parent.add(group);
@@ -211,6 +147,7 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
         uTime: { value: 0 }, uColor: { value: new THREE.Color(color) },
         uInferno: { value: inferno ? 1 : 0 }, uLight: { value: light ? 1 : 0 },
         uArtwork: { value: artwork },
+        uLightArtwork: { value: celestialTexture || artwork },
         uArtworkReady: { value: artwork.image ? 1 : 0 },
         uHover: { value: 0 }
       },
