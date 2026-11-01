@@ -351,22 +351,16 @@
 .portal:hover .portal-art,
 .portal:focus-visible .portal-art { filter: drop-shadow(0 0 32px var(--portal)) brightness(1.18); }
 
-/* Alternativa sin WebGL: cielo luminoso y marcos dorados, nunca remolino negro. */
+/* Portal de luz: únicamente el óvalo de la imagen de referencia. */
 .no-webgl .portal[data-theme='light'] .portal-art {
- background:
-   radial-gradient(ellipse at 50% 58%, #fffbe8 0%, #e6f7ff 25%, #9acbe9 48%, #5b94c6 68%, transparent 70%);
- filter: drop-shadow(0 0 25px #fff0b4ba);
+  background: url('./portal-luz-ovalo.avif') center / 100% 100% no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at center,#000 86%,transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at center,#000 86%,transparent 100%);
+  filter: drop-shadow(0 0 22px #ffe8a3);
+  animation: light-breathe 6s ease-in-out infinite;
 }
-.no-webgl .portal[data-theme='light'] .portal-depth {
- inset: 13% 13%;
- background:
-   radial-gradient(ellipse at 51% 63%, #fff8da 0%, transparent 40%),
-   linear-gradient(175deg, #65a7d8 0%, #c4e7f7 43%, #fff5d9 65%, #d0e9f5 100%);
- border: 6px solid #ffedaa;
- box-shadow: 0 0 26px #ffe7a5, inset 0 0 18px #fff;
- opacity: 1;
-}
-.no-webgl .portal[data-theme='light'] .portal-flow { opacity:.30; mix-blend-mode: screen; }
-.no-webgl .portal[data-theme='light'] .portal-flow::before,
-.no-webgl .portal[data-theme='light'] .portal-flow::after { animation-duration: 50s; }
-.no-webgl .portal[data-theme='light']:hover .portal-art { filter:drop-shadow(0 0 38px #fff5d1) brightness(1.08); }
+.no-webgl .portal[data-theme='light'] .portal-depth,
+.no-webgl .portal[data-theme='light'] .portal-flow { display:none; }
+@keyframes light-breathe { 50% { filter: brightness(1.09) drop-shadow(0 0 32px #fff0b4); } }
+.no-webgl .portal[data-theme='light']:hover .portal-art { filter: brightness(1.14) drop-shadow(0 0 35px #fff8d6); }
+@media(prefers-reduced-motion:reduce){.no-webgl .portal[data-theme='light'] .portal-art{animation:none;}}
