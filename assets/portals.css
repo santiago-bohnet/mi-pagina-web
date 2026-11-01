@@ -351,12 +351,11 @@
 .portal:hover .portal-art,
 .portal:focus-visible .portal-art { filter: drop-shadow(0 0 32px var(--portal)) brightness(1.18); }
 
-/* Imagen aprobada del portal de luz: mismo tratamiento ovalado del portal de fuego. */
-.portal[data-theme='light'] .portal-art {
- background: url('./portal-luz.jpg') center / cover no-repeat;
- -webkit-mask-image: radial-gradient(ellipse 50% 50% at center,#000 68%,transparent 100%);
- mask-image: radial-gradient(ellipse 50% 50% at center,#000 68%,transparent 100%);
- animation: inferno-breathe 6s ease-in-out infinite;
+/* Portal de la luz: energía ovalada animada, sin fotografía ni textura. */
+.portal[data-theme='light'] .portal-depth {
+ background: radial-gradient(ellipse at center,#080710 12%,#211708 45%,#d5a94e 77%,#fff6d5 94%);
+ box-shadow: inset 0 0 60px #0b0717, 0 0 22px #ffe9a077;
 }
-.portal[data-theme='light'] .portal-depth { opacity: .12; }
-.portal[data-theme='light'] .portal-flow { opacity: .18; mix-blend-mode: screen; }
+.portal[data-theme='light'] .portal-flow { opacity: 1; }
+.portal[data-theme='light'] .portal-art { filter: drop-shadow(0 0 23px #ffe6a088); }
+.portal[data-theme='light']:hover .portal-art { filter: drop-shadow(0 0 34px #fff4c8) brightness(1.16); }
