@@ -77,7 +77,7 @@ const fragmentShader = `
       rgb = art * pulse + vec3(1.0, 0.2, 0.02) * strands * 0.08;
       alpha = 1.0 - smoothstep(0.80, 1.0, r);
     }
-    // El centro muestra una ciudad celestial creada por código, sin archivos de imagen.
+    // El óvalo seleccionado se renderiza como textura recortada sobre el portal 3D.
     if (uLight > 0.5) {
       vec4 celestial = texture2D(uLightArtwork, vUv);
       float breath = 0.985 + 0.025 * sin(uTime * 1.25);
@@ -88,7 +88,7 @@ const fragmentShader = `
       alpha = celestial.a;
     }
     rgb *= 1.0 + uHover * 0.22;
-    alpha *= 1.0 - smoothstep(0.92, 1.0, r);
+    alpha *= uLight > 0.5 ? (1.0 - smoothstep(0.98, 1.06, r)) : (1.0 - smoothstep(0.92, 1.0, r));
     if (alpha < 0.005) discard;
     gl_FragColor = vec4(rgb, alpha);
     #include <tonemapping_fragment>
@@ -138,7 +138,22 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
   `;
 
   function add({ color, x, y, z, inferno = false, light = false, button, parent = scene, index = portals.length }) {
-    if (light && !celestialTexture) celestialTexture = createCelestialTexture(THREE);
+    if (light && !celestialTexture) {
+      // La imagen solo contiene el óvalo recortado del portal aprobado.
+      celestialTexture = new THREE.TextureLoader().load(
+        new URL('./portal-luz-ovalo.avif', import.meta.url).href,
+        () => onReady(),
+        undefined,
+        () => {
+          // Evitar un portal vacío en navegadores sin soporte AVIF.
+          const fallback = createCelestialTexture(THREE);
+          for (const portal of portals) if (portal?.light)
+            portal.material.uniforms.uLightArtwork.value = fallback;
+          onReady();
+        }
+      );
+      celestialTexture.colorSpace = THREE.SRGBColorSpace;
+    }
     const group = new THREE.Group();
     group.position.set(x, y, z);
     parent.add(group);
