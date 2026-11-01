@@ -263,7 +263,11 @@ function installPortalInteractions(){
   last=btn;const dimension=DIMENSIONS[Number(btn.dataset.dimension)];
   document.getElementById('world-heading').textContent='Puedes echar un vistazo.';
   document.getElementById('world-desc').textContent=dimension.description;
-  document.getElementById('world-art').hidden=dimension.theme!=='fire';
+  const artwork=document.getElementById('world-art');
+  artwork.src=dimension.theme==='light'?'./assets/portal-luz.jpg':'./assets/portal-inferno.webp';
+  artwork.alt=dimension.theme==='light'?'Portal ovalado de energía dorada y blanca':'Portal ovalado de energía escarlata en una dimensión volcánica';
+  artwork.hidden=!['light','fire'].includes(dimension.theme);
+  artwork.onerror=()=>{artwork.hidden=true};
   popup.hidden=false;document.body.style.overflow='hidden';close.focus();
  }));
  function dismiss(){popup.hidden=true;document.body.style.overflow='';last?.focus()}
