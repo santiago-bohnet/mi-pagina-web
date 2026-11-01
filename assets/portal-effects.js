@@ -14,8 +14,6 @@ const fragmentShader = `
   uniform float uTime;
   uniform float uInferno;
   uniform float uLight;
-  uniform float uLightReady;
-  uniform sampler2D uLightArtwork;
   uniform float uArtworkReady;
   uniform float uHover;
   uniform vec3 uColor;
@@ -77,12 +75,17 @@ const fragmentShader = `
       rgb = art * pulse + vec3(1.0, 0.2, 0.02) * strands * 0.08;
       alpha = 1.0 - smoothstep(0.80, 1.0, r);
     }
-    if (uLight > 0.5 && uLightReady > 0.5) {
-      vec2 tangent = vec2(-p.y, p.x);
-      vec2 drift = tangent * sin(uTime * 0.65 + r * 12.0) * 0.003;
-      vec2 imageUv = vec2(0.06 + vUv.x * 0.88, 0.02 + vUv.y * 0.96) + drift;
-      rgb = texture2D(uLightArtwork, imageUv).rgb * (1.0 + sin(uTime * 1.1) * 0.025);
-      alpha = 1.0 - smoothstep(0.80, 1.0, r);
+    // Luz: torbellino de energía generado en tiempo real, sin imágenes.
+    if (uLight > 0.5) {
+      float rays = pow(max(0.0, sin(angle * 13.0 + r * 28.0 - clock * 4.5 + turbulence * 5.0)), 8.0);
+      float glow = rim * (1.25 + 0.4 * sin(uTime * 1.8));
+      vec3 gold = vec3(1.0, 0.77, 0.33);
+      vec3 white = vec3(1.0, 0.98, 0.90);
+      rgb = mix(gold, white, clamp(glow + rays * 0.75, 0.0, 1.0)) * (glow * 1.2 + strands * 1.4 + rays * 0.33 + halo);
+      rgb += white * inward * 1.2;
+      float core = 1.0 - smoothstep(0.30, 0.72, r);
+      rgb = mix(vec3(0.018, 0.014, 0.034) + gold * inward * 1.4, rgb, smoothstep(0.12, 0.64, r));
+      alpha = max(alpha, core * 0.94);
     }
     rgb *= 1.0 + uHover * 0.22;
     alpha *= 1.0 - smoothstep(0.92, 1.0, r);
@@ -103,14 +106,6 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
     }
   );
   artwork.colorSpace = THREE.SRGBColorSpace;
-  const lightArtwork = new THREE.TextureLoader().load(
-    new URL('./portal-luz.jpg', import.meta.url).href,
-    () => {
-      for (const portal of portals) if (portal?.light) portal.material.uniforms.uLightReady.value = 1;
-      onReady();
-    }, undefined, () => {} // Conserva el portal energético si la imagen aún no fue subida.
-  );
-  lightArtwork.colorSpace = THREE.SRGBColorSpace;
   const planeGeometry = new THREE.PlaneGeometry(8.8, 13);
   const sparkCount = 180;
   const sparkVertex = `
@@ -149,7 +144,6 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
       uniforms: {
         uTime: { value: 0 }, uColor: { value: new THREE.Color(color) },
         uInferno: { value: inferno ? 1 : 0 }, uLight: { value: light ? 1 : 0 },
-        uLightArtwork: { value: lightArtwork }, uLightReady: { value: lightArtwork.image ? 1 : 0 },
         uArtwork: { value: artwork },
         uArtworkReady: { value: artwork.image ? 1 : 0 },
         uHover: { value: 0 }
