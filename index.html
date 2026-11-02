@@ -29,7 +29,27 @@
 @media(prefers-reduced-motion:reduce){#despertar.intro-stage{min-height:125svh}}
 #compare-kuro{position:fixed;z-index:9;top:56px;left:18px;padding:11px 15px;border:1px solid #b43659;background:#1f0919df;color:#fff;text-decoration:none;border-radius:18px;font-size:.85rem;backdrop-filter:blur(10px)}#compare-kuro:hover{background:#5e1734}@media(max-width:520px){#compare-kuro{top:48px;left:10px;font-size:.75rem;padding:10px}}
 .tunnel-stage{height:650.4svh;position:relative;pointer-events:none}.tunnel-caption{position:sticky;top:22vh;width:min(300px,40vw);padding:12px;pointer-events:auto}.tunnel-caption.left{margin-left:7vw}.tunnel-caption.right{margin-left:auto;margin-right:7vw}.tunnel-caption .portal{background:linear-gradient(145deg,#080911b3,#08091144);min-height:210px;width:100%;border-color:var(--portal)}.tunnel-caption .eyebrow{color:var(--portal)}.tunnel-note{color:#e3dce6;font-size:.9rem;line-height:1.6;text-shadow:0 2px 8px #000}.descent-hint{position:absolute;bottom:14vh;width:100%;text-align:center;color:#d2c7dc;font-size:.85rem;letter-spacing:.09em}#compare-kuro{display:none}.scroll-guide{position:fixed;bottom:28px;right:22px;z-index:5;font-size:.75rem;color:#c7b8c9;letter-spacing:.1em}#skip-intro{position:fixed;top:20px;left:20px;z-index:6;color:#dfced7;text-decoration:none;font-size:.8rem}#scene-popup .inner{border:1px solid #584254;border-radius:24px;padding:36px;background:#100c18}body:before{background:radial-gradient(ellipse at center,transparent 25%,#03030977 100%)}@media(max-width:600px){.tunnel-caption{width:48vw;top:18vh;padding:6px}.tunnel-caption.left{margin-left:3vw}.tunnel-caption.right{margin-right:3vw}.tunnel-caption .portal{min-height:175px;padding:14px}.portal .ring{width:75px;height:90px}.tunnel-note{font-size:.78rem}.scroll-guide{bottom:85px;right:12px;max-width:160px;text-align:right}}
-.no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}</style>
+.no-webgl .tunnel-stage{background:radial-gradient(ellipse at 50% 20%,transparent 18%,#030309 72%),repeating-radial-gradient(ellipse at 50% 20%,#17141e 0 6%,var(--portal) 6.1% 6.3%,#17141e 6.5% 13%)}.no-webgl .intro-stage{min-height:110svh!important;background:radial-gradient(ellipse at 45% 45%,#ff174b 0 .4%,transparent 1%),radial-gradient(ellipse at 55% 45%,#ff174b 0 .4%,transparent 1%)!important}
+/* Selector accesible para alternar entre el universo 3D y la vista tradicional. */
+#classic-mode-link{
+ position:fixed;top:18px;left:18px;z-index:8;
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:44px;padding:10px 17px;
+ border:1px solid #fc345478;border-radius:12px;
+ color:#fff;background:#1b0a17e8;
+ font:700 .84rem system-ui,Segoe UI,sans-serif;
+ text-decoration:none;letter-spacing:.01em;
+ box-shadow:0 10px 30px #0007,0 0 20px #fc34541b;
+ backdrop-filter:blur(12px);transition:background .2s,transform .2s;
+}
+#classic-mode-link:hover{background:#4e1424;transform:translateY(-1px)}
+#classic-mode-link:focus-visible{outline:2px solid #ff8396;outline-offset:3px}
+#skip-intro{top:76px}
+@media(max-width:520px){
+ #classic-mode-link{top:12px;left:10px;padding:10px 12px;font-size:.77rem}
+ #skip-intro{top:69px;left:12px}
+}
+</style>
 <link rel="stylesheet" href="./assets/portals.css?v=oval-ref-5">
 </head>
 <body class="no-webgl">
@@ -38,6 +58,7 @@
 
 <div id="kuro-overlay" aria-hidden="true"><span id="catmark"><i class="eyes"></i></span></div>
 <a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
+<a href="./clasica.html" id="classic-mode-link" aria-label="Cambiar a la versión clásica de Universo XR">💻 Modo clásico ↗</a>
 <a href="#explorar" id="skip-intro">Explorar con Kuro ↓</a><div class="scroll-guide">SCROLL ↓ · SIGUE A KURO</div><main>
 <section class="intro-stage" id="despertar" aria-label="Kuro se acerca y se presenta. Desplázate para explorar sus dimensiones."><h1 class="sr-only">Kuro</h1><span id="intro-eyes" aria-hidden="true"><i></i><i></i></span></section>
 
