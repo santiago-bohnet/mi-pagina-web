@@ -514,15 +514,15 @@ function frame(t){
   shipFill.intensity=42*shipReveal*(1-parked*.32);
   exhaustMat.opacity=shipReveal*(1-parked*.86);
   eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
-  ambient.intensity=.15+universe*(state.level===0?2:1.2);
+  ambient.intensity=.15+universe*([.85,1.52,1.38,.85][state.level]);
   if(landscapeEntry>.001){
     worldFog.set(worldFogColors[state.level]);
     scene.background.copy(worldFog);
     scene.fog.color.copy(worldFog);
-    scene.fog.density=state.level===0?.0018:state.level===1?.0032:state.level===2?.0039:.0016;
+    scene.fog.density=state.level===0?.0017:state.level===1?.0032:state.level===2?.0031:.0014;
     // Controlar la exposición por dimensión: elimina el cielo completamente
     // blanco y preserva detalle en las nubes y las zonas oscuras.
-    const exposure=[.78,.96,.96,.98][state.level];
+    const exposure=[.85,.98,.99,.88][state.level];
     renderer.toneMappingExposure+=
       (exposure-renderer.toneMappingExposure)*(reduced?1:Math.min(1,dt*2.8));
   }else{
