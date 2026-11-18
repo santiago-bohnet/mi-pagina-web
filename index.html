@@ -129,7 +129,8 @@ import { createCosmicPilot } from './assets/cosmic-pilot.js?v=realms-13';
 import { createShadowMysteries } from './assets/shadow-mysteries.js?v=realms-13';
 const guide=createKuroGuide();
 installPortalInteractions();
-const portalTour=createPortalTour();
+let enterRealm=()=>false;
+const portalTour=createPortalTour({onEnter:level=>enterRealm(level)});
 let prepareDimension=()=>Promise.resolve();
 const voyage=createShipVoyage({
   dimensions:DIMENSIONS, currentLevel:()=>readJourney().level,
@@ -169,6 +170,15 @@ const renderQuality=createRenderQualityController(renderer,{
 const activities=createRealmActivities(THREE);
 const mysteries=createShadowMysteries(activities.store);
 const pilot=createCosmicPilot();
+// Los portales ofrecen una experiencia específica en lugar de abrir
+// únicamente una tarjeta con una imagen.
+enterRealm=level=>{
+ if(level===0){activities.open('library');return true;}
+ if(level===1){activities.open('forge');return true;}
+ if(level===2){mysteries.open();return true;}
+ if(level===3){pilot.start(readJourney());return true;}
+ return false;
+};
 
 const ambient=new THREE.AmbientLight(0x8b6075,1.2);scene.add(ambient);const red=new THREE.PointLight(0xff2050,140,75);red.position.set(8,5,-8);scene.add(red);
 const starCount=innerWidth<700?550:900;const xyz=new Float32Array(starCount*3);for(let i=0;i<starCount;i++){xyz[3*i]=(Math.random()-.5)*280;xyz[3*i+1]=(Math.random()-.5)*180;xyz[3*i+2]=-Math.random()*410+25}
