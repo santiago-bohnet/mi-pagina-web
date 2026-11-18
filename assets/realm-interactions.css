@@ -88,3 +88,10 @@ body.xr-piloting .scroll-guide{visibility:hidden;pointer-events:none}
  .xr-editor{gap:7px}
 }
 @media(prefers-reduced-motion:reduce){#xr-activity *,#xr-mystery *,#xr-pilot *{animation:none!important;transition:none!important}}
+
+#xr-mystery-canvas{
+ width:100%;height:clamp(235px,34svh,340px);
+ background:#080714;border:1px solid #ae7fdb60;border-radius:14px;
+ margin:5px 0 15px;touch-action:manipulation
+}
+@media(max-width:600px){#xr-mystery-canvas{height:220px}}
