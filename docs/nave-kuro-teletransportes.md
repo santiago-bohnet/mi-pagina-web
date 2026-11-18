@@ -5,7 +5,7 @@
 1. La introducción revela a Kuro y su nave.
 2. Después de «Descubrimiento» y «Núcleo», la etapa «Viaje» muestra la nave desde una **Third-Person Follow Camera real**. Kuro y su nave recorren curvas amplias sin volar de costado.
 
-3. Se visita primero Luz. Cada etapa tiene **720 alturas de ventana por 100** (720 svh) en escritorio y 650 svh en móvil, más de tres veces la duración anterior. A la mitad la nave reduce velocidad, se acerca a una plataforma junto al portal y queda estacionada. Kuro baja de la nave y camina hacia el portal.
+3. Se visita primero Luz. Cada etapa tiene **7,2 pantallas** de recorrido en escritorio (720 svh) y **6,5 pantallas** en móvil (650 svh), más de tres veces la duración anterior. A la mitad la nave reduce velocidad, se acerca a una plataforma junto al portal y queda estacionada. Kuro baja de la nave y camina hacia el portal.
 4. Mientras Kuro presenta el portal, el desplazamiento está dedicado a una pausa: el usuario puede **entrar al portal** para abrir una vista de exploración o **seguir avanzando**. En el segundo caso, Kuro se da vuelta, vuelve a subir y la nave despega con suavidad. El scroll controla las fases sin esperas forzadas ni cambio automático de dimensión.
 5. El salto de una dimensión a otra se habilita al completar al menos el 90 % del recorrido, con la consola de navegación: Luz → Fuego → Sombras → Cosmos → Luz.
 6. El teletransporte activa la cabina en primera persona: establecimiento de coordenadas → carga del núcleo → salto → estabilización. Después reaparece la nave en tercera persona.
@@ -19,7 +19,7 @@
 - `assets/journey-motion.js`: ruta con curvas en S suaves y altitud, frenado progresivo, estacionamiento junto a cada portal, movimiento en plataforma, embarque y despegue al reanudar el scroll. Las fases `landing → disembark → guide → reboard → takeoff` están fijadas por el progreso.
 - `assets/dimension-scenes.js`: paisajes extensos con estaciones de aterrizaje, rampa, anillos y luces junto a cada portal.
 - `assets/dimensional-landscapes.js`: cielo con dispersión solar y halo, ángeles con brazos, rostro, alas y plumas más detalladas; volumetría de ceniza en el volcán.
-- `assets/realistic-environments.js`: relieve de 700 unidades, nubes/bruma en capas, lava animada, mapas minerales procedurales y materiales PBR fotográficos CC0 de Poly Haven (difusa y normal). La carga de fotos es opcional: si la red/CDN falla, continúa la textura local. Modo móvil reduce resolución y sombras.
+- `assets/realistic-environments.js`: relieve de 700 unidades, nubes/bruma en capas, lava animada, mapas minerales procedurales y materiales PBR fotográficos CC0 de Poly Haven (difusa y normal: hasta 2K en escritorio y 1K en móvil). La carga de fotos es opcional: si la red/CDN falla, continúa la textura local. Modo móvil reduce resolución y sombras.
 - `index.html`: tono cinematográfico ACES, salida sRGB, y sombras suaves en pantallas con mayor capacidad.
 - `assets/kuro-guide.js`: diálogo de Kuro en vuelo y en cada dimensión.
 
@@ -41,4 +41,4 @@ Se mejoraron materiales, geometría, profundidad atmosférica e iluminación, pe
 
 Los materiales de roca `rock_path`, `rocky_gravel` y `rock_ground_02` se cargan desde https://dl.polyhaven.org bajo licencia CC0 (https://polyhaven.com/). El proyecto no reexporta las fotografías ni necesita pagos/API. Se comprueban las descargas en el navegador; si no están disponibles, quedan las texturas procedurales. El uso de CDN supone conectividad en la primera visita y la carga aumenta el consumo de memoria de GPU.
 
-La visita al portal abre una **vista temática** dentro del sitio actual; no es una dimensión 3D independiente ni un videojuego terminado. Queda pendiente una verificación visual real de WebGL y, para un objetivo fotográfico total, modelos/escaneos de alta resolución de paisajes, ángeles y naves con texturas PBR y revisión de rendimiento.
+La visita al portal abre una **vista temática** dentro del sitio actual, manteniendo la nave estacionada hasta continuar el scroll; no es una dimensión 3D independiente ni un videojuego terminado. Queda pendiente una verificación visual real de WebGL y, para un objetivo fotográfico total, modelos/escaneos de alta resolución de paisajes, ángeles y naves con texturas PBR y revisión de rendimiento.
