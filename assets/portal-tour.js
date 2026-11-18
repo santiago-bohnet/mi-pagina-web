@@ -6,7 +6,7 @@ const PLACES=[
   {title:'Portal de las Sombras',details:'Kuro: Este es el Portal de las Sombras. Elegí si querés descubrir sus secretos.',color:'sombras'},
   {title:'Portal del Cosmos',details:'Kuro: Este es el Portal del Cosmos. Conecta con los mundos estelares.',color:'cosmos'}
 ];
-export function createPortalTour(){
+export function createPortalTour({onEnter=()=>false}={}){
   const panel=document.getElementById('portal-stop');
   const title=document.getElementById('portal-stop-title');
   const description=document.getElementById('portal-stop-text');
@@ -52,8 +52,9 @@ export function createPortalTour(){
   }
   enter.addEventListener('click',()=>{
     if(!currentState?.stop?.interactable)return;
-    // El modal inmersivo existente permite visitar el portal y volver sin
-    // perder el punto de la ruta en el que estacionó Kuro.
+    // Primero entra a la actividad propia de cada reino; si no se registró
+    // ninguna actividad, conserva el visor del portal tradicional.
+    if(onEnter(currentState.level)===true)return;
     document.querySelector('[data-dimension="'+currentState.level+'"]')?.click();
   });
   continueButton.addEventListener('click',()=>{
