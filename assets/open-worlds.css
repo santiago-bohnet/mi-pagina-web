@@ -1,0 +1,40 @@
+/* Escenarios abiertos. Estas capas se ven si el dispositivo no puede iniciar WebGL. */
+.world-stage { position:relative; isolation:isolate; }
+.world-info {
+  position:sticky;top:14svh;margin:0 0 -150px 5vw;
+  width:min(330px,56vw);
+  z-index:2;padding:15px 17px;border-radius:18px;
+  background:#080811a8;border:1px solid #ffffff32;
+  box-shadow:0 12px 55px #0007;backdrop-filter:blur(7px);
+  pointer-events:none;text-align:left;
+}
+.world-info small { display:block;font-size:.65rem;letter-spacing:.23em;color:var(--portal);font-weight:800;margin-bottom:7px; }
+.world-info strong { display:block;font-size:clamp(.9rem,2vw,1.25rem);line-height:1.35; }
+.world-info p { font-size:.77rem;color:#e8e1e5;line-height:1.55;margin:.45rem 0 0; }
+.no-webgl #tunel-0 {
+  background:
+    radial-gradient(ellipse at 20% 12%,#fff9ce 0 1%,transparent 12%),
+    radial-gradient(ellipse at 20% 34%,#f9fffcbb 0 12%,transparent 32%),
+    radial-gradient(ellipse at 75% 50%,#e6f2fcba 0 12%,transparent 36%),
+    linear-gradient(175deg,#4c8ab8 1%,#cceaf0 38%,#ffe7b8 65%,#c6d9e5 100%);
+}
+.no-webgl #tunel-1 {
+  background:
+    radial-gradient(ellipse at 18% 75%,#ff5a1760 0 5%,transparent 28%),
+    radial-gradient(ellipse at 80% 40%,#d9240f9c 0 3%,transparent 33%),
+    linear-gradient(180deg,#100610,#52140e 33%,#1b0c15 70%,#e33211 100%);
+}
+.no-webgl #tunel-1::before { display:none !important; }
+.no-webgl #tunel-2 {
+  background:radial-gradient(ellipse at 72% 45%,#9164da42,transparent 44%),linear-gradient(170deg,#09091c,#302047 48%,#100b1f);
+}
+.no-webgl #tunel-3 {
+  background:radial-gradient(circle at 50% 32%,#59ead13d,transparent 35%),linear-gradient(180deg,#06111e,#10384a 45%,#07101d);
+}
+.no-webgl .world-info {
+  background:#0d1320be;
+}
+@media (max-width:640px) {
+  .world-info { top:16svh;margin-left:3vw;padding:11px 12px;width:min(250px,56vw); }
+  .world-info p {font-size:.69rem}
+}
