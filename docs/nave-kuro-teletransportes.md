@@ -99,3 +99,12 @@ Para validar: `node --test tests/*.test.mjs` más los `node --check` del flujo C
 - `tests/realm-activities.test.mjs`: validación de categorías, persistencia, exportación y navegación.
 
 La prioridad es mantener las experiencias desacopladas del motor de vuelo y preservar el recorrido con Kuro. Sigue pendiente validar visualmente con GPU los cuatro escenarios y ajustar rendimiento/materiales en dispositivos reales. **Los modelos procedurales no sustituyen un pipeline fotorrealista de modelos profesionales con PBR, rigging e iluminación avanzada.**
+
+## Validación de entrega por mundo
+
+- **Luz**: nubes fractales y animación del viento; ángeles volando solos y en grupos de cinco, catedrales de gran escala, cascadas alineadas a islas floridas, haces solares, escalones, fauna ocasional y entrada desde el portal al Santuario tridimensional. Los libros se eligen desde estantes 3D con raycasting, también mediante selector accesible. Escritura/lectura/edición/exportación/importación de texto .txt/.md; sin conexión a servicios externos.
+- **Fuego**: volcanes con lago de lava, ríos y mares laterales, rayos, meteoritos, cadenas montañosas, fortalezas, demonios que se desplazan y dragones animados. Entrada desde portal a una forja con proyectos, objetivos, desafíos, ideas y reliquias 3D para proyectos terminados; los estados se modifican manualmente.
+- **Sombras**: árboles instanciados, bosques oscuros, cementerio, castillos, lagos, luna eclipsada, luces errantes y misterio cambiante. Una puerta secreta conduce a una sala con geometría 3D y una reliquia; su apertura se anima y queda registrada en navegador.
+- **Cosmos**: nebulosas, asteroides, agujero negro estilizado, túnel de gusano, estructuras extraterrestres, patrullas de naves y tres planetas visitables —Borealis, Umbra y Arca— con waypoints y desplazamiento asistido. Modo libre WASD/flechas/QE/controles táctiles, con opción de volver al scroll.
+
+**Privacidad y límites**: el Santuario, la Forja y la exploración de Sombras usan almacenamiento local (`localStorage`) y botón de exportar respaldo JSON. Los escritos no están sincronizados con otros dispositivos ni protegidos por una cuenta. No se adjuntan archivos binarios ni PDFs. La importación JSON reemplaza ambos catálogos después de confirmar. Máximo: 80 entradas por colección y 12.000 caracteres por texto. La calidad visual es una aproximación procedural para navegador y requiere control visual en WebGL para evaluar artefactos; no se afirma fotorrealismo cinematográfico.
