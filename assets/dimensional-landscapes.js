@@ -97,7 +97,8 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       side:THREE.BackSide,depthWrite:false,fog:false
     }));
   sky.position.set(0,0,-82);
-  group.add(sky);
+  // El cosmos utiliza su propia nebulosa fractal, no un cielo diurno encima.
+  if(level!==3)group.add(sky);
   if(level!==0){
     const landform=createRealisticTerrain(THREE,level,theme,compact);
     group.add(landform);
