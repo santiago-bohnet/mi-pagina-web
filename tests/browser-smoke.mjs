@@ -39,12 +39,34 @@ try{
       document.documentElement.style.scrollBehavior='auto';
       scrollTo(0,top+stage.offsetHeight*.51);
     },level);
+    // Un salto forzado por scroll a la dimensión siguiente activa primero
+    // la cabina durante ~4s. Esperar a que termine y luego situarse a mitad.
+    if(level>0){
+      await page.waitForTimeout(4650);
+      await page.evaluate(level=>{
+        const stage=document.getElementById('tunel-'+level);
+        scrollTo(0,stage.getBoundingClientRect().top+scrollY+stage.offsetHeight*.51);
+      },level);
+    }
     await page.waitForTimeout(1300);
-    const title=await page.locator('#portal-stop-title').textContent();
-    assert.ok(title?.includes(['Luz','Fuego','Sombras','Cosmos'][level]),'Portal equivocado');
+    const debug=await page.evaluate(()=>({
+      title:document.querySelector('#portal-stop-title')?.textContent,
+      hidden:document.querySelector('#portal-stop')?.hidden,
+      jump:document.querySelector('#teleport-cockpit')?.hidden,
+      scroll:scrollY
+    }));
+    console.log('Portal en Chromium: '+level+' '+JSON.stringify(debug));
+    assert.ok(debug.title?.includes(['Luz','Fuego','Sombras','Cosmos'][level]),
+      'Portal equivocado: '+JSON.stringify(debug));
     assert.equal(await page.locator('#portal-stop').isVisible(),true);
     const shot=await page.locator('#space').screenshot({timeout:30000});
     writeFileSync('browser-artifacts/dimension-'+level+'.png',shot);
+    // Muestra visual comprimida de la primera dimensión para inspección
+    // remota del render real, sin descargar artefactos privados del workflow.
+    if(level===0){
+      const tiny=await page.screenshot({type:'jpeg',quality:32});
+      console.log('XR_SCREENSHOT_BASE64='+tiny.toString('base64'));
+    }
     assert.ok(shot.length>15000,'El dibujo WebGL no debe estar vacío');
   }
   assert.equal(warnings.length,0,'Compilación de shaders: '+warnings.join('\n'));
