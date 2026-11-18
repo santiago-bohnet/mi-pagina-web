@@ -67,5 +67,40 @@ export function createPortalTour(){
       behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'
     });
   });
+  // Atenuar sólo el movimiento de la rueda/táctil durante la visita.
+  // La nave ya queda inmóvil en la plataforma; esto evita que un gesto
+  // rápido saltee la explicación y el reembarque. Fuera de la parada
+  // conservamos el scroll nativo del navegador.
+  const slowdown=0.30;
+  const slowing=()=>!!currentState?.stop?.visible &&
+    currentState.f>=.37 && currentState.f<=.69 &&
+    !document.body.classList.contains('is-teleporting') &&
+    !document.body.style?.overflow;
+  let lastTouchY=null;
+  if(typeof window.addEventListener==='function'){
+    window.addEventListener('wheel',event=>{
+      if(!slowing()||!event.cancelable||event.ctrlKey)return;
+      event.preventDefault();
+      const factor=event.deltaMode===1?16:event.deltaMode===2?innerHeight:1;
+      window.scrollBy(0,event.deltaY*factor*slowdown);
+    },{passive:false});
+    window.addEventListener('touchstart',event=>{
+      if(event.touches.length!==1){lastTouchY=null;return;}
+      lastTouchY=event.touches[0].clientY;
+    },{passive:true});
+    window.addEventListener('touchmove',event=>{
+      if(lastTouchY===null||event.touches.length!==1)return;
+      const y=event.touches[0].clientY;
+      if(!slowing()||!event.cancelable){
+        lastTouchY=y;return;
+      }
+      if(event.target.closest?.('button,a,[role="dialog"]'))return;
+      event.preventDefault();
+      window.scrollBy(0,(lastTouchY-y)*slowdown);
+      lastTouchY=y;
+    },{passive:false});
+    window.addEventListener('touchend',()=>{lastTouchY=null;},{passive:true});
+    window.addEventListener('touchcancel',()=>{lastTouchY=null;},{passive:true});
+  }
   return {update};
 }
