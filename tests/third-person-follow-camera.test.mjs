@@ -28,8 +28,9 @@ test('La cámara sigue a la nave por detrás y observa hacia su morro',()=>{
   const state=rig.update({ship:s,level:0,snap:true});
   assert.ok(state.position.z>s.position.z+7);
   assert.ok(state.lookAt.z<s.position.z);
-  assert.ok(Math.hypot(state.position.y-s.position.y,state.position.z-s.position.z)<11,
-    'La cámara no debe atravesar la pared curva del túnel');
+  assert.ok(Math.abs(state.position.x-s.position.x)<.001,
+    'La cámara debe seguir exactamente sobre el eje central de la nave');
+  assert.ok(Math.abs(state.position.z-s.position.z-16)<.001);
 });
 test('La cámara no está pegada al viewport: se desplaza suavemente detrás de la nave',()=>{
   const rig=createThirdPersonFollowCamera(THREE);
@@ -52,7 +53,7 @@ test('El seguimiento rota con la nave y reinicia posición tras teletransporte',
   const state=rig.update({ship:s,level:1});
   assert.ok(state.position.z<s.position.z-7,
     'Con morro +Z la cámara se ubica detrás, del lado -Z');
-  assert.equal(state.position.x,-20+2.5);
+  assert.equal(state.position.x,-20);
 });
 test('Movimiento reducido no introduce suavizado temporal',()=>{
   const rig=createThirdPersonFollowCamera(THREE);
@@ -60,5 +61,5 @@ test('Movimiento reducido no introduce suavizado temporal',()=>{
   rig.update({ship:s,level:0});
   s.position.x=25;
   const state=rig.update({ship:s,level:0,dt:1/60,reduced:true});
-  assert.ok(Math.abs(state.position.x-(25-2.5))<.001);
+  assert.ok(Math.abs(state.position.x-25)<.001);
 });
