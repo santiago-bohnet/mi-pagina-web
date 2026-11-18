@@ -16,10 +16,11 @@ export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimens
   if (progress < 1 || zone === 'intro') return 'Seré tu guía. Ven, tengo algo que mostrarte.';
   if (zone === 'exploration') return 'No todo lo que flota está perdido. Aquí comienza nuestro recorrido.';
   if (zone === 'nucleus' && portalEntry < .20) return 'Este es el núcleo Ω, el corazón de nuestro universo.';
-  if (portalEntry < .99) return 'Estas son las dimensiones que compartimos mi dueño y yo.';
-  if (level === 0 && f < .08) return 'Puedes echar un vistazo.';
-  if (fall > 0) return 'Por esta abertura llegamos a la siguiente dimensión. ¡Sígueme!';
-  if (level === 3 && f > .94) return 'Puedes volver a explorar las dimensiones subiendo. Yo te acompaño.';
+  if (zone === 'flight') return 'Subí a la nave. Viajaremos juntos por las dimensiones en tercera persona.';
+   if (portalEntry < .99) return 'Preparando la ruta de la nave hacia la primera dimensión.';
+  if (level === 0 && f < .08) return 'Llegamos a la dimensión de la luz. Podés explorar su portal.';
+  if (f > .76) return 'La nave está lista. Configurá el teletransporte para avanzar.';
+  if (level === 3 && f > .94) return 'Podemos fijar coordenadas y regresar al origen cuando quieras.';
   return DIMENSIONS[level].description;
 }
 
@@ -31,7 +32,8 @@ export function readIntro() {
       return { top: rect.top + scrollY, height: rect.height };
     };
     sequenceLayout = { width: innerWidth, height: innerHeight, intro: bounds('despertar'),
-      exploration: bounds('explorar'), nucleus: bounds('nucleo'), dimensions: bounds('tunel-0') };
+      exploration: bounds('explorar'), nucleus: bounds('nucleo'),
+       flight: bounds('viaje'), dimensions: bounds('tunel-0') };
   }
   const clamp = n => Math.max(0, Math.min(1, n));
   const layout = sequenceLayout;
@@ -42,10 +44,12 @@ export function readIntro() {
   const viewportCenter = scrollY + innerHeight * .4;
   const zone = viewportCenter < layout.exploration.top ? 'intro'
     : viewportCenter < layout.nucleus.top ? 'exploration'
-    : viewportCenter < layout.dimensions.top ? 'nucleus' : 'dimensions';
+    : viewportCenter < layout.flight.top ? 'nucleus'
+     : viewportCenter < layout.dimensions.top ? 'flight' : 'dimensions';
   return { progress, entry, portalEntry, zone,
     exploration: clamp((scrollY + innerHeight * .6 - layout.exploration.top) / layout.exploration.height),
-    nucleus: clamp((scrollY + innerHeight * .6 - layout.nucleus.top) / layout.nucleus.height) };
+    nucleus: clamp((scrollY + innerHeight * .6 - layout.nucleus.top) / layout.nucleus.height),
+     flight: clamp((scrollY + innerHeight * .6 - layout.flight.top) / layout.flight.height) };
 }
 
 export function createKuroGuide() {
