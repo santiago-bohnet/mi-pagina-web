@@ -3,7 +3,8 @@
 ## Flujo
 
 1. La introducción revela a Kuro y su nave.
-2. Después de «Descubrimiento» y «Núcleo», la etapa «Viaje» muestra la nave desde una cámara exterior (tercera persona).
+2. Después de «Descubrimiento» y «Núcleo», la etapa «Viaje» muestra la nave desde una **Third-Person Follow Camera real**. Kuro es un objeto independiente en el mundo 3D. La cámara lo sigue por detrás con amortiguación, mira hacia su morro y acompaña sus giros. No está anclado al encuadre.
+
 3. Se visita primero la Dimensión de la luz. Cada dimensión conserva su portal ovalado, que ahora es un punto de observación, **no** un agujero ni un pasaje a otra sala.
 4. La consola de navegación permite fijar coordenadas del siguiente destino: Luz → Fuego → Sombras → Cosmos → Luz.
 5. Al activar el salto, se muestra una cabina en primera persona: establecimiento de coordenadas → carga del núcleo → salto → estabilización. El desplazamiento a la nueva sala sucede durante la animación.
@@ -11,6 +12,7 @@
 
 ## Implementación
 
+- `assets/third-person-follow-camera.js`: cámara perseguidora real con suavizado independiente, orientación de la nave, mirada hacia delante y reposicionamiento instantáneo entre mundos.
 - `assets/ship-voyage.js`: máquina de estados temporal, navegación entre etapas, precarga de la siguiente escena.
 - `assets/ship-voyage.css`: consola, cabina y efecto de salto; versión de movimiento reducido y responsive.
 - `assets/journey-motion.js`: movimiento lateral por dimensión, sin caída vertical.
@@ -19,9 +21,9 @@
 
 ## Comprobación
 
-Ejecutar `node --test tests/ship-voyage.test.mjs` con Node 22 o superior.
+Ejecutar `node --test tests/*.test.mjs` con Node 22 o superior.
 
-En navegador: probar la introducción, el vuelo, la consola, cada salto, el regreso de Cosmos a Luz, abrir/cerrar el visor de un portal, el uso con teclado y el modo `prefers-reduced-motion`. También probar con WebGL deshabilitado: la consola y los teletransportes siguen disponibles.
+En navegador: comprobar que la nave se mueve por coordenadas 3D reales y que la cámara la persigue desde atrás con cierto retraso. Probar la introducción, el vuelo, la consola, cada salto, el regreso de Cosmos a Luz, abrir/cerrar el visor de un portal, el uso con teclado y el modo `prefers-reduced-motion`. También probar con WebGL deshabilitado: la consola y los teletransportes siguen disponibles.
 
 ## Alcance del cambio
 
