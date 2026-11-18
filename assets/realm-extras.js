@@ -310,6 +310,40 @@ function cosmicConstructs(T,parent,compact,reduced,updates){
     ring.rotation.z=i*.22;
   }
   updates.push(t=>{if(!reduced)worm.rotation.z=Math.sin(t*.13)*.1;});
+  // Planetas visitables: exactamente las coordenadas de los puntos del mapa.
+  const planetary=[
+    {name:'Borealis',x:80,y:35,z:-68,r:15,hex:0x517fa5},
+    {name:'Umbra',x:-90,y:20,z:-205,r:19,hex:0x544675},
+    {name:'Arca',x:128,y:45,z:-323,r:13,hex:0x659d8e}
+  ];
+  planetary.forEach((p,i)=>{
+    const surface=color(T,p.hex,{metalness:.08,roughness:.9});
+    const sphere=m(T,parent,new T.SphereGeometry(p.r,36,28),surface,p.x,p.y,p.z);
+    sphere.name='Planeta '+p.name;
+    const atm=new T.MeshBasicMaterial({color:p.hex,transparent:true,
+      opacity:.14,depthWrite:false,side:T.BackSide});
+    m(T,parent,new T.SphereGeometry(p.r*1.12,30,22),atm,p.x,p.y,p.z);
+    const ring=m(T,parent,new T.RingGeometry(p.r*1.5,p.r*2.1,64),
+      new T.MeshStandardMaterial({color:0x8bbab8,side:T.DoubleSide,
+      transparent:true,opacity:.42,depthWrite:false}),p.x,p.y,p.z);
+    ring.rotation.x=.8+i*.1;
+    updates.push(t=>{if(!reduced)sphere.rotation.y=t*.013;});
+  });
+  // Naves desconocidas: patrullan en trayectorias propias.
+  const scouts=[];
+  for(let i=0;i<(compact?4:9);i++){
+    const g=new T.Group();g.name='Nave exploradora desconocida';parent.add(g);
+    const hull=m(T,g,new T.ConeGeometry(1.7,7,6),metal,0,0,0);
+    hull.rotation.x=Math.PI/2;
+    m(T,g,new T.BoxGeometry(9,.25,2),metal,0,0,-.7);
+    m(T,g,new T.SphereGeometry(.52,8,6),cyan,0,0,-3.3);
+    scouts.push({g,i});
+  }
+  updates.push(t=>scouts.forEach(({g,i})=>{
+    const p=t*.12+i*.8;
+    g.position.set(Math.sin(p)*(65+i*5),12+Math.sin(p*.8)*10,-80-i*32+Math.cos(p)*24);
+    g.rotation.y=p*.2;
+  }));
   const alien=color(T,0x2c675f,{emissive:0x103b3e,emissiveIntensity:.4});
   for(let i=0;i<4;i++){
     const side=i%2?1:-1,x=side*(135+rand(i,4)*23),z=-35-i*85;
