@@ -27,9 +27,16 @@ export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimens
     if(stop.phase==='takeoff')return '¡De vuelta a bordo! Sigamos explorando.';
   }
   if (portalEntry < .99) return 'Preparando la ruta de la nave hacia la primera dimensión.';
-  if (level === 0 && f < .08) return 'Bienvenido al cielo angelical. Mirá los ángeles y las columnas mientras avanzamos.';
-  if (f > .76) return 'La nave está lista. Configurá el teletransporte para avanzar.';
+  if (level === 0 && f < .16) return 'Bienvenido al cielo angelical. Observá las formaciones de ángeles y el mar de nubes.';
+  if (level === 0 && f >= .19 && f < .36) return 'Esas catedrales surgieron sobre las islas. En ellas se guardan historias y conocimientos del reino.';
+  if (level === 1 && f < .34) return 'Las fortificaciones infernales fueron levantadas para resistir las erupciones de las montañas de obsidiana.';
+  if (level === 1 && f >= .72 && f < .88) return 'Los dragones patrullan las fortalezas. Más allá de la lava está la Forja de la Creación.';
+  if (level === 2 && f < .34) return 'En ese bosque antiguo se ocultan castillos, tumbas y un pasaje que nadie ha logrado explicar.';
+  if (level === 2 && f >= .70 && f < .88) return 'Tengo una señal extraña: quizá encontremos una puerta secreta entre las sombras.';
+  if (level === 3 && f < .31) return 'El Cosmos no termina en este camino: podemos tomar el control de la nave y visitar planetas.';
+  if (level === 3 && f >= .72 && f < .88) return 'Detecto estaciones espaciales, una singularidad oscura y una posible puerta de gusano.';
   if (level === 3 && f > .94) return 'Podemos fijar coordenadas y regresar al origen cuando quieras.';
+  if (f > .90) return 'La nave está lista. Configurá el teletransporte para avanzar.';
   return DIMENSIONS[level].description;
 }
 

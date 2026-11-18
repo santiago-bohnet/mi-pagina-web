@@ -54,6 +54,7 @@
 <link rel="stylesheet" href="./assets/ship-voyage.css?v=open-worlds-1">
 <link rel="stylesheet" href="./assets/open-worlds.css?v=open-worlds-1">
 <link rel="stylesheet" href="./assets/portal-tour.css?v=worlds-12">
+<link rel="stylesheet" href="./assets/realm-interactions.css?v=realms-14">
 </head>
 <body class="no-webgl">
 <canvas id="space" aria-hidden="true"></canvas>
@@ -116,16 +117,20 @@
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
 import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=landing-9';
-import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=tour-6';
-import { createDimensionScenes } from './assets/dimension-scenes.js?v=worlds-12';
+import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=realms-14';
+import { createDimensionScenes } from './assets/dimension-scenes.js?v=realms-14';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
 import { createShipVoyage } from './assets/ship-voyage.js?v=tour-6';
-import { createPortalTour } from './assets/portal-tour.js?v=clouds-8';
+import { createPortalTour } from './assets/portal-tour.js?v=realms-14';
 import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=open-worlds-1';
 import { createRenderQualityController } from './assets/quality-controller.js?v=worlds-12';
+import { createRealmActivities } from './assets/realm-activities.js?v=realms-14';
+import { createCosmicPilot } from './assets/cosmic-pilot.js?v=realms-14';
+import { createShadowMysteries } from './assets/shadow-mysteries.js?v=realms-14';
 const guide=createKuroGuide();
 installPortalInteractions();
-const portalTour=createPortalTour();
+let enterRealm=()=>false;
+const portalTour=createPortalTour({onEnter:level=>enterRealm(level)});
 let prepareDimension=()=>Promise.resolve();
 const voyage=createShipVoyage({
   dimensions:DIMENSIONS, currentLevel:()=>readJourney().level,
@@ -161,6 +166,19 @@ const renderQuality=createRenderQualityController(renderer,{
   reduced,width:()=>innerWidth,height:()=>innerHeight,
   pixelRatio:()=>devicePixelRatio,mobile:()=>innerWidth<750
 });
+// Actividades desacopladas: contenido local, misterios y pilotaje libre.
+const activities=createRealmActivities(THREE);
+const mysteries=createShadowMysteries(activities.store,{THREE});
+const pilot=createCosmicPilot();
+// Los portales ofrecen una experiencia específica en lugar de abrir
+// únicamente una tarjeta con una imagen.
+enterRealm=level=>{
+ if(level===0){activities.open('library');return true;}
+ if(level===1){activities.open('forge');return true;}
+ if(level===2){mysteries.open();return true;}
+ if(level===3){pilot.start(readJourney());return true;}
+ return false;
+};
 
 const ambient=new THREE.AmbientLight(0x8b6075,1.2);scene.add(ambient);const red=new THREE.PointLight(0xff2050,140,75);red.position.set(8,5,-8);scene.add(red);
 const starCount=innerWidth<700?550:900;const xyz=new Float32Array(starCount*3);for(let i=0;i<starCount;i++){xyz[3*i]=(Math.random()-.5)*280;xyz[3*i+1]=(Math.random()-.5)*180;xyz[3*i+2]=-Math.random()*410+25}
@@ -330,6 +348,12 @@ function frame(t){
   frameRequest=0;if(lostContext||document.hidden)return;
   t*=.001;
   const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
+  if(activities.isOpen()||mysteries.isOpen()){
+    activities.update(t);
+    mysteries.updateScene(t);
+    if(!reduced)scheduleFrame();
+    return;
+  }
   renderQuality.update(dt,t);
   const follow=reduced?1:1-Math.exp(-12*dt);
   const sequence=readIntro();
@@ -340,7 +364,11 @@ function frame(t){
   voyage.update(sequence,state);
   const jump=voyage.read();
   portalTour.update(state,sequence.zone,jump.active);
+  activities.showButton(state.level,sequence,state.stop);
+  mysteries.update(state,sequence.zone,jump.active);
+  pilot.showButton(state,sequence.zone,jump.active);
   const activeChase=sequence.zone==='dimensions';
+  const flightControl=pilot.update(dt);
   // La transición se hace progresiva al acercarnos a la etapa de vuelo.
   const chaseBlend=activeChase?1:ease((sequence.flight-.025)/.31);
   const flight=ease(sequence.flight);
@@ -367,7 +395,8 @@ function frame(t){
   // Curvas abiertas: la dirección real de la nave es tangente a la ruta.
   // Se mantiene un eje central suave; nada de movimiento de costado.
   if(activeChase){
-    worldShipGoal.set(state.x,state.y,state.z);
+    worldShipGoal.set(flightControl?.x??state.x,
+      flightControl?.y??state.y,flightControl?.z??state.z);
   }else{
     worldShipGoal.set(
       0,
@@ -382,8 +411,8 @@ function frame(t){
     worldShipPosition.lerp(worldShipGoal,reduced?1:1-Math.exp(-5.2*dt));
   }
   // El morro mira hacia la curva siguiente; balanceo leve, como una aeronave.
-  yawEuler.set(0,activeChase?state.yaw:Math.PI,
-    reduced?0:(activeChase?state.bank:0),'YXZ');
+  yawEuler.set(0,flightControl?.yaw??(activeChase?state.yaw:Math.PI),
+    reduced?0:(flightControl?.bank??(activeChase?state.bank:0)),'YXZ');
   targetShipRotation.setFromEuler(yawEuler);
   if(!worldShipReady || levelChanged || reduced){
     worldShipRotation.copy(targetShipRotation);

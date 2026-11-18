@@ -1,4 +1,4 @@
-import { makeLandscape } from './dimensional-landscapes.js?v=worlds-12';
+import { makeLandscape } from './dimensional-landscapes.js?v=realms-14';
 
 // Escenarios independientes y abiertos: sin paredes laterales ni cilindros.
 export function createDimensionScenes(THREE, parent, portalSystem, buttons, dimensions, onError, onReady = () => {}) {

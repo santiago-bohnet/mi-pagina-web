@@ -187,6 +187,16 @@ export function createFlowingLava(THREE,group,compact=false,reduced=false){
     const surface=new THREE.Mesh(new THREE.TubeGeometry(spline,170,compact?1.75:2.35,9,false),material);
     surface.frustumCulled=false;group.add(surface);
   }
+  // Lagos de magma a ambos lados de la ruta. Mantienen libre el carril
+  // y aportan una superficie inmensa de lava en movimiento.
+  const seaMat=material.clone();
+  seaMat.side=THREE.DoubleSide;
+  for(const side of [-1,1]){
+    const lake=new THREE.Mesh(new THREE.PlaneGeometry(150,230,16,16),seaMat);
+    lake.rotation.x=-Math.PI/2;
+    lake.position.set(side*128,-8.6,-165);
+    group.add(lake);
+  }
   return time=>{
     map.offset.x=reduced?0:(time*.045)%1;
     map.offset.y=reduced?0:(time*.027)%1;

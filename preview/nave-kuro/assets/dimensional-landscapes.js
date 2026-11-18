@@ -1,10 +1,11 @@
 // Paisajes abiertos; no se crean paredes, tubos ni túneles.
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
-import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=tour-6';
+import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=realms-14';
 import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-12';
-import { addCinematicWorldDetails } from './world-cinematics.js?v=worlds-12';
-import { createAngelFlock } from './angel-flight.js?v=worlds-12';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-14';
+import { createAngelFlock } from './angel-flight.js?v=realms-14';
+import { enhanceRealm } from './realm-extras.js?v=realms-14';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -32,6 +33,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   const animated = level===0
     ? [createHeavenlyCloudscape(THREE,group,{compact,reduced}),cinematic]
     : [createAtmosphericLayers(THREE,group,level,compact,reduced),cinematic];
+  // Detalles complementarios, separados para que se puedan cargar o ajustar
+  // sin alterar el motor de navegación de Kuro ni los otros reinos.
+  animated.push(enhanceRealm(THREE,group,level,{compact,reduced}));
   const shared = {
     orb: new THREE.SphereGeometry(1, 12, 10),
     cloud: new THREE.IcosahedronGeometry(1, 1),
