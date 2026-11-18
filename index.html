@@ -312,8 +312,9 @@ function frame(t){
  guideOffset.applyQuaternion(camera.quaternion);
  kuro.visible=!jump.active;
   kuro.position.copy(camera.position).add(guideOffset);
-  if(sequence.zone==='flight'&&!reduced)kuro.rotateZ(Math.sin(t*.9+sequence.flight*5)*.025);
+  
  kuro.quaternion.copy(camera.quaternion);kuro.rotateY(mx*(.025+.19*universe));
+  if(sequence.zone==='flight'&&!reduced)kuro.rotateZ(Math.sin(t*.9+sequence.flight*5)*.025);
  // Evitar que las alas se corten en celulares estrechos.
  kuro.scale.setScalar((innerWidth<550?(.77-.27*enter):innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
  animateKuro(t);
