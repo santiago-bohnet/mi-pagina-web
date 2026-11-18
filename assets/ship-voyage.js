@@ -95,10 +95,8 @@ export function createShipVoyage({ dimensions, currentLevel, prepare, reduced = 
     frameId = requestAnimationFrame(tick);
   }
 
-  function begin() {
+  function begin(from = currentLevel(), to = (from + 1) % dimensions.length) {
     if (transit) return;
-    const from = currentLevel();
-    const to = (from + 1) % dimensions.length;
     // Precargamos la escena de llegada; un fallo no bloquea la navegación HTML.
     Promise.resolve().then(() => prepare(to)).catch(() => {});
     transit = { from, to, started: performance.now(), jumped: false, progress: 0 };
@@ -119,7 +117,15 @@ export function createShipVoyage({ dimensions, currentLevel, prepare, reduced = 
     const isInsideDimensions = sequence.zone === 'dimensions';
     consoleEl.hidden = !isInsideDimensions;
     cameraMode.hidden = !(isFlying || isInsideDimensions);
-    if (isInsideDimensions) displayRoute(state.level);
+    if (!isInsideDimensions) {
+      displayedLevel = -1;
+    } else if (displayedLevel >= 0 && state.level !== displayedLevel) {
+      // Scrollear a otra sala también activa la transición; no se pueden saltar
+      // dimensiones evitando el teletransporte mediante la rueda o el táctil.
+      begin(displayedLevel, state.level);
+    } else {
+      displayRoute(state.level);
+    }
   }
 
   function read() {
@@ -129,7 +135,7 @@ export function createShipVoyage({ dimensions, currentLevel, prepare, reduced = 
       : { active: false, progress: 0, jumped: false };
   }
 
-  button.addEventListener('click', begin);
+  button.addEventListener('click', () => begin());
   document.addEventListener('visibilitychange', () => {
     // Si la pestaña queda suspendida durante el viaje, completamos el salto al volver.
     if (!document.hidden && transit && performance.now() - transit.started >= duration) {
