@@ -99,7 +99,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   sky.position.set(0,0,-82);
   // El cosmos utiliza su propia nebulosa fractal, no un cielo diurno encima.
   if(level!==3)group.add(sky);
-  if(level!==0){
+  // Luz: océano de nubes. Cosmos: vacío espacial, sin suelo plano.
+  // Sólo Fuego y Sombras tienen relieve mineral.
+  if(level===1||level===2){
     const landform=createRealisticTerrain(THREE,level,theme,compact);
     group.add(landform);
     upgradeTerrainWithPBR(THREE,landform,level,compact);
