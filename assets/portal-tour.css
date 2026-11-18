@@ -44,3 +44,24 @@ body.is-teleporting #ship-console {visibility:hidden}
 @media (prefers-reduced-motion:reduce) {
  #portal-stop,.portal-stop-actions button{transition:none!important}
 }
+
+/* Entrada ceremonial: la pantalla se convierte brevemente en un vórtice. */
+#scene-popup {isolation:isolate;overflow:hidden}
+#scene-popup::before {
+ content:'';position:absolute;inset:-65%;z-index:0;pointer-events:none;
+ background:repeating-conic-gradient(from 0deg,transparent 0deg 15deg,
+   #784dc52e 21deg,transparent 24deg 40deg,#eec47135 49deg,transparent 55deg 68deg);
+ opacity:.42;animation:portal-enter-vortex 1.25s ease-out both;
+}
+#scene-popup .inner {position:relative;z-index:1;animation:portal-enter-card 1s ease-out both}
+@keyframes portal-enter-vortex{
+ from{transform:rotate(160deg) scale(.03);opacity:1;filter:blur(25px)}
+ to{transform:rotate(0) scale(1);opacity:.28;filter:blur(3px)}
+}
+@keyframes portal-enter-card{
+ from{transform:scale(.55);opacity:0;filter:blur(13px)}
+ to{transform:scale(1);opacity:1;filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+ #scene-popup::before,#scene-popup .inner{animation:none!important}
+}
