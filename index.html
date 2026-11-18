@@ -117,11 +117,12 @@
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
 import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=landing-9';
 import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=tour-6';
-import { createDimensionScenes } from './assets/dimension-scenes.js?v=landing-10';
+import { createDimensionScenes } from './assets/dimension-scenes.js?v=worlds-11';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
 import { createShipVoyage } from './assets/ship-voyage.js?v=tour-6';
 import { createPortalTour } from './assets/portal-tour.js?v=clouds-8';
 import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=open-worlds-1';
+import { createRenderQualityController } from './assets/quality-controller.js?v=worlds-11';
 const guide=createKuroGuide();
 installPortalInteractions();
 const portalTour=createPortalTour();
@@ -152,12 +153,14 @@ const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,900);camer
 let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(error){guide.useFallback();return;}document.body.classList.replace('no-webgl','has-webgl');
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.18;
+renderer.toneMappingExposure=1.06;
 // Sombras suaves, escalado según GPU disponible; prioridad a la fluidez en móvil.
 renderer.shadowMap.enabled=innerWidth>750;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<700?1.1:1.5));
-renderer.setSize(innerWidth,innerHeight);
+const renderQuality=createRenderQualityController(renderer,{
+  reduced,width:()=>innerWidth,height:()=>innerHeight,
+  pixelRatio:()=>devicePixelRatio,mobile:()=>innerWidth<750
+});
 
 const ambient=new THREE.AmbientLight(0x8b6075,1.2);scene.add(ambient);const red=new THREE.PointLight(0xff2050,140,75);red.position.set(8,5,-8);scene.add(red);
 const starCount=innerWidth<700?550:900;const xyz=new Float32Array(starCount*3);for(let i=0;i<starCount;i++){xyz[3*i]=(Math.random()-.5)*280;xyz[3*i+1]=(Math.random()-.5)*180;xyz[3*i+2]=-Math.random()*410+25}
@@ -324,6 +327,7 @@ function frame(t){
   frameRequest=0;if(lostContext||document.hidden)return;
   t*=.001;
   const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
+  renderQuality.update(dt,t);
   const follow=reduced?1:1-Math.exp(-12*dt);
   const sequence=readIntro();
   const {progress:p,entry:exit,portalEntry:enter}=sequence;
@@ -484,10 +488,17 @@ function frame(t){
     worldFog.set(worldFogColors[state.level]);
     scene.background.copy(worldFog);
     scene.fog.color.copy(worldFog);
-    scene.fog.density=state.level===0?.0024:state.level===1?.004:.0045;
+    scene.fog.density=state.level===0?.0018:state.level===1?.0032:state.level===2?.0039:.0016;
+    // Controlar la exposición por dimensión: elimina el cielo completamente
+    // blanco y preserva detalle en las nubes y las zonas oscuras.
+    const exposure=[.78,.96,.96,.98][state.level];
+    renderer.toneMappingExposure+=
+      (exposure-renderer.toneMappingExposure)*(reduced?1:Math.min(1,dt*2.8));
   }else{
     scene.fog.color.set(0x06030e);
     scene.fog.density=.006;
+    renderer.toneMappingExposure+=
+      (1.06-renderer.toneMappingExposure)*(reduced?1:Math.min(1,dt*2.8));
   }
   portalLight.color.set(DIMENSIONS[state.level].color);
   portalLight.position.set(state.stop?.portalX??-21,-state.level*32+3.5,state.stop?.portalZ??-112);
@@ -509,7 +520,7 @@ function frame(t){
 if(reduced)addEventListener('scroll',scheduleFrame,{passive:true});
 scheduleFrame();
 document.addEventListener('visibilitychange',scheduleFrame);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(reduced)scheduleFrame()},{passive:true});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderQuality.resize(true);if(reduced)scheduleFrame()},{passive:true});
 })();
 function installPortalInteractions(){
  const popup=document.getElementById('scene-popup'),close=document.getElementById('close-scene');let last;
