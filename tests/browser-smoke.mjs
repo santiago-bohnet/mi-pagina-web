@@ -60,6 +60,20 @@ try{
       webgl:document.body.classList.contains('has-webgl')
     }));
     console.log('Portal en Chromium: '+level+' '+JSON.stringify(debug));
+    if(debug.hidden){
+      const diagnostic=await page.evaluate(async()=>{
+        const journey=await import('./assets/journey-motion.js?v=landing-9');
+        const intro=await import('./assets/kuro-guide.js?v=realms-14');
+        return {
+          state:journey.readJourney(),intro:intro.readIntro(),
+          panel:document.getElementById('portal-stop')?.outerHTML.slice(0,300),
+          canvas:document.getElementById('space')?.width
+        };
+      });
+      console.log('STOP_DIAGNOSTIC '+JSON.stringify(diagnostic));
+      console.log('BROWSER_ERRORS '+JSON.stringify(errors));
+      await page.waitForTimeout(3000);
+    }
     assert.equal(debug.webgl,true,'WebGL debe seguir activo');
     assert.ok(debug.title?.includes(['Luz','Fuego','Sombras','Cosmos'][level]),
       'Portal equivocado: '+JSON.stringify(debug));
