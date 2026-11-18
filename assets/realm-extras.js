@@ -52,7 +52,8 @@ function waterfalls(T,parent,compact,reduced,updates){
   const ribbons=[];
   for(let i=0;i<(compact?4:8);i++){
     const side=i%2?-1:1;
-    const x=side*(97+rand(i,11)*27),z=22-i*46;
+    // La cascada nace justo debajo de la isla del jardín correspondiente.
+    const x=side*(79+rand(i,4)*40),z=27-i*40;
     for(let j=0;j<3;j++){
       const geo=new T.PlaneGeometry(3.5+j,55,8,23);
       const pos=geo.getAttribute('position');
