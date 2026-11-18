@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { journeyAt } from '../assets/journey-motion.js';
+import { journeyAt, sampleFlightPath, FLIGHT_PATH } from '../assets/journey-motion.js';
 import { createShipVoyage } from '../assets/ship-voyage.js';
 
 const stages = [0, 2100, 4200, 6300].map(top => ({ top, height: 2100 }));
@@ -14,10 +14,10 @@ test('la nave navega cada dimensión sin pozos ni descensos', () => {
     const state = position(stages[level].top);
     assert.equal(state.fall, 0);
     assert.equal(state.y, -32 * level + 6);
-    assert.equal(state.x, 0);
+    assert.ok(Math.abs(state.x)<.00001);
     assert.equal(state.z, 22);
   }
-  assert.equal(position(2200, 390).x, 0);
+  assert.ok(Number.isFinite(position(2200, 390).x));
   const start=position(0);
   const halfway=position(1050);
   const end=position(1979);
@@ -25,6 +25,25 @@ test('la nave navega cada dimensión sin pozos ni descensos', () => {
   assert.ok(halfway.z<start.z);
   assert.ok(end.z<halfway.z);
   assert.ok(end.z < -145);
+  const left=position(525),right=position(1575);
+  assert.ok(left.x>2,'Primera curva hacia la derecha');
+  assert.ok(right.x< -2,'Segunda curva hacia la izquierda');
+  assert.ok(Math.abs(position(0).x)<1e-6,'El vuelo comienza centrado');
+  // La nave no puede desplazarse de costado: orientación alineada con la tangente.
+  for(const p of [.1,.2,.36,.6,.77,.92]){
+    const path=sampleFlightPath(p);
+    const prev=sampleFlightPath(p-.0005),next=sampleFlightPath(p+.0005);
+    const headingX=-Math.sin(path.yaw);
+    const headingZ=-Math.cos(path.yaw);
+    const deltaX=next.x-prev.x,deltaZ=next.z-prev.z;
+    const unit=Math.hypot(deltaX,deltaZ);
+    const dot=(headingX*deltaX+headingZ*deltaZ)/unit;
+    assert.ok(dot>.995,'La nave debe mirar hacia la ruta, no volar de costado');
+    assert.ok(Math.abs(path.bank)<=.111,'El balanceo nunca es brusco');
+    assert.ok(Math.abs(path.x)<15,'Las curvas deben ser amplias, no zigzag');
+  }
+  assert.equal(sampleFlightPath(0).z,FLIGHT_PATH.startZ);
+  assert.equal(sampleFlightPath(1).z,FLIGHT_PATH.endZ);
 });
 
 test('teletransporte: fija coordenadas, cambia de sala y vuelve a tercera persona', async () => {
