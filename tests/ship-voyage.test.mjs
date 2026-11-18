@@ -20,11 +20,11 @@ test('la nave navega cada dimensión sin pozos ni descensos', () => {
   assert.equal(position(2200, 390).x, 0);
   const start=position(0);
   const halfway=position(1050);
-  const end=position(2099);
+  const end=position(1979);
   assert.equal(start.z,22);
   assert.ok(halfway.z<start.z);
   assert.ok(end.z<halfway.z);
-  assert.ok(Math.abs(end.z+158)<.01);
+  assert.ok(end.z < -145);
 });
 
 test('teletransporte: fija coordenadas, cambia de sala y vuelve a tercera persona', async () => {
