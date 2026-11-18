@@ -45,7 +45,7 @@ test('Kuro aparca, presenta el portal, permite entrar o seguir y vuelve a embarc
     assert.equal(elements['portal-stop'].hidden,true);
     tour.update(state(.4),'dimensions');
     assert.equal(elements['portal-stop'].hidden,false);
-    assert.match(elements['portal-stop-hint'].textContent,/aterriz/);
+    assert.match(elements['portal-stop-hint'].textContent,/aproxima/);
     tour.update(state(.51),'dimensions');
     assert.equal(elements['portal-stop'].hidden,false);
     assert.match(elements['portal-stop-title'].textContent,/Portal de la Luz/);
