@@ -306,6 +306,9 @@ const worldShipPosition=new THREE.Vector3();
 const worldShipGoal=new THREE.Vector3();
 const worldShipRotation=new THREE.Quaternion();
 const targetShipRotation=new THREE.Quaternion();
+const yawEuler=new THREE.Euler(0,0,0,'YXZ');
+const verticalAxis=new THREE.Vector3(0,1,0);
+const anchorWorld=new THREE.Vector3(.1,1,.5);
 const introRotation=new THREE.Quaternion();
 const worldShip={position:worldShipPosition,quaternion:worldShipRotation};
 const blendedLookAt=new THREE.Vector3();
@@ -359,7 +362,7 @@ function frame(t){
     -(distance*(1-travel)+12*travel)
   );
   introShipPosition.copy(introPosition).add(guideOffset);
-  introRotation.setFromAxisAngle(new THREE.Vector3(0,1,0),mx*(.025+.19*universe));
+  introRotation.setFromAxisAngle(verticalAxis,mx*(.025+.19*universe));
 
   // Curvas abiertas: la dirección real de la nave es tangente a la ruta.
   // Se mantiene un eje central suave; nada de movimiento de costado.
@@ -379,10 +382,9 @@ function frame(t){
     worldShipPosition.lerp(worldShipGoal,reduced?1:1-Math.exp(-5.2*dt));
   }
   // El morro mira hacia la curva siguiente; balanceo leve, como una aeronave.
-  targetShipRotation.setFromEuler(new THREE.Euler(
-    0,activeChase?state.yaw:Math.PI,
-    reduced?0:(activeChase?state.bank:0),'YXZ'
-  ));
+  yawEuler.set(0,activeChase?state.yaw:Math.PI,
+    reduced?0:(activeChase?state.bank:0),'YXZ');
+  targetShipRotation.setFromEuler(yawEuler);
   if(!worldShipReady || levelChanged || reduced){
     worldShipRotation.copy(targetShipRotation);
   }else{
@@ -412,7 +414,7 @@ function frame(t){
     if(catBody.parent!==scene)scene.attach(catBody);
     catBody.position.copy(catMountedWorld).lerp(catExitWorld,outside);
     catBody.scale.setScalar(THREE.MathUtils.lerp(kuro.scale.x,1.95,outside));
-    catBody.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),
+    catBody.quaternion.setFromAxisAngle(verticalAxis,
       state.level%2===0?-.3:.3);
   }else if(catBody.parent!==kuro){
     kuro.attach(catBody);
@@ -510,7 +512,7 @@ function frame(t){
     catHead.rotation.y+=outside*.18;
     tail.rotation.y+=Math.sin(t*2.1)*.045*outside;
   }
-  const anchor=catBody.localToWorld(new THREE.Vector3(.1,1,.5));
+  const anchor=catBody.localToWorld(anchorWorld.set(.1,1,.5));
   anchor.project(camera);
   guide.placeAnchor((anchor.x*.5+.5)*innerWidth,(1-anchor.y)*.5*innerHeight);
   renderer.render(scene,camera);
