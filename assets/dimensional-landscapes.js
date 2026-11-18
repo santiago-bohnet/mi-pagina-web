@@ -4,6 +4,7 @@
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=tour-6';
 import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-11';
 import { addCinematicWorldDetails } from './world-cinematics.js?v=worlds-11';
+import { createAngelFlock } from './angel-flight.js?v=worlds-11';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -125,57 +126,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     addInstances(shared.pillar,marble,columns);
     addInstances(shared.box,gold,capitals);
 
-    // Ángeles modelados con túnicas, cabezas, aureolas y alas emplumadas.
-    // No se usan imágenes planas: son figuras tridimensionales ligeras.
-    const robe=material(0xf3ecdb,{roughness:.96,emissive:0xd8c69a,emissiveIntensity:.12});
-    const hair=material(0xc8ad79,{roughness:.94});
-    const eye=material(0x493a31,{roughness:.65});
-    const sleeveMat=material(0xe2dccd,{roughness:.94});
-    const face=material(0xffd6af,{emissive:0xb8906e,emissiveIntensity:.09});
-    const feather=material(0xf2eee2,{roughness:.89,side:THREE.DoubleSide,emissive:0xc3cede,emissiveIntensity:.12});
-    const halo=glowMaterial(0xffe19a);
-    const wingshape=new THREE.SphereGeometry(1,8,6);
-    const angelCount=compact?12:26;
-    for(let i=0;i<angelCount;i++){
-      const angel=new THREE.Group();
-      const side=i%2?1:-1;
-      angel.position.set(side*(17+randomAt(i+128)*29),6+randomAt(i+221)*10,9-i*(compact?47:27));
-      const size=.88+randomAt(i+42)*.55;
-      angel.scale.setScalar(size);
-      const tunic=put(new THREE.CylinderGeometry(.42,1.15,3.3,16,3),robe,[0,-.2,0],null,angel);
-      tunic.castShadow=!compact;
-      put(shared.orb,face,[0,2.0,.03],[.48,.56,.45],angel);
-      put(shared.orb,hair,[0,2.37,-.09],[.5,.28,.5],angel);
-      for(const d of [-1,1]){
-        const arm=put(new THREE.CylinderGeometry(.19,.3,1.5,9),sleeveMat,[d*.73,.64,.07],null,angel);
-        arm.rotation.z=d*.36;
-        put(shared.orb,face,[d*.93,-.1,.13],[.17,.2,.17],angel);
-        put(shared.orb,eye,[d*.19,2.09,.47],[.041,.052,.02],angel);
-      }
-      put(new THREE.TorusGeometry(.75,.07,7,30),halo,[0,2.86,0],null,angel).rotation.x=Math.PI/2;
-      const wingGroups=[];
-      for(const dir of [-1,1]){
-        const wing=new THREE.Group();
-        wing.position.set(dir*.52,1.15,-.2);
-        for(let k=0;k<9;k++){
-          const t=k/8;
-          const featherObj=put(wingshape,feather,
-            [dir*(.32+k*.33),.5-k*.11,-.08],[.23+t*.07,1.05-t*.39,.15],wing);
-          featherObj.rotation.z=dir*(.55+t*.7);
-        }
-        angel.add(wing);
-        wingGroups.push({wing,dir});
-      }
-      group.add(angel);
-      animated.push(time=>{
-        if(reduced)return;
-        angel.position.y=angel.userData.baseY+Math.sin(time*.62+i)*.35;
-        wingGroups.forEach(({wing,dir})=>{
-          wing.rotation.z=dir*(.12+Math.sin(time*1.4+i*.65)*.17);
-        });
-      });
-      angel.userData.baseY=angel.position.y;
-    }
+    // Alas con plumas instanciadas y silueta humana esculpida: reemplaza
+    // las antiguas esferas geométricas que se veían como figuras de juguete.
+    animated.push(createAngelFlock(THREE,group,{compact,reduced}));
     const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,2.5);
     group.add(heavenlyLight);
     const sunlight=new THREE.DirectionalLight(0xffecd6,2.45);
