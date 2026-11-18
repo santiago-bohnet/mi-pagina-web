@@ -1,7 +1,7 @@
 // Paisajes abiertos; no se crean paredes, tubos ni túneles.
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
-import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava } from './realistic-environments.js?v=cinematic-3';
+import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=cinematic-tour-4';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -89,7 +89,10 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     }));
   sky.position.set(0,0,-82);
   group.add(sky);
-  group.add(createRealisticTerrain(THREE,level,theme,compact));
+  const landform=createRealisticTerrain(THREE,level,theme,compact);
+  group.add(landform);
+  // Imágenes de roca fotografiada, cargadas con un fallback procedural sin internet.
+  upgradeTerrainWithPBR(THREE,landform,level,compact);
   const sun=put(new THREE.SphereGeometry(level===0?16:11,24,18),
     new THREE.MeshBasicMaterial({
       color:level===0?0xfff2d3:level===1?0xff4927:theme.accent,
@@ -104,7 +107,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       clouds.push({
         x:side*(15+randomAt(i+11)*120),
         y:-2+randomAt(i+47)*22,
-        z:35-randomAt(i+86)*245,
+        z:35-randomAt(i+86)*342,
         sx:5+randomAt(i+26)*14,sy:1.1+randomAt(i+38)*2.9,
         sz:4+randomAt(i+29)*9
       });
@@ -115,7 +118,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     const gold=material(0xffd386,{metalness:.45,roughness:.35,emissive:0xcc9e58,emissiveIntensity:.34});
     const columns=[],capitals=[];
     for(let i=0;i<22;i++){
-      const side=i%2?-1:1,z=-17-i*8;
+      const side=i%2?-1:1,z=4-i*13;
       const x=side*(25+(i%4)*12);
       columns.push({x,y:1+(i%3)*1.3,z,sx:1.15,sy:21+(i%4)*4,sz:1.15});
       capitals.push({x,y:12+(i%3)*1.3+(i%4)*2,z,sx:3.4,sy:.85,sz:3.4});
@@ -137,7 +140,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     for(let i=0;i<angelCount;i++){
       const angel=new THREE.Group();
       const side=i%2?1:-1;
-      angel.position.set(side*(17+randomAt(i+128)*29),6+randomAt(i+221)*10,-24-i*(compact?29:16));
+      angel.position.set(side*(17+randomAt(i+128)*29),6+randomAt(i+221)*10,9-i*(compact?47:27));
       const size=.88+randomAt(i+42)*.55;
       angel.scale.setScalar(size);
       const tunic=put(new THREE.CylinderGeometry(.42,1.15,3.3,16,3),robe,[0,-.2,0],null,angel);
@@ -199,7 +202,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     for(let i=0;i<(compact?95:176);i++){
       const side=i%2?1:-1;
       const x=side*(17+randomAt(i+41)*146);
-      const z=30-randomAt(i+56)*260;
+      const z=30-randomAt(i+56)*345;
       spikes.push({x,y:-6+randomAt(i+7)*3,z,
         sx:2+randomAt(i+17)*4,sy:8+randomAt(i+71)*42,sz:2+randomAt(i+22)*4,ry:randomAt(i+80)*6});
       if(i%3===0)boulders.push({x:x+6,y:-8,z:z-2,sx:3+randomAt(i+14)*7,sy:2+randomAt(i+91)*6,sz:4+randomAt(i+67)*9});
@@ -246,7 +249,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       const side=i%2?1:-1;
       points[i*3]=side*(14+randomAt(i+93)*90);
       points[i*3+1]=-2+randomAt(i+45)*46;
-      points[i*3+2]=20-randomAt(i+8)*245;
+      points[i*3+2]=20-randomAt(i+8)*342;
     }
     const emberGeo=new THREE.BufferGeometry();
     emberGeo.setAttribute('position',new THREE.BufferAttribute(points,3));
@@ -270,7 +273,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     const placements=[],highlights=[];
     for(let i=0;i<(compact?100:185);i++){
       const side=i%2?1:-1;
-      const x=side*(17+randomAt(i+31)*140),z=30-randomAt(i+44)*260;
+      const x=side*(17+randomAt(i+31)*140),z=30-randomAt(i+44)*345;
       const h=9+randomAt(i+66)*49;
       placements.push({x,y:-6,z,sx:1+randomAt(i)*3,sy:h,sz:1+randomAt(i+3)*3});
       if(i%4===0)highlights.push({x,y:-3+h*.45,z,sx:.3,sy:h*.21,sz:.3});
@@ -300,7 +303,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       const side=i%2?1:-1;
       const x=side*(25+randomAt(i+7)*100);
       const y=8+randomAt(i+66)*43;
-      const z=15-i*19;
+      const z=18-i*28;
       const size=2+randomAt(i+18)*9;
       put(shared.orb,orbsMat,[x,y,z],[size,size,size]);
       const ring=put(new THREE.TorusGeometry(size*1.55,.12,6,32),ringsMat,[x,y,z]);
