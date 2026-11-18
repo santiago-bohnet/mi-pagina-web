@@ -20,3 +20,10 @@ jobs:
           node-version: '22'
       - name: Probar rutas y teletransporte
         run: node --test tests/*.test.mjs
+      - name: Comprobar sintaxis de los escenarios 3D
+        run: |
+          node --check assets/dimensional-landscapes.js
+          node --check assets/dimension-scenes.js
+          node --check assets/portal-effects.js
+          node --check assets/journey-motion.js
+          node --check assets/third-person-follow-camera.js
