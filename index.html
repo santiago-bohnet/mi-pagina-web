@@ -51,6 +51,7 @@
 }
 </style>
 <link rel="stylesheet" href="./assets/portals.css?v=oval-ref-5">
+<link rel="stylesheet" href="./assets/ship-voyage.css?v=ship-voyage-1">
 </head>
 <body class="no-webgl">
 <canvas id="space" aria-hidden="true"></canvas>
@@ -58,7 +59,7 @@
 
 <div id="kuro-overlay" aria-hidden="true"><span id="catmark"><i class="eyes"></i></span></div>
 <a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
-<a href="./clasica.html" id="classic-mode-link" aria-label="Cambiar a la versión clásica de Universo XR">💻 Modo clásico ↗</a>
+<a href="./clasica.html" id="classic-mode-link" aria-label="Cambiar a la versión clásica del universo de Kuro">💻 Modo clásico ↗</a>
 <a href="#explorar" id="skip-intro">Explorar con Kuro ↓</a><div class="scroll-guide">SCROLL ↓ · SIGUE A KURO</div><main>
 <section class="intro-stage" id="despertar" aria-label="Kuro se acerca y se presenta. Desplázate para explorar sus dimensiones."><h1 class="sr-only">Kuro</h1><span id="intro-eyes" aria-hidden="true"><i></i><i></i></span></section>
 
@@ -68,9 +69,37 @@
 </section>
 <section class="stage prelude-stage" id="nucleo" aria-labelledby="core-heading">
 <div class="core-preview" aria-hidden="true"><i></i><i></i><i></i><b>Ω</b></div>
-<div class="prelude-content"><p class="eyebrow">02 / NÚCLEO</p><h2 id="core-heading">EL CORAZÓN DEL <span class="omega-accent">Ω</span></h2><p class="desc">Una estructura suspendida en el vacío. El corazón de este universo conecta todas sus dimensiones.</p><a class="action" href="#portales">Descubrir los portales ↓</a></div>
+<div class="prelude-content"><p class="eyebrow">02 / NÚCLEO</p><h2 id="core-heading">EL CORAZÓN DEL <span class="omega-accent">Ω</span></h2><p class="desc">Una estructura suspendida en el vacío. El corazón de este universo conecta todas sus dimensiones.</p><a class="action" href="#viaje">Subir a la nave de Kuro ↓</a></div>
+</section>
+<section class="stage ship-flight" id="viaje" aria-labelledby="flight-heading">
+  <div class="prelude-content">
+    <span class="flight-badge">03 / VIAJE EN NAVE · TERCERA PERSONA</span>
+    <h2 id="flight-heading">TU VIAJE COMIENZA<br>CON KURO AL MANDO</h2>
+    <p class="desc">Viajá con Kuro en su nave por cuatro dimensiones. Durante el recorrido vas a verla desde afuera. Para pasar de un mundo a otro, activá el teletransporte de la consola: la nave fijará las coordenadas y entrarás en la cabina en primera persona durante el salto.</p>
+    <a class="action" href="#tunel-0">Comenzar el viaje a la dimensión de la luz ↓</a>
+  </div>
 </section><span id="portales" aria-hidden="true"></span>
-<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><span id="bajada-0" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-fire" href="#tunel-1" aria-label="Ir a la dimensión del fuego"><img src="./assets/sign-fire.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><span id="bajada-1" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-shadow" href="#tunel-2" aria-label="Ir a la dimensión de las sombras"><img src="./assets/sign-shadow.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><span id="bajada-2" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-cosmos" href="#tunel-3" aria-label="Ir a la dimensión cósmica"><img src="./assets/sign-cosmos.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><span id="bajada-0" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><span id="bajada-1" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><span id="bajada-2" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Cuatro dimensiones, una nave y teletransportes por coordenadas.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<div id="camera-mode" hidden role="status">CÁMARA EXTERIOR · TERCERA PERSONA</div>
+<aside id="ship-console" hidden aria-label="Consola de teletransporte de la nave">
+  <div class="ship-console-head">NAVE DE KURO · NAVEGACIÓN</div>
+  <strong id="ship-current">Dimensión de la luz</strong>
+  <p class="ship-console-route">Próxima dimensión <span id="ship-next">Dimensión del fuego</span></p>
+  <div class="ship-console-coords" id="ship-coordinates">IGN-002 · 083.4 / 012.9 / 147</div>
+  <button id="teleport-next" type="button">Fijar coordenadas y teletransportar</button>
+</aside>
+<div id="teleport-cockpit" hidden role="group" aria-label="Teletransporte desde la cabina de Kuro en primera persona">
+  <span class="cockpit-line left" aria-hidden="true"></span>
+  <span class="cockpit-line right" aria-hidden="true"></span>
+  <div class="cockpit-dashboard">
+    <div class="eyebrow">SISTEMA DE TELETRANSPORTE · KURO</div>
+    <h2 id="teleport-destination">Dimensión del fuego</h2>
+    <div class="coord" id="teleport-coordinates">IGN-002 · 083.4 / 012.9 / 147</div>
+    <p id="teleport-phase" role="status" aria-live="polite" aria-atomic="true">Estableciendo coordenadas…</p>
+    <div class="teleport-meter" aria-hidden="true"><span id="teleport-progress"></span></div>
+    <div class="teleport-camera-label">VISTA DESDE LA CABINA · PRIMERA PERSONA</div>
+  </div>
+</div>
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">KURO TE MUESTRA</p><h2 id="world-heading"></h2><p id="world-desc"></p><img class="world-art" id="world-art" src="./assets/portal-inferno.webp" alt="Portal ovalado de energía escarlata en una dimensión volcánica" hidden><p class="eyebrow">PUEDES SEGUIR EXPLORANDO</p><button id="close-scene" class="action">Seguir con Kuro</button></div></div>
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
@@ -78,8 +107,19 @@ import { readJourney } from './assets/journey-motion.js?v=signs-origin';
 import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=signs-origin';
 import { createDimensionScenes } from './assets/dimension-scenes.js?v=signs-origin';
 import { createOriginSequence } from './assets/origin-sequence.js?v=signs-origin';
+import { createShipVoyage } from './assets/ship-voyage.js?v=ship-voyage-1';
 const guide=createKuroGuide();
 installPortalInteractions();
+let prepareDimension=()=>Promise.resolve();
+const voyage=createShipVoyage({
+  dimensions:DIMENSIONS, currentLevel:()=>readJourney().level,
+  prepare:level=>prepareDimension(level),
+  reduced:matchMedia('(prefers-reduced-motion: reduce)').matches
+});
+const syncVoyage=()=>voyage.update(readIntro(),readJourney());
+addEventListener('scroll',syncVoyage,{passive:true});
+addEventListener('resize',syncVoyage,{passive:true});
+syncVoyage();
 import { TUNNEL } from './assets/tunnel-openings.js?v=signs-origin';
 let THREE;
 try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/+esm'); }
@@ -214,6 +254,7 @@ const tunnels=new THREE.Group();scene.add(tunnels);
 const portalButtons=[...document.querySelectorAll('.tunnel-caption .portal')];
 const portalSystem=createPortalSystem(THREE,tunnels,{reduced,onReady:()=>{if(reduced)scheduleFrame()}});
 const scenes=createDimensionScenes(THREE,tunnels,portalSystem,portalButtons,DIMENSIONS,useFallback,scheduleFrame);
+prepareDimension=level=>scenes.prepare(level);
 const originSequence=createOriginSequence(THREE,scene,reduced);
 scenes.prepare(0).catch(()=>{});
 const portalLight=new THREE.PointLight(0xffffff,180,30,1.5);scene.add(portalLight);
@@ -234,17 +275,23 @@ function frame(t){
  const distance=24-12*p;
  // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
  const state=journeyState();
+  const jump=voyage.read();
+  voyage.update(sequence,state);
  const targetZ=35-28*exit;
  camera.position.z+=(targetZ-camera.position.z)*follow;
  camera.position.x+=((THREE.MathUtils.lerp(mx*.3,state.x,enter))-camera.position.x)*follow;
  camera.position.y+=((THREE.MathUtils.lerp(1-my*.2,state.y-1,enter))-camera.position.y)*follow;
- if(state.active&&state.fall>0){camera.position.x=state.x;camera.position.z=7;}
+ // El salto se observa desde la cabina. El cambio de sala sucede bajo la animación.
+  if(jump.active){camera.position.set(state.x,state.y,7);}
  // After the introduction, only screen-space X/Y panning remains. No dive or pitch.
  camera.up.set(0,1,0);
  camera.lookAt(camera.position.x,camera.position.y,camera.position.z-30);
  camera.updateMatrixWorld();
  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
- starMaterial.opacity=.83*universe*(1-enter);stars.visible=universe>.01&&enter<.999;
+ starMaterial.opacity=.83*universe*(1-enter);
+  stars.visible=universe>.01&&(enter<.999||jump.active);
+  stars.position.z=sequence.zone==='flight'?sequence.flight*18:0;
+  stars.rotation.z=jump.active&&!reduced?t*.14:0;
  tunnels.visible=enter>.001;scenes.update(state,enter,camera);
  originSequence.update(t,sequence,mx,my);
  // First Kuro's eyes, then reveal cat and spacecraft gradually.
@@ -263,7 +310,9 @@ function frame(t){
  guideOffset.set((-state.side*2*(1-2*state.fall)*enter)+Math.sin(t*.65)*.08,
   -.08-2.7*universe+Math.cos(t*1.2)*.05,-(distance*(1-travel)+12*travel));
  guideOffset.applyQuaternion(camera.quaternion);
- kuro.position.copy(camera.position).add(guideOffset);
+ kuro.visible=!jump.active;
+  kuro.position.copy(camera.position).add(guideOffset);
+  if(sequence.zone==='flight'&&!reduced)kuro.rotateZ(Math.sin(t*.9+sequence.flight*5)*.025);
  kuro.quaternion.copy(camera.quaternion);kuro.rotateY(mx*(.025+.19*universe));
  // Evitar que las alas se corten en celulares estrechos.
  kuro.scale.setScalar((innerWidth<550?(.77-.27*enter):innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
