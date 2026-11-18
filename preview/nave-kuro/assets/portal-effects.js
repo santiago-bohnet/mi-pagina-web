@@ -211,8 +211,12 @@ export function createPortalSystem(THREE, scene, { reduced = false, onReady = ()
       portal.material.uniforms.uHover.value = portal.hover;
       const available = active && i === level && f < 0.67;
       portal.group.visible = active && Math.abs(i - level) <= 1;
-      center.copy(portal.group.position).project(camera);
-      corner.copy(portal.group.position).add(halfSize).project(camera);
+      // Coordenadas mundiales: la escena tiene altura propia por dimensión.
+      portal.group.getWorldPosition(center);
+      corner.copy(halfSize);
+      portal.group.localToWorld(corner);
+      center.project(camera);
+      corner.project(camera);
       const width = Math.abs(corner.x - center.x) * innerWidth;
       const height = Math.abs(corner.y - center.y) * innerHeight;
       const inView = available && center.z > -1 && center.z < 1

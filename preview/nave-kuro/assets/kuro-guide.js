@@ -1,14 +1,14 @@
-import { readJourney } from './journey-motion.js?v=ship-voyage-1';
+import { readJourney } from './journey-motion.js?v=open-worlds-1';
 
 export const DIMENSIONS = Object.freeze([
   { theme: 'light', name: 'Dimensión de la luz', color: '#e2c88d',
-    description: 'Esta es la dimensión de la luz. Contiene columnas de piedra clara y destellos dorados.' },
+    description: 'Esta es la dimensión de la luz: un cielo angelical abierto, con nubes, templos luminosos y ángeles que vuelan a nuestro alrededor.' },
   { theme: 'fire', name: 'Dimensión del fuego', color: '#f45124',
-    description: 'Esta es la dimensión del fuego. Contiene roca volcánica, lava y energía escarlata.' },
+    description: 'Esta es la dimensión del fuego: sobrevolamos un infierno abierto con volcanes, ríos de lava, brasas y montañas de obsidiana.' },
   { theme: 'shadow', name: 'Dimensión de las sombras', color: '#a17bea',
-    description: 'Esta es la dimensión de las sombras. Aquí esperan ruinas antiguas, cristales y secretos.' },
+    description: 'Esta es la dimensión de las sombras: un valle abierto de cristales oscuros y agujas violetas.' },
   { theme: 'cosmos', name: 'Dimensión cósmica', color: '#58dfbd',
-    description: 'Esta es la dimensión cósmica. Aquí encontrarás estructuras extrañas y energía de otros mundos.' }
+    description: 'Esta es la dimensión cósmica: un horizonte abierto de planetas flotantes, estrellas y energía de otros mundos.' }
 ]);
 
 export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimensions', level, f, fall }) {
@@ -16,9 +16,9 @@ export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimens
   if (progress < 1 || zone === 'intro') return 'Seré tu guía. Ven, tengo algo que mostrarte.';
   if (zone === 'exploration') return 'No todo lo que flota está perdido. Aquí comienza nuestro recorrido.';
   if (zone === 'nucleus' && portalEntry < .20) return 'Este es el núcleo Ω, el corazón de nuestro universo.';
-  if (zone === 'flight') return 'Subí a la nave. Viajaremos juntos por las dimensiones en tercera persona.';
+  if (zone === 'flight') return 'Subí a la nave. Iremos siempre en línea recta, con la cámara detrás de la nave.';
    if (portalEntry < .99) return 'Preparando la ruta de la nave hacia la primera dimensión.';
-  if (level === 0 && f < .08) return 'Llegamos a la dimensión de la luz. Podés explorar su portal.';
+  if (level === 0 && f < .08) return 'Bienvenido al cielo angelical. Mirá los ángeles y las columnas mientras avanzamos.';
   if (f > .76) return 'La nave está lista. Configurá el teletransporte para avanzar.';
   if (level === 3 && f > .94) return 'Podemos fijar coordenadas y regresar al origen cuando quieras.';
   return DIMENSIONS[level].description;
