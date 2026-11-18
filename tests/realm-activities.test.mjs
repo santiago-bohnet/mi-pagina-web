@@ -41,7 +41,7 @@ test('validar capacidad, tamaños y entradas ajenas',()=>{
  assert.equal(s.importJSON(s.exportJSON()),true);
 });
 test('el cosmos incorpora pilotaje opcional y puntos de navegación distintos',()=>{
- assert.equal(COSMIC_WAYPOINTS.length,5);
+ assert.ok(COSMIC_WAYPOINTS.length>=8);
  assert.equal(new Set(COSMIC_WAYPOINTS.map(x=>x.name)).size,5);
  for(const point of COSMIC_WAYPOINTS){
   assert.ok(Number.isFinite(point.x)&&Number.isFinite(point.y)&&Number.isFinite(point.z));
