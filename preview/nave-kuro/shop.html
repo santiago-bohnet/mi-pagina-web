@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08090d">
+<meta name="description" content="XR Shop: configurá tu sistema a medida, activá módulos y probá demos interactivas de restaurante, turnos y Minecraft.">
+<title>XR Shop · Sistemas a tu medida | Universo XR</title>
+<link rel="stylesheet" href="./assets/shop-v2.css">
+</head>
+<body>
+<header><nav class="wrap navigation" aria-label="Navegación principal">
+<a class="brand" href="./clasica.html" aria-label="Volver a Universo XR"><span class="brand-mark" aria-hidden="true">Ω</span><span>UNIVERSO XR<small>TECNOLOGÍA A TU MEDIDA</small></span></a>
+<div class="navlinks"><a href="./clasica.html">Inicio</a><a href="./clasica.html#proyectos">Proyectos</a><a href="./shop.html" class="current" aria-current="page">XR Shop</a><a class="nav-cta" href="./clasica.html#contacto">Contacto ↗</a></div>
+</nav></header>
+<main>
+<section class="wrap hero" aria-labelledby="hero-title">
+<div>
+<div class="eyebrow">Ω XR / DIGITAL SYSTEMS MARKETPLACE</div>
+<h1 id="hero-title">TU IDEA.<br>TUS <span>REGLAS.</span></h1>
+<p>El futuro de tu negocio no viene en una caja cerrada. Elegí un sistema, combiná módulos como piezas de un juego y probá cómo funciona antes de contratarlo. Cada función tiene su lugar y podés sumar o quitar lo que necesites.</p>
+<div class="hero-buttons"><a href="#catalogo" class="btn">Explorar sistemas <span aria-hidden="true">↘</span></a><a href="#laboratorio" class="btn btn-outline">Ir al laboratorio ⚙</a></div>
+<div class="hero-pills"><span class="pill">▣ Sistemas modulares</span><span class="pill">◉ Demos interactivas</span><span class="pill">✦ Presupuesto dinámico</span></div>
+</div>
+<div class="hero-art" aria-hidden="true"><div class="orbit"></div><div class="hero-omega">Ω</div><div class="float one"><b>XR // SYSTEM ONLINE</b><small>Configurá tu plataforma</small></div><div class="float two"><b>+ MÓDULOS</b><small>Tu negocio evoluciona con vos</small></div></div>
+</section>
+<section class="wrap section" id="catalogo" aria-labelledby="catalog-title"><div class="section-top"><div><div class="eyebrow">01 / EXPLORÁ</div><h2 id="catalog-title">Elegí tu universo digital.</h2></div><p>Tres soluciones para comenzar. Cada una se adapta a tu negocio y crece por módulos.</p></div><div class="catalog" id="catalog" aria-label="Catálogo de productos"></div></section>
+<section class="wrap section" id="laboratorio" aria-labelledby="builder-title"><div class="section-top"><div><div class="eyebrow">02 / CONSTRUÍ & PROBÁ</div><h2 id="builder-title">El laboratorio XR.</h2></div><p>Encendé módulos, probá productos, creá pedidos y revisá el panel administrativo. Todo en una demo segura.</p></div>
+<div class="builder">
+<section class="panel" aria-label="Configurador de módulos">
+<div class="panel-title"><div><h3 id="selected-title">Configuración</h3><p>Elegí las funciones de tu proyecto.</p></div><span class="counter" id="module-count">0 activos</span></div>
+<div id="module-list" class="module-list"></div>
+<div class="pricing"><div class="eyebrow">TU CONFIGURACIÓN</div><div class="price-line"><span>Precio base ilustrativo</span><strong id="base-price"></strong></div><div class="price-line"><span>Módulos adicionales</span><strong id="mods-price"></strong></div><div class="price-line total"><span>Desarrollo estimado</span><strong id="total-price"></strong></div><div class="price-line"><span>Mantenimiento mensual estimado</span><strong id="monthly-price"></strong></div><div class="price-actions"><button id="copy" class="btn small" type="button">⧉ Copiar configuración</button><button id="reset" class="btn btn-outline small" type="button">↺ Restablecer</button></div><p class="pricing-note">Importes demostrativos en pesos argentinos, no son una oferta ni una cotización final. No incluyen dominio, hosting, APIs, integraciones de terceros ni impuestos.</p><div class="status" id="status" role="status" aria-live="polite"></div></div>
+</section>
+<section class="panel demo-panel" aria-label="Demostración interactiva">
+<div class="panel-title"><div><h3>Simulador en vivo</h3><p id="demo-description">Probá las funciones habilitadas.</p></div><span class="counter">✦ XR LIVE LAB</span></div>
+<div class="demo-tools"><div class="tabs" role="group" aria-label="Elegir vista de demostración"><button type="button" data-view="client" class="active" aria-pressed="true">👤 Cliente</button><button type="button" data-view="admin" aria-pressed="false">⚙ Admin</button><button type="button" data-view="mobile" aria-pressed="false">📱 Móvil</button></div><span class="demo-indicator">● SIMULACIÓN LOCAL</span></div>
+<div class="demo-scene" id="demo-scene" aria-live="polite"></div>
+<div class="demo-bottom">Interactuá con los botones dentro del simulador. Los pedidos y turnos de prueba aparecen en la vista Admin cuando sus módulos están activos.</div>
+</section>
+</div></section>
+<section class="wrap notice" aria-label="Información sobre la demo"><b>Acerca del laboratorio:</b> las pantallas y los datos son ficticios. No se realizan compras, reservas, pagos ni mensajes reales. Los módulos representan funciones previstas o prototipos, no un compromiso de disponibilidad inmediata. Los presupuestos finales requieren revisar el alcance técnico.</section>
+</main>
+<footer><div class="wrap footer-inner"><span>© <span id="year">2026</span> Universo XR · Santiago Bohnet</span><span>XR Shop / Sistemas que evolucionan · <a href="./clasica.html">Volver a la web ↗</a></span></div></footer>
+<script defer src="./assets/shop-v2.js"></script>
+</body>
+</html>
