@@ -63,7 +63,9 @@ try{
     assert.ok(debug.title?.includes(['Luz','Fuego','Sombras','Cosmos'][level]),
       'Portal equivocado: '+JSON.stringify(debug));
     assert.equal(await page.locator('#portal-stop').isVisible(),true);
-    const shot=await page.locator('#space').screenshot({timeout:30000});
+    // Un canvas animado nunca queda "estable" para locator.screenshot.
+    // Capturar la ventana completa evita ese timeout artificial.
+    const shot=await page.screenshot({timeout:30000});
     writeFileSync('browser-artifacts/dimension-'+level+'.png',shot);
     // Muestra visual comprimida de la primera dimensión para inspección
     // remota del render real, sin descargar artefactos privados del workflow.
