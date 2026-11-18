@@ -51,7 +51,7 @@
 }
 </style>
 <link rel="stylesheet" href="./assets/portals.css?v=oval-ref-5">
-<link rel="stylesheet" href="./assets/ship-voyage.css?v=ship-voyage-1">
+<link rel="stylesheet" href="./assets/ship-voyage.css?v=open-worlds-1">
 </head>
 <body class="no-webgl">
 <canvas id="space" aria-hidden="true"></canvas>
@@ -75,11 +75,11 @@
   <div class="prelude-content">
     <span class="flight-badge">03 / VIAJE EN NAVE · THIRD-PERSON FOLLOW CAMERA</span>
     <h2 id="flight-heading">TU VIAJE COMIENZA<br>CON KURO AL MANDO</h2>
-    <p class="desc">Viajá con Kuro en su nave por cuatro dimensiones. La cámara persigue la nave desde atrás y se desplaza con ella. Para pasar de un mundo a otro, activá el teletransporte de la consola: la nave fijará las coordenadas y entrarás en la cabina en primera persona durante el salto.</p>
+    <p class="desc">Viajá con Kuro en su nave por cuatro dimensiones. La cámara sigue a Kuro desde atrás mientras la nave avanza en línea recta sobre paisajes abiertos: cielos angelicales con ángeles y tierras infernales con volcanes y lava. Para pasar de un mundo a otro, activá el teletransporte de la consola: la nave fijará las coordenadas y entrarás en la cabina en primera persona durante el salto.</p>
     <a class="action" href="#tunel-0">Comenzar el viaje a la dimensión de la luz ↓</a>
   </div>
 </section><span id="portales" aria-hidden="true"></span>
-<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Cuatro dimensiones, una nave y teletransportes por coordenadas.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<section class="tunnel-stage world-stage" id="tunel-0" style="--portal:#e2c88d"><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage world-stage" id="tunel-1" style="--portal:#f45124"><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage world-stage" id="tunel-2" style="--portal:#a17bea"><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage world-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Cuatro paisajes abiertos, vuelo recto y teletransportes por coordenadas.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
 <div id="camera-mode" hidden role="status">CÁMARA EXTERIOR · TERCERA PERSONA</div>
 <aside id="ship-console" hidden aria-label="Consola de teletransporte de la nave">
   <div class="ship-console-head">NAVE DE KURO · NAVEGACIÓN</div>
@@ -103,12 +103,12 @@
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">KURO TE MUESTRA</p><h2 id="world-heading"></h2><p id="world-desc"></p><img class="world-art" id="world-art" src="./assets/portal-inferno.webp" alt="Portal ovalado de energía escarlata en una dimensión volcánica" hidden><p class="eyebrow">PUEDES SEGUIR EXPLORANDO</p><button id="close-scene" class="action">Seguir con Kuro</button></div></div>
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
-import { readJourney } from './assets/journey-motion.js?v=ship-voyage-1';
-import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=ship-voyage-1';
-import { createDimensionScenes } from './assets/dimension-scenes.js?v=ship-voyage-1';
+import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=open-worlds-1';
+import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=open-worlds-1';
+import { createDimensionScenes } from './assets/dimension-scenes.js?v=open-worlds-1';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
 import { createShipVoyage } from './assets/ship-voyage.js?v=ship-voyage-1';
-import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=follow-camera-2';
+import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=open-worlds-1';
 const guide=createKuroGuide();
 installPortalInteractions();
 let prepareDimension=()=>Promise.resolve();
@@ -121,7 +121,6 @@ const syncVoyage=()=>voyage.update(readIntro(),readJourney());
 addEventListener('scroll',syncVoyage,{passive:true});
 addEventListener('resize',syncVoyage,{passive:true});
 syncVoyage();
-import { TUNNEL } from './assets/tunnel-openings.js?v=ship-voyage-1';
 let THREE;
 try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/+esm'); }
 catch { guide.useFallback(); }
@@ -130,7 +129,7 @@ if (!THREE) return;
 const canvas=document.getElementById('space');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const scene=new THREE.Scene();scene.background=new THREE.Color('#000000');scene.fog=new THREE.FogExp2(0x06030e,.011);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#000000');scene.fog=new THREE.FogExp2(0x06030e,.006);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,900);camera.position.set(0,1,35);
 let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(error){guide.useFallback();return;}document.body.classList.replace('no-webgl','has-webgl');
 renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<700?1.25:1.5));renderer.setSize(innerWidth,innerHeight);
@@ -251,15 +250,16 @@ let lostContext=false,frameRequest=0,lastFrameTime=0;
 function scheduleFrame(){if(!frameRequest&&!document.hidden&&!lostContext)frameRequest=requestAnimationFrame(frame)}
 function useFallback(){lostContext=true;cancelAnimationFrame(frameRequest);document.body.classList.replace('has-webgl','no-webgl');canvas.hidden=true;guide.useFallback()}
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();useFallback()});
-const tunnels=new THREE.Group();scene.add(tunnels);
+const worlds=new THREE.Group();scene.add(worlds);
 const portalButtons=[...document.querySelectorAll('.tunnel-caption .portal')];
-const portalSystem=createPortalSystem(THREE,tunnels,{reduced,onReady:()=>{if(reduced)scheduleFrame()}});
-const scenes=createDimensionScenes(THREE,tunnels,portalSystem,portalButtons,DIMENSIONS,useFallback,scheduleFrame);
+const portalSystem=createPortalSystem(THREE,worlds,{reduced,onReady:()=>{if(reduced)scheduleFrame()}});
+const scenes=createDimensionScenes(THREE,worlds,portalSystem,portalButtons,DIMENSIONS,useFallback,scheduleFrame);
 prepareDimension=level=>scenes.prepare(level);
 const originSequence=createOriginSequence(THREE,scene,reduced);
 scenes.prepare(0).catch(()=>{});
-const portalLight=new THREE.PointLight(0xffffff,180,30,1.5);scene.add(portalLight);
-const tunnelColor=new THREE.Color();
+const portalLight=new THREE.PointLight(0xffffff,85,55,1.5);scene.add(portalLight);
+const worldFog=new THREE.Color();
+const worldFogColors=[0xa8cada,0x512219,0x382451,0x12334b];
 function journeyState(){ return readJourney(); }
 
 // Posición de la nave y cámara independientes. El ship NO depende de camera.position.
@@ -320,15 +320,15 @@ function frame(t){
   introShipPosition.copy(introPosition).add(guideOffset);
   introRotation.setFromAxisAngle(new THREE.Vector3(0,1,0),mx*(.025+.19*universe));
 
-  // Ruta propia en coordenadas 3D. En la etapa de vuelo sale del núcleo;
-  // luego sigue el corredor de la dimensión, sin permanecer pegada al viewport.
+  // Trayectoria recta (X = 0) mirando siempre hacia el horizonte del mundo (-Z).
+  // Desde el núcleo entra en el primer paisaje; el scroll la hace avanzar.
   if(activeChase){
-    worldShipGoal.set(state.x,state.y-.25,1.0-.9*state.f);
+    worldShipGoal.set(0,state.y,state.z);
   }else{
     worldShipGoal.set(
-      THREE.MathUtils.lerp(10,-(TUNNEL.portalOffset-5),flight),
-      THREE.MathUtils.lerp(1.1,-1.25,flight)+Math.sin(flight*Math.PI)*.7,
-      THREE.MathUtils.lerp(-10,1.0,flight)
+      0,
+      THREE.MathUtils.lerp(8,FLIGHT_PATH.altitude,flight),
+      THREE.MathUtils.lerp(FLIGHT_PATH.openingZ,FLIGHT_PATH.startZ,flight)
     );
   }
   if(!worldShipReady || (levelChanged && activeChase)){
@@ -337,11 +337,9 @@ function frame(t){
   }else{
     worldShipPosition.lerp(worldShipGoal,reduced?1:1-Math.exp(-5.2*dt));
   }
-  // Morro apuntando hacia el interior de la dimensión; una leve inclinación
-  // comunica la dirección del vuelo. La cámara conserva el horizonte estable.
-  const yaw=activeChase?state.side*.16:.23*(1-flight);
-  const roll=reduced?0:(activeChase?state.side*.045:Math.sin(t*.75)*.06);
-  worldShipRotation.setFromEuler(new THREE.Euler(0,Math.PI+yaw,roll,'YXZ'));
+  // Sin cambios de carril, sin giros laterales ni inclinación de la nave.
+  // +Z es el morro local, apuntado a -Z del paisaje.
+  worldShipRotation.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI);
 
   // Kuro es un objeto del mundo: actualizamos su posición y orientación antes
   // de calcular una cámara que lo persigue con amortiguación independiente.
@@ -354,7 +352,7 @@ function frame(t){
   kuro.visible=!jump.active;
   const tracked=chase.update({
     ship:worldShip,dt,level:state.level,
-    pointerX:mx,pointerY:my,compact:innerWidth<700,
+    compact:innerWidth<700,
     snap:levelChanged && activeChase,reduced
   });
 
@@ -366,7 +364,7 @@ function frame(t){
     // la persecución exterior en el destino.
     cockpitPosition.set(0,.55,.5)
       .applyQuaternion(worldShipRotation).add(worldShipPosition);
-    cockpitLookAt.set(0,.65,15)
+    cockpitLookAt.set(0,.65,20)
       .applyQuaternion(worldShipRotation).add(worldShipPosition);
     camera.position.copy(cockpitPosition);
     camera.lookAt(cockpitLookAt);
@@ -386,8 +384,10 @@ function frame(t){
   stars.visible=universe>.01&&(enter<.999||jump.active);
   stars.position.z=sequence.zone==='flight'?flight*18:0;
   stars.rotation.z=jump.active&&!reduced?t*.14:0;
-  tunnels.visible=enter>.001;
-  scenes.update(state,enter,camera);
+  // El paisaje de luz se hace visible ya durante la aproximación inicial.
+  const landscapeEntry=Math.max(enter,sequence.zone==='flight'?ease((flight-.18)/.2):0);
+  worlds.visible=landscapeEntry>.001;
+  scenes.update(state,landscapeEntry,camera,t,sequence.zone);
   originSequence.update(t,sequence,mx,my);
   fadeMats.forEach(mat=>{
     mat.opacity=shipReveal;mat.depthWrite=shipReveal>.995;
@@ -397,15 +397,20 @@ function frame(t){
   shipFill.intensity=42*shipReveal;
   eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
   ambient.intensity=.15+universe*(state.level===0?2:1.2);
-  if(state.active){
-    tunnelColor.set(DIMENSIONS[state.level].color).multiplyScalar(.035);
-    scene.background.copy(tunnelColor);scene.fog.color.copy(tunnelColor);
+  if(landscapeEntry>.001){
+    worldFog.set(worldFogColors[state.level]);
+    scene.background.copy(worldFog);
+    scene.fog.color.copy(worldFog);
+    scene.fog.density=state.level===0?.0035:.006;
+  }else{
+    scene.fog.color.set(0x06030e);
+    scene.fog.density=.006;
   }
   portalLight.color.set(DIMENSIONS[state.level].color);
-  portalLight.position.set(state.side*TUNNEL.portalOffset,-state.level*32,-2);
-  portalLight.intensity=180*enter;
+  portalLight.position.set(state.level%2?-22:22,-state.level*32+5,-83);
+  portalLight.intensity=85*landscapeEntry;
   portalSystem.update(t,camera,state);
-  red.intensity=140*universe;
+  red.intensity=140*universe*(1-landscapeEntry);
   animateKuro(t);
   const anchor=catBody.localToWorld(new THREE.Vector3(.1,1,.5));
   anchor.project(camera);
