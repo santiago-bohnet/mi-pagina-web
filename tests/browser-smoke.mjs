@@ -35,7 +35,7 @@ try{
   for(let level=0;level<4;level++){
     // Carga limpia en la ruta exacta para no generar teletransportes
     // no solicitados al saltar artificialmente varias pantallas en CI.
-    await page.goto('http://127.0.0.1:8765/index.html#tunel-'+level,{
+    await page.goto('http://127.0.0.1:8765/index.html?visual-level='+level+'#tunel-'+level,{
       waitUntil:'domcontentloaded',timeout:60000
     });
     await page.waitForTimeout(2200);
@@ -49,6 +49,9 @@ try{
       const top=stage.getBoundingClientRect().top+scrollY;
       document.documentElement.style.scrollBehavior='auto';
       window.scrollTo(0,top+stage.offsetHeight*.51);
+      // El movimiento simulado no equivale a una rueda física. Disparar
+      // el evento garantiza el mismo recorrido de actualización del HUD.
+      window.dispatchEvent(new Event('scroll'));
     },level);
     await page.waitForTimeout(2100);
     const debug=await page.evaluate(()=>({
