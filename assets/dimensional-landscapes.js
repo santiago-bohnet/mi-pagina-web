@@ -113,22 +113,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   if(level===0){
     // Las nubes voxel/icosaedro fueron retiradas. La atmósfera ahora se
     // compone de un suelo de nubes y masas con bordes orgánicos.
-    // Columnas blancas y doradas sobre islas flotantes a ambos lados del vuelo.
-    const marble=material(0xe9e4d5,{metalness:.1,emissive:0xc9b579,emissiveIntensity:.12});
-    const gold=material(0xffd386,{metalness:.45,roughness:.35,emissive:0xcc9e58,emissiveIntensity:.34});
-    const columns=[],capitals=[];
-    for(let i=0;i<22;i++){
-      const side=i%2?-1:1,z=4-i*13;
-      const x=side*(25+(i%4)*12);
-      // Despejar la visual de Kuro, la plataforma y el portal celestial.
-      // Una columna situada en (-25,-100) atravesaba el encuadre de la parada.
-      if(z > -155 && z < -68 && x < 0 && x > -60)continue;
-      columns.push({x,y:1+(i%3)*1.3,z,sx:1.15,sy:21+(i%4)*4,sz:1.15});
-      capitals.push({x,y:12+(i%3)*1.3+(i%4)*2,z,sx:3.4,sy:.85,sz:3.4});
-    }
-    addInstances(shared.pillar,marble,columns);
-    addInstances(shared.box,gold,capitals);
-
+    // La arquitectura original de cajas y columnas flotantes se eliminó.
+    // Los templos escalonados y pedestales reales se construyen y comparten
+    // geometría en el módulo de detalle cinematográfico de Luz.
     // Alas con plumas instanciadas y silueta humana esculpida: reemplaza
     // las antiguas esferas geométricas que se veían como figuras de juguete.
     animated.push(createAngelFlock(THREE,group,{compact,reduced}));
