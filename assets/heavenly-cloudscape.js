@@ -92,8 +92,8 @@ const fragmentShader=`
      shading+=optical*(.75+.36*(density-shadow));
      coverage+=optical;
    }
-   vec3 shade=vec3(.31,.40,.54);
-   vec3 white=vec3(.84,.90,.96);
+   vec3 shade=vec3(.20,.31,.49);
+   vec3 white=vec3(.76,.85,.96);
    vec3 sun=vec3(1.,.94,.80);
    float wisps=field(p*1.55+vec2(13.6,3.1));
    float bright=clamp(shading*2.35+wisps*.2,.0,1.);
@@ -111,7 +111,7 @@ function strata(THREE,group,atlas,{compact=false,reduced=false}={}){
   const geo=new THREE.PlaneGeometry(1,1);
   geo.rotateX(-Math.PI/2);
   const mat=new THREE.MeshBasicMaterial({
-    map:atlas,color:0xe5eef8,transparent:true,opacity:.73,
+    map:atlas,color:0xbdcde3,transparent:true,opacity:.59,
     depthWrite:false,side:THREE.DoubleSide,fog:true
   });
   const layerCounts=compact?[80,32,20]:[175,65,40];
