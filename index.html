@@ -73,9 +73,9 @@
 </section>
 <section class="stage ship-flight" id="viaje" aria-labelledby="flight-heading">
   <div class="prelude-content">
-    <span class="flight-badge">03 / VIAJE EN NAVE · TERCERA PERSONA</span>
+    <span class="flight-badge">03 / VIAJE EN NAVE · THIRD-PERSON FOLLOW CAMERA</span>
     <h2 id="flight-heading">TU VIAJE COMIENZA<br>CON KURO AL MANDO</h2>
-    <p class="desc">Viajá con Kuro en su nave por cuatro dimensiones. Durante el recorrido vas a verla desde afuera. Para pasar de un mundo a otro, activá el teletransporte de la consola: la nave fijará las coordenadas y entrarás en la cabina en primera persona durante el salto.</p>
+    <p class="desc">Viajá con Kuro en su nave por cuatro dimensiones. La cámara persigue la nave desde atrás y se desplaza con ella. Para pasar de un mundo a otro, activá el teletransporte de la consola: la nave fijará las coordenadas y entrarás en la cabina en primera persona durante el salto.</p>
     <a class="action" href="#tunel-0">Comenzar el viaje a la dimensión de la luz ↓</a>
   </div>
 </section><span id="portales" aria-hidden="true"></span>
@@ -108,6 +108,7 @@ import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v
 import { createDimensionScenes } from './assets/dimension-scenes.js?v=ship-voyage-1';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
 import { createShipVoyage } from './assets/ship-voyage.js?v=ship-voyage-1';
+import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=follow-camera-2';
 const guide=createKuroGuide();
 installPortalInteractions();
 let prepareDimension=()=>Promise.resolve();
@@ -261,67 +262,151 @@ const portalLight=new THREE.PointLight(0xffffff,180,30,1.5);scene.add(portalLigh
 const tunnelColor=new THREE.Color();
 function journeyState(){ return readJourney(); }
 
+// Posición de la nave y cámara independientes. El ship NO depende de camera.position.
+const chase=createThirdPersonFollowCamera(THREE);
+const introPosition=new THREE.Vector3(0,1,35);
+const introTarget=new THREE.Vector3();
+const introShipPosition=new THREE.Vector3();
+const introLookAt=new THREE.Vector3();
+const worldShipPosition=new THREE.Vector3();
+const worldShipGoal=new THREE.Vector3();
+const worldShipRotation=new THREE.Quaternion();
+const introRotation=new THREE.Quaternion();
+const worldShip={position:worldShipPosition,quaternion:worldShipRotation};
+const blendedLookAt=new THREE.Vector3();
+const cockpitPosition=new THREE.Vector3();
+const cockpitLookAt=new THREE.Vector3();
 const guideOffset=new THREE.Vector3();
-let mx=0,my=0,sy=0;
-addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
+let worldShipReady=false, previousLevel=-1;
+let mx=0,my=0;
+addEventListener('pointermove',e=>{
+  mx=(e.clientX/innerWidth-.5)*2;
+  my=(e.clientY/innerHeight-.5)*2;
+},{passive:true});
+
 function frame(t){
- frameRequest=0;if(lostContext||document.hidden)return;
- t*=.001;const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
- const follow=reduced?1:1-Math.exp(-12*dt);
- const sequence=readIntro();
- const {progress:p,entry:exit,portalEntry:enter}=sequence;
- const universe=ease((p-.40)/.60);
- const shipReveal=ease((p-.06)/.62);
- const distance=24-12*p;
- // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
- const state=journeyState();
-  const jump=voyage.read();
+  frameRequest=0;if(lostContext||document.hidden)return;
+  t*=.001;
+  const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
+  const follow=reduced?1:1-Math.exp(-12*dt);
+  const sequence=readIntro();
+  const {progress:p,entry:exit,portalEntry:enter}=sequence;
+  const universe=ease((p-.40)/.60);
+  const shipReveal=ease((p-.06)/.62);
+  const state=journeyState();
   voyage.update(sequence,state);
- const targetZ=35-28*exit;
- camera.position.z+=(targetZ-camera.position.z)*follow;
- camera.position.x+=((THREE.MathUtils.lerp(mx*.3,state.x,enter))-camera.position.x)*follow;
- camera.position.y+=((THREE.MathUtils.lerp(1-my*.2,state.y-1,enter))-camera.position.y)*follow;
- // El salto se observa desde la cabina. El cambio de sala sucede bajo la animación.
-  if(jump.active){camera.position.set(state.x,state.y,7);}
- // After the introduction, only screen-space X/Y panning remains. No dive or pitch.
- camera.up.set(0,1,0);
- camera.lookAt(camera.position.x,camera.position.y,camera.position.z-30);
- camera.updateMatrixWorld();
- scene.background.setRGB(.011*universe,.005*universe,.022*universe);
- starMaterial.opacity=.83*universe*(1-enter);
+  const jump=voyage.read();
+  const activeChase=sequence.zone==='dimensions';
+  // La transición se hace progresiva al acercarnos a la etapa de vuelo.
+  const chaseBlend=activeChase?1:ease((sequence.flight-.025)/.31);
+  const flight=ease(sequence.flight);
+  const levelChanged=previousLevel!==state.level;
+
+  // Plano de la presentación: Kuro vuela hacia el espectador con sus ojos rojos.
+  introTarget.set(
+    THREE.MathUtils.lerp(mx*.3,state.x,enter),
+    THREE.MathUtils.lerp(1-my*.2,state.y-1,enter),
+    35-28*exit
+  );
+  introPosition.lerp(introTarget,follow);
+  introLookAt.set(introPosition.x,introPosition.y,introPosition.z-30);
+  const distance=24-12*p;
+  const travel=ease((p-.60)/.40);
+  guideOffset.set(
+    -state.side*2*enter+Math.sin(t*.65)*.08,
+    -.08-2.7*universe+Math.cos(t*1.2)*.05,
+    -(distance*(1-travel)+12*travel)
+  );
+  introShipPosition.copy(introPosition).add(guideOffset);
+  introRotation.setFromAxisAngle(new THREE.Vector3(0,1,0),mx*(.025+.19*universe));
+
+  // Ruta propia en coordenadas 3D. En la etapa de vuelo sale del núcleo;
+  // luego sigue el corredor de la dimensión, sin permanecer pegada al viewport.
+  if(activeChase){
+    worldShipGoal.set(state.x,state.y-.25,1.0-.9*state.f);
+  }else{
+    worldShipGoal.set(
+      THREE.MathUtils.lerp(10,-(TUNNEL.portalOffset-5),flight),
+      THREE.MathUtils.lerp(1.1,-1.25,flight)+Math.sin(flight*Math.PI)*.7,
+      THREE.MathUtils.lerp(-10,1.0,flight)
+    );
+  }
+  if(!worldShipReady || (levelChanged && activeChase)){
+    worldShipPosition.copy(worldShipGoal);
+    worldShipReady=true;
+  }else{
+    worldShipPosition.lerp(worldShipGoal,reduced?1:1-Math.exp(-5.2*dt));
+  }
+  // Morro apuntando hacia el interior de la dimensión; una leve inclinación
+  // comunica la dirección del vuelo. La cámara conserva el horizonte estable.
+  const yaw=activeChase?state.side*.16:.23*(1-flight);
+  const roll=reduced?0:(activeChase?state.side*.045:Math.sin(t*.75)*.06);
+  worldShipRotation.setFromEuler(new THREE.Euler(0,Math.PI+yaw,roll,'YXZ'));
+
+  // Kuro es un objeto del mundo: actualizamos su posición y orientación antes
+  // de calcular una cámara que lo persigue con amortiguación independiente.
+  kuro.position.copy(introShipPosition).lerp(worldShipPosition,chaseBlend);
+  kuro.quaternion.copy(introRotation).slerp(worldShipRotation,chaseBlend);
+  const introScale=(innerWidth<550?(.77-.27*enter):innerWidth<780?.99:1.15)
+    *(.87+.22*ease((p-.23)/.72));
+  const flightScale=innerWidth<600?.91:1.1;
+  kuro.scale.setScalar(THREE.MathUtils.lerp(introScale,flightScale,chaseBlend));
+  kuro.visible=!jump.active;
+  const tracked=chase.update({
+    ship:worldShip,dt,level:state.level,
+    pointerX:mx,pointerY:my,compact:innerWidth<700,
+    snap:levelChanged && activeChase,reduced
+  });
+
+  camera.position.copy(introPosition).lerp(tracked.position,chaseBlend);
+  blendedLookAt.copy(introLookAt).lerp(tracked.lookAt,chaseBlend);
+  camera.up.set(0,1,0);
+  if(jump.active && chaseBlend>.8){
+    // Al activarse el salto, la cámara entra en la cabina antes de volver a
+    // la persecución exterior en el destino.
+    cockpitPosition.set(0,.55,.5)
+      .applyQuaternion(worldShipRotation).add(worldShipPosition);
+    cockpitLookAt.set(0,.65,15)
+      .applyQuaternion(worldShipRotation).add(worldShipPosition);
+    camera.position.copy(cockpitPosition);
+    camera.lookAt(cockpitLookAt);
+  }else{
+    camera.lookAt(blendedLookAt);
+  }
+  camera.updateMatrixWorld();
+
+  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
+  starMaterial.opacity=.83*universe*(1-enter);
   stars.visible=universe>.01&&(enter<.999||jump.active);
-  stars.position.z=sequence.zone==='flight'?sequence.flight*18:0;
+  stars.position.z=sequence.zone==='flight'?flight*18:0;
   stars.rotation.z=jump.active&&!reduced?t*.14:0;
- tunnels.visible=enter>.001;scenes.update(state,enter,camera);
- originSequence.update(t,sequence,mx,my);
- // First Kuro's eyes, then reveal cat and spacecraft gradually.
- fadeMats.forEach(mat=>{mat.opacity=shipReveal;mat.depthWrite=shipReveal>.995;mat.visible=shipReveal>.001});
- shipLight.intensity=38*shipReveal;shipFill.intensity=42*shipReveal;
- eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
- ambient.intensity=.15+universe*(state.level===0?2:1.2);
- if(state.active){tunnelColor.set(DIMENSIONS[state.level].color).multiplyScalar(.035);scene.background.copy(tunnelColor);scene.fog.color.copy(tunnelColor);}
- portalLight.color.set(DIMENSIONS[state.level].color);
- portalLight.position.set(state.side*TUNNEL.portalOffset,-state.level*32,-2);
- portalLight.intensity=180*enter;
- portalSystem.update(t,camera,state);
- red.intensity=140*universe;
- // Su presencia es el título visual: las palabras aparecen como un diálogo suyo.
- const travel=ease((p-.60)/.40);
- guideOffset.set((-state.side*2*(1-2*state.fall)*enter)+Math.sin(t*.65)*.08,
-  -.08-2.7*universe+Math.cos(t*1.2)*.05,-(distance*(1-travel)+12*travel));
- guideOffset.applyQuaternion(camera.quaternion);
- kuro.visible=!jump.active;
-  kuro.position.copy(camera.position).add(guideOffset);
-  
- kuro.quaternion.copy(camera.quaternion);kuro.rotateY(mx*(.025+.19*universe));
-  if(sequence.zone==='flight'&&!reduced)kuro.rotateZ(Math.sin(t*.9+sequence.flight*5)*.025);
- // Evitar que las alas se corten en celulares estrechos.
- kuro.scale.setScalar((innerWidth<550?(.77-.27*enter):innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
- animateKuro(t);
- const anchor=catBody.localToWorld(new THREE.Vector3(.1,1,.5));anchor.project(camera);
- guide.placeAnchor((anchor.x*.5+.5)*innerWidth,(1-anchor.y)*.5*innerHeight);
- renderer.render(scene,camera);
- if(!reduced)scheduleFrame();
+  tunnels.visible=enter>.001;
+  scenes.update(state,enter,camera);
+  originSequence.update(t,sequence,mx,my);
+  fadeMats.forEach(mat=>{
+    mat.opacity=shipReveal;mat.depthWrite=shipReveal>.995;
+    mat.visible=shipReveal>.001;
+  });
+  shipLight.intensity=38*shipReveal;
+  shipFill.intensity=42*shipReveal;
+  eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
+  ambient.intensity=.15+universe*(state.level===0?2:1.2);
+  if(state.active){
+    tunnelColor.set(DIMENSIONS[state.level].color).multiplyScalar(.035);
+    scene.background.copy(tunnelColor);scene.fog.color.copy(tunnelColor);
+  }
+  portalLight.color.set(DIMENSIONS[state.level].color);
+  portalLight.position.set(state.side*TUNNEL.portalOffset,-state.level*32,-2);
+  portalLight.intensity=180*enter;
+  portalSystem.update(t,camera,state);
+  red.intensity=140*universe;
+  animateKuro(t);
+  const anchor=catBody.localToWorld(new THREE.Vector3(.1,1,.5));
+  anchor.project(camera);
+  guide.placeAnchor((anchor.x*.5+.5)*innerWidth,(1-anchor.y)*.5*innerHeight);
+  renderer.render(scene,camera);
+  previousLevel=state.level;
+  if(!reduced)scheduleFrame();
 }
 if(reduced)addEventListener('scroll',scheduleFrame,{passive:true});
 scheduleFrame();
