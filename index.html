@@ -116,7 +116,7 @@
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
 import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=tour-5';
-import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=open-worlds-1';
+import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=tour-5';
 import { createDimensionScenes } from './assets/dimension-scenes.js?v=tour-5';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
 import { createShipVoyage } from './assets/ship-voyage.js?v=tour-5';
@@ -495,9 +495,17 @@ function installPortalInteractions(){
  const popup=document.getElementById('scene-popup'),close=document.getElementById('close-scene');let last;
  document.querySelectorAll('[data-dimension]').forEach(btn=>btn.addEventListener('click',()=>{
   last=btn;const dimension=DIMENSIONS[Number(btn.dataset.dimension)];
-  document.getElementById('world-heading').textContent='Puedes echar un vistazo.';
-  document.getElementById('world-desc').textContent=dimension.description;
-  document.getElementById('world-art').hidden=dimension.theme!=='fire';
+  document.getElementById('world-heading').textContent='Entraste en '+dimension.name;
+  document.getElementById('world-desc').textContent=dimension.description+
+     ' Podés volver al lugar donde estacionó Kuro para continuar el recorrido.';
+  const art=document.getElementById('world-art');
+   art.dataset.theme=dimension.theme;
+   art.hidden=dimension.theme!=='fire'&&dimension.theme!=='light';
+   art.src=dimension.theme==='light'
+      ?'./assets/portal-luz-ovalo.avif':'./assets/portal-inferno.webp';
+   art.alt=dimension.theme==='light'
+      ?'Portal ovalado de luz celestial dorada'
+      :'Portal ovalado de energía volcánica escarlata';
   popup.hidden=false;document.body.style.overflow='hidden';close.focus();
  }));
  function dismiss(){popup.hidden=true;document.body.style.overflow='';last?.focus()}
