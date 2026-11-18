@@ -364,7 +364,7 @@ function frame(t){
   voyage.update(sequence,state);
   const jump=voyage.read();
   portalTour.update(state,sequence.zone,jump.active);
-  activities.showButton(state.level,sequence,state.stop);
+  activities.showButton(state.level,sequence,state.stop,state.f);
   mysteries.update(state,sequence.zone,jump.active);
   pilot.showButton(state,sequence.zone,jump.active);
   const activeChase=sequence.zone==='dimensions';
