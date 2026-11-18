@@ -2,9 +2,9 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=tour-6';
-import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-11';
-import { addCinematicWorldDetails } from './world-cinematics.js?v=worlds-11';
-import { createAngelFlock } from './angel-flight.js?v=worlds-11';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-12';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=worlds-12';
+import { createAngelFlock } from './angel-flight.js?v=worlds-12';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
