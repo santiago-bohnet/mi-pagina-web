@@ -168,7 +168,7 @@ const renderQuality=createRenderQualityController(renderer,{
 });
 // Actividades desacopladas: contenido local, misterios y pilotaje libre.
 const activities=createRealmActivities(THREE);
-const mysteries=createShadowMysteries(activities.store);
+const mysteries=createShadowMysteries(activities.store,{THREE});
 const pilot=createCosmicPilot();
 // Los portales ofrecen una experiencia específica en lugar de abrir
 // únicamente una tarjeta con una imagen.
@@ -350,6 +350,7 @@ function frame(t){
   const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
   if(activities.isOpen()||mysteries.isOpen()){
     activities.update(t);
+    mysteries.updateScene(t);
     if(!reduced)scheduleFrame();
     return;
   }
