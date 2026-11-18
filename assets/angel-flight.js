@@ -104,9 +104,13 @@ export function createAngelFlock(THREE,group,{compact=false,reduced=false}={}){
   for(let i=0;i<n;i++){
     const side=i%2?1:-1;
     const angel=createAngel(THREE,feather,materials,compact,i);
-    const x=side*(25+rnd(i+3)*45);
-    const y=9+rnd(i+17)*17;
-    const z=42-i*(compact?35:19);
+    // Alterna vuelos solitarios y formaciones en V de cinco ángeles.
+    const formation=i>=4&&i<14;
+    const row=Math.floor((i-4)/5);
+    const lane=(i-4)%5-2;
+    const x=formation?side*45+lane*5:side*(25+rnd(i+3)*45);
+    const y=formation?19+Math.abs(lane)*2.2+row*4:9+rnd(i+17)*17;
+    const z=formation?12-row*145-Math.abs(lane)*7:42-i*(compact?35:19);
     // No invadir plataforma ni ocultar a Kuro frente al portal.
     if(z>-148&&z<-75&&x<0&&x>-60)continue;
     angel.position.set(x,y,z);
@@ -114,13 +118,15 @@ export function createAngelFlock(THREE,group,{compact=false,reduced=false}={}){
     const size=.8+rnd(i+29)*.65;
     angel.scale.setScalar(size);
     group.add(angel);
-    flock.push({angel,baseY:y,i});
+    flock.push({angel,baseY:y,baseX:x,baseZ:z,formation,i});
   }
   return time=>{
     if(reduced)return;
     for(const item of flock){
-      const {angel,i,baseY}=item;
+      const {angel,i,baseY,baseX,baseZ,formation}=item;
       angel.position.y=baseY+Math.sin(time*.45+i*.72)*.67;
+      angel.position.x=baseX+(formation?Math.sin(time*.13+Math.floor(i/5))*.7:Math.sin(time*.2+i)*.32);
+      angel.position.z=baseZ-(formation?Math.sin(time*.14+i*.03)*3.2:0);
       angel.userData.wings.forEach(({wing,side})=>{
         wing.rotation.z=side*(.08+Math.sin(time*1.05+i*.55)*.15);
       });
