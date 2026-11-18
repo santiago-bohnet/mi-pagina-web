@@ -33,21 +33,19 @@ try{
   assert.equal(gl.hasContext,true,'Se requiere un contexto WebGL en Chromium de CI');
   assert.equal(gl.hasWebGL,true,'Three.js no pudo inicializarse');
   for(let level=0;level<4;level++){
+    // Cada escena se verifica tras una carga limpia: saltar al medio de la
+    // siguiente pantalla mientras la nave está en marcha dispararía un
+    // teletransporte obligatorio que invalida la muestra visual.
+    if(level>0){
+      await page.reload({waitUntil:'domcontentloaded',timeout:60000});
+      await page.waitForTimeout(1800);
+    }
     await page.evaluate(level=>{
       const stage=document.getElementById('tunel-'+level);
       const top=stage.getBoundingClientRect().top+scrollY;
       document.documentElement.style.scrollBehavior='auto';
       scrollTo(0,top+stage.offsetHeight*.51);
     },level);
-    // Un salto forzado por scroll a la dimensión siguiente activa primero
-    // la cabina durante ~4s. Esperar a que termine y luego situarse a mitad.
-    if(level>0){
-      await page.waitForTimeout(4650);
-      await page.evaluate(level=>{
-        const stage=document.getElementById('tunel-'+level);
-        scrollTo(0,stage.getBoundingClientRect().top+scrollY+stage.offsetHeight*.51);
-      },level);
-    }
     await page.waitForTimeout(1300);
     const debug=await page.evaluate(()=>({
       title:document.querySelector('#portal-stop-title')?.textContent,
@@ -63,9 +61,9 @@ try{
     writeFileSync('browser-artifacts/dimension-'+level+'.png',shot);
     // Muestra visual comprimida de la primera dimensión para inspección
     // remota del render real, sin descargar artefactos privados del workflow.
-    if(level===0){
+    if(true){
       const tiny=await page.screenshot({type:'jpeg',quality:32});
-      console.log('XR_SCREENSHOT_BASE64='+tiny.toString('base64'));
+      console.log('XR_SCREENSHOT_'+level+'_BASE64='+tiny.toString('base64'));
     }
     assert.ok(shot.length>15000,'El dibujo WebGL no debe estar vacío');
   }
