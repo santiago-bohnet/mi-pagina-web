@@ -33,7 +33,7 @@ test('las cuatro dimensiones tienen un recorrido largo sin saltos prematuros',()
   assert.equal(position(STAGE*.53).stop.interactable,true);
   assert.equal(position(STAGE*.60).stop.phase,'reboard');
   assert.equal(position(STAGE*.70).stop.visible,false);
-  assert.ok(position(STAGE*.63).stop.out<.04,'Kuro ya volvió a embarcar');
+  assert.ok(position(STAGE*.64).stop.out<.001,'Kuro ya volvió a embarcar');
 });
 
 test('las curvas son suaves y la nave mira hacia su tangente',()=>{
