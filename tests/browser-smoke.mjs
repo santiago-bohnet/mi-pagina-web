@@ -33,12 +33,18 @@ try{
   assert.equal(gl.hasContext,true,'Se requiere un contexto WebGL en Chromium de CI');
   assert.equal(gl.hasWebGL,true,'Three.js no pudo inicializarse');
   for(let level=0;level<4;level++){
-    // Cada escena se verifica tras una carga limpia: saltar al medio de la
-    // siguiente pantalla mientras la nave está en marcha dispararía un
-    // teletransporte obligatorio que invalida la muestra visual.
+    // Probar el flujo REAL: completar el paisaje anterior, pulsar la consola,
+    // esperar la cabina de teletransporte y visitar la siguiente dimensión.
     if(level>0){
-      await page.reload({waitUntil:'domcontentloaded',timeout:60000});
-      await page.waitForTimeout(1800);
+      await page.evaluate(previous=>{
+        const stage=document.getElementById('tunel-'+previous);
+        scrollTo(0,stage.getBoundingClientRect().top+scrollY+stage.offsetHeight*.95);
+      },level-1);
+      await page.waitForTimeout(500);
+      assert.equal(await page.locator('#teleport-next').isEnabled(),true,
+        'Debe poder teletransportarse al completar el recorrido');
+      await page.locator('#teleport-next').click();
+      await page.waitForTimeout(4950);
     }
     await page.evaluate(level=>{
       const stage=document.getElementById('tunel-'+level);
