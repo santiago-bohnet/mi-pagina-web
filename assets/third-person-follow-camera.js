@@ -16,8 +16,9 @@ export function createThirdPersonFollowCamera(THREE) {
     // Coordenadas locales: -Z detrás de la nave, +Z hacia su morro.
     // El desplazamiento de hombro permite ver a Kuro y el destino a la vez.
     const shoulder = (compact ? 0.9 : 2.5) + pointerX * (compact ? .55 : 1.1);
-    const height = (compact ? 3.1 : 3.7) - pointerY * .7;
-    const distance = compact ? 13.2 : 15;
+    const height = (compact ? 2.7 : 3.1) - pointerY * .6;
+    // Mantener la cámara dentro de las paredes curvas del túnel (radio 11).
+    const distance = compact ? 8.7 : 8.8;
     desiredPosition.set(shoulder, height, -distance)
       .applyQuaternion(ship.quaternion).add(ship.position);
     desiredLookAt.set(0, 1.0, 3.8)
