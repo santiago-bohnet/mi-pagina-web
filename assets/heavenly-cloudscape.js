@@ -51,15 +51,18 @@ function cloudAtlas(THREE,compact){
 }
 const vertexShader=`
  varying vec3 vWorld;
+ varying vec3 vCloudNormal;
  void main(){
    vec4 world=modelMatrix*vec4(position,1.);
    vWorld=world.xyz;
+   vCloudNormal=normalize(normalMatrix*normal);
    gl_Position=projectionMatrix*viewMatrix*world;
  }`;
 const fragmentShader=`
  precision highp float;
  uniform float uTime;
  varying vec3 vWorld;
+ varying vec3 vCloudNormal;
  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
  float noise(vec2 p){
    vec2 i=floor(p),f=fract(p);
@@ -89,12 +92,14 @@ const fragmentShader=`
      shading+=optical*(.75+.36*(density-shadow));
      coverage+=optical;
    }
-   vec3 shade=vec3(.45,.56,.72);
-   vec3 white=vec3(.89,.93,.97);
+   vec3 shade=vec3(.31,.40,.54);
+   vec3 white=vec3(.84,.90,.96);
    vec3 sun=vec3(1.,.94,.80);
    float wisps=field(p*1.55+vec2(13.6,3.1));
    float bright=clamp(shading*2.35+wisps*.2,.0,1.);
-   vec3 color=mix(shade,white,bright);
+   vec3 lightDir=normalize(vec3(-.48,.83,-.32));
+   float relief=clamp(dot(normalize(vCloudNormal),lightDir),.08,1.);
+   vec3 color=mix(shade,white,bright)*(.62+.40*relief);
    color=mix(color,sun,pow(clamp(wisps,0.,1.),4.)*.16);
    // Franja de niebla lejana integrada al manto.
    color=mix(color,vec3(.75,.83,.92),.12);
@@ -151,8 +156,20 @@ export function createHeavenlyCloudscape(THREE,group,{compact=false,reduced=fals
     vertexShader,fragmentShader,uniforms,
     side:THREE.DoubleSide,depthWrite:true,fog:false
   });
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(580,950),mat);
-  floor.rotation.x=-Math.PI/2;
+  // Malla orgánica ondulada, no una plancha plana de color blanco.
+  const terrain=new THREE.PlaneGeometry(580,950,compact?64:104,compact?90:156);
+  terrain.rotateX(-Math.PI/2);
+  const verts=terrain.getAttribute('position');
+  for(let i=0;i<verts.count;i++){
+    const x=verts.getX(i),z=verts.getZ(i);
+    const billow=fbm(x*.016+9,z*.013+3,57);
+    const middle=fbm(x*.057,z*.046,73);
+    const t=clamp((Math.abs(x)-6)/45);
+    const y=(billow-.46)*10+(middle-.48)*4.8+t*2.4;
+    verts.setY(i,y);
+  }
+  terrain.computeVertexNormals();
+  const floor=new THREE.Mesh(terrain,mat);
   floor.position.set(0,-10,-155);
   floor.name='Mar de nubes multicapa — infinito a la vista';
   group.add(floor);
