@@ -1,25 +1,42 @@
-import { readJourney } from './journey-motion.js?v=signs-origin';
+import { readJourney } from './journey-motion.js?v=tour-5';
 
 export const DIMENSIONS = Object.freeze([
   { theme: 'light', name: 'Dimensión de la luz', color: '#e2c88d',
-    description: 'Esta es la dimensión de la luz. Contiene columnas de piedra clara y destellos dorados.' },
+    description: 'Esta es la dimensión de la luz: un cielo angelical abierto, con nubes, templos luminosos y ángeles que vuelan a nuestro alrededor.' },
   { theme: 'fire', name: 'Dimensión del fuego', color: '#f45124',
-    description: 'Esta es la dimensión del fuego. Contiene roca volcánica, lava y energía escarlata.' },
+    description: 'Esta es la dimensión del fuego: sobrevolamos un infierno abierto con volcanes, ríos de lava, brasas y montañas de obsidiana.' },
   { theme: 'shadow', name: 'Dimensión de las sombras', color: '#a17bea',
-    description: 'Esta es la dimensión de las sombras. Aquí esperan ruinas antiguas, cristales y secretos.' },
+    description: 'Esta es la dimensión de las sombras: un valle abierto de cristales oscuros y agujas violetas.' },
   { theme: 'cosmos', name: 'Dimensión cósmica', color: '#58dfbd',
-    description: 'Esta es la dimensión cósmica. Aquí encontrarás estructuras extrañas y energía de otros mundos.' }
+    description: 'Esta es la dimensión cósmica: un horizonte abierto de planetas flotantes, estrellas y energía de otros mundos.' }
 ]);
 
-export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimensions', level, f, fall }) {
+export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimensions', level, f, stop }) {
   if (progress < .28) return 'Hola, soy Kuro.';
   if (progress < 1 || zone === 'intro') return 'Seré tu guía. Ven, tengo algo que mostrarte.';
   if (zone === 'exploration') return 'No todo lo que flota está perdido. Aquí comienza nuestro recorrido.';
   if (zone === 'nucleus' && portalEntry < .20) return 'Este es el núcleo Ω, el corazón de nuestro universo.';
-  if (portalEntry < .99) return 'Estas son las dimensiones que compartimos mi dueño y yo.';
-  if (level === 0 && f < .08) return 'Puedes echar un vistazo.';
-  if (fall > 0) return 'Por esta abertura llegamos a la siguiente dimensión. ¡Sígueme!';
-  if (level === 3 && f > .94) return 'Puedes volver a explorar las dimensiones subiendo. Yo te acompaño.';
+  if (zone === 'flight') return 'Subí a la nave. Vamos a explorar cada dimensión con calma, haciendo paradas en sus portales.';
+  if (zone === 'dimensions' && stop?.visible) {
+    const titles=['de la Luz','del Fuego','de las Sombras','del Cosmos'];
+    const name=titles[level]||'dimensional';
+    if(stop.phase==='landing')return 'Reduciendo velocidad. Estamos por estacionar junto al Portal '+name+'.';
+    if(stop.phase==='disembark')return 'Ya aterrizamos. Bajo de la nave para mostrarte algo.';
+    if(stop.phase==='guide')return 'Este es el Portal '+name+'. Podés entrar o seguir viajando conmigo.';
+    if(stop.phase==='reboard')return 'Vuelvo a subir a la nave. Seguí avanzando para despegar.';
+    if(stop.phase==='takeoff')return '¡De vuelta a bordo! Sigamos explorando.';
+  }
+  if (portalEntry < .99) return 'Preparando la ruta de la nave hacia la primera dimensión.';
+  if (level === 0 && f < .16) return 'Bienvenido al cielo angelical. Observá las formaciones de ángeles y el mar de nubes.';
+  if (level === 0 && f >= .19 && f < .36) return 'Esas catedrales surgieron sobre las islas. En ellas se guardan historias y conocimientos del reino.';
+  if (level === 1 && f < .34) return 'Las fortificaciones infernales fueron levantadas para resistir las erupciones de las montañas de obsidiana.';
+  if (level === 1 && f >= .72 && f < .88) return 'Los dragones patrullan las fortalezas. Más allá de la lava está la Forja de la Creación.';
+  if (level === 2 && f < .34) return 'En ese bosque antiguo se ocultan castillos, tumbas y un pasaje que nadie ha logrado explicar.';
+  if (level === 2 && f >= .70 && f < .88) return 'Tengo una señal extraña: quizá encontremos una puerta secreta entre las sombras.';
+  if (level === 3 && f < .31) return 'El Cosmos no termina en este camino: podemos tomar el control de la nave y visitar planetas.';
+  if (level === 3 && f >= .72 && f < .88) return 'Detecto estaciones espaciales, una singularidad oscura y una posible puerta de gusano.';
+  if (level === 3 && f > .94) return 'Podemos fijar coordenadas y regresar al origen cuando quieras.';
+  if (f > .90) return 'La nave está lista. Configurá el teletransporte para avanzar.';
   return DIMENSIONS[level].description;
 }
 
@@ -31,7 +48,8 @@ export function readIntro() {
       return { top: rect.top + scrollY, height: rect.height };
     };
     sequenceLayout = { width: innerWidth, height: innerHeight, intro: bounds('despertar'),
-      exploration: bounds('explorar'), nucleus: bounds('nucleo'), dimensions: bounds('tunel-0') };
+      exploration: bounds('explorar'), nucleus: bounds('nucleo'),
+       flight: bounds('viaje'), dimensions: bounds('tunel-0') };
   }
   const clamp = n => Math.max(0, Math.min(1, n));
   const layout = sequenceLayout;
@@ -42,10 +60,12 @@ export function readIntro() {
   const viewportCenter = scrollY + innerHeight * .4;
   const zone = viewportCenter < layout.exploration.top ? 'intro'
     : viewportCenter < layout.nucleus.top ? 'exploration'
-    : viewportCenter < layout.dimensions.top ? 'nucleus' : 'dimensions';
+    : viewportCenter < layout.flight.top ? 'nucleus'
+     : viewportCenter < layout.dimensions.top ? 'flight' : 'dimensions';
   return { progress, entry, portalEntry, zone,
     exploration: clamp((scrollY + innerHeight * .6 - layout.exploration.top) / layout.exploration.height),
-    nucleus: clamp((scrollY + innerHeight * .6 - layout.nucleus.top) / layout.nucleus.height) };
+    nucleus: clamp((scrollY + innerHeight * .6 - layout.nucleus.top) / layout.nucleus.height),
+     flight: clamp((scrollY + innerHeight * .6 - layout.flight.top) / layout.flight.height) };
 }
 
 export function createKuroGuide() {

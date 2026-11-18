@@ -1,0 +1,70 @@
+name: Kuro - verificaciones del viaje
+concurrency:
+  group: xr-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/**'
+      - 'tests/**'
+  push:
+    branches:
+      - 'feature/nave-kuro-teletransportes'
+jobs:
+  voyage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probar rutas y teletransporte
+        run: node --test tests/*.test.mjs
+      - name: Comprobar sintaxis de los escenarios 3D
+        run: |
+          node --check assets/quality-controller.js
+          node --check assets/angel-flight.js
+          node --check assets/world-cinematics.js
+          node --check assets/heavenly-cloudscape.js
+          node --check assets/realistic-environments.js
+          node --check assets/dimensional-landscapes.js
+          node --check assets/dimension-scenes.js
+          node --check assets/portal-effects.js
+          node --check assets/journey-motion.js
+          node --check assets/third-person-follow-camera.js
+          node --check assets/portal-tour.js
+          node --check assets/ship-voyage.js
+          node --check assets/realm-extras.js
+          node --check assets/realm-activities.js
+          node --check assets/cosmic-pilot.js
+          node --check assets/shadow-mysteries.js
+
+  visual:
+    # Playwright 1.56 supports 22.04. ubuntu-latest can resolve to 26.04.
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar Chromium para WebGL
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Servir escena y revisar portales reales
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/xr-server.log 2>&1 &
+          for i in $(seq 1 15); do curl -fs http://127.0.0.1:8765/index.html >/dev/null && break; sleep 1; done
+          node tests/browser-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capturas-webgl-cuatro-dimensiones
+          path: browser-artifacts/*.png
+          if-no-files-found: ignore

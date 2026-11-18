@@ -51,6 +51,10 @@
 }
 </style>
 <link rel="stylesheet" href="./assets/portals.css?v=oval-ref-5">
+<link rel="stylesheet" href="./assets/ship-voyage.css?v=open-worlds-1">
+<link rel="stylesheet" href="./assets/open-worlds.css?v=open-worlds-1">
+<link rel="stylesheet" href="./assets/portal-tour.css?v=worlds-12">
+<link rel="stylesheet" href="./assets/realm-interactions.css?v=realms-14">
 </head>
 <body class="no-webgl">
 <canvas id="space" aria-hidden="true"></canvas>
@@ -58,7 +62,7 @@
 
 <div id="kuro-overlay" aria-hidden="true"><span id="catmark"><i class="eyes"></i></span></div>
 <a href="./kuro-modelos.html" id="compare-kuro">🐈‍⬛ Comparar diseños de Kuro</a>
-<a href="./clasica.html" id="classic-mode-link" aria-label="Cambiar a la versión clásica de Universo XR">💻 Modo clásico ↗</a>
+<a href="./clasica.html" id="classic-mode-link" aria-label="Cambiar a la versión clásica del universo de Kuro">💻 Modo clásico ↗</a>
 <a href="#explorar" id="skip-intro">Explorar con Kuro ↓</a><div class="scroll-guide">SCROLL ↓ · SIGUE A KURO</div><main>
 <section class="intro-stage" id="despertar" aria-label="Kuro se acerca y se presenta. Desplázate para explorar sus dimensiones."><h1 class="sr-only">Kuro</h1><span id="intro-eyes" aria-hidden="true"><i></i><i></i></span></section>
 
@@ -68,19 +72,79 @@
 </section>
 <section class="stage prelude-stage" id="nucleo" aria-labelledby="core-heading">
 <div class="core-preview" aria-hidden="true"><i></i><i></i><i></i><b>Ω</b></div>
-<div class="prelude-content"><p class="eyebrow">02 / NÚCLEO</p><h2 id="core-heading">EL CORAZÓN DEL <span class="omega-accent">Ω</span></h2><p class="desc">Una estructura suspendida en el vacío. El corazón de este universo conecta todas sus dimensiones.</p><a class="action" href="#portales">Descubrir los portales ↓</a></div>
+<div class="prelude-content"><p class="eyebrow">02 / NÚCLEO</p><h2 id="core-heading">EL CORAZÓN DEL <span class="omega-accent">Ω</span></h2><p class="desc">Una estructura suspendida en el vacío. El corazón de este universo conecta todas sus dimensiones.</p><a class="action" href="#viaje">Subir a la nave de Kuro ↓</a></div>
+</section>
+<section class="stage ship-flight" id="viaje" aria-labelledby="flight-heading">
+  <div class="prelude-content">
+    <span class="flight-badge">03 / VIAJE EN NAVE · THIRD-PERSON FOLLOW CAMERA</span>
+    <h2 id="flight-heading">TU VIAJE COMIENZA<br>CON KURO AL MANDO</h2>
+    <p class="desc">Viajá con Kuro en su nave por cuatro dimensiones. La cámara sigue a Kuro desde atrás mientras la nave atraviesa curvas suaves y paisajes más realistas: cielos angelicales con ángeles y tierras infernales con volcanes y lava. En la mitad de cada mundo Kuro estaciona la nave, baja a mostrarte su portal y vuelve a subir cuando seguís desplazándote. Al terminar el recorrido, activá el teletransporte de la consola: la nave fijará las coordenadas y entrarás en la cabina en primera persona durante el salto.</p>
+    <a class="action" href="#tunel-0">Comenzar el viaje a la dimensión de la luz ↓</a>
+  </div>
 </section><span id="portales" aria-hidden="true"></span>
-<section class="tunnel-stage" id="tunel-0" style="--portal:#e2c88d"><span id="bajada-0" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-fire" href="#tunel-1" aria-label="Ir a la dimensión del fuego"><img src="./assets/sign-fire.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-1" style="--portal:#f45124"><span id="bajada-1" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-shadow" href="#tunel-2" aria-label="Ir a la dimensión de las sombras"><img src="./assets/sign-shadow.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-2" style="--portal:#a17bea"><span id="bajada-2" class="descent-anchor" aria-hidden="true"></span><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div><a class="dimension-arrow next-cosmos" href="#tunel-3" aria-label="Ir a la dimensión cósmica"><img src="./assets/sign-cosmos.svg" width="140" height="190" alt="" aria-hidden="true"></a></section><section class="tunnel-stage" id="tunel-3" style="--portal:#58dfbd"><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Cuatro umbrales, un mismo descenso.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<section class="tunnel-stage world-stage" id="tunel-0" style="--portal:#e2c88d"><div class="world-info"><small>DIMENSIÓN 01 / VUELO EXTENDIDO · PARADA CON KURO</small><strong>EL CIELO ANGELICAL</strong><p>Nubes, ángeles alados y templos dorados</p></div><div class="tunnel-caption left"><button class="portal" style="--portal:#e2c88d" data-dimension="0" data-theme="light" aria-label="Echar un vistazo a la dimensión de la luz"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de la luz</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage world-stage" id="tunel-1" style="--portal:#f45124"><div class="world-info"><small>DIMENSIÓN 02 / VUELO EXTENDIDO · PARADA CON KURO</small><strong>EL INFIERNO VOLCÁNICO</strong><p>Volcanes, montañas de obsidiana y ríos de lava</p></div><div class="tunnel-caption right"><button class="portal" style="--portal:#f45124" data-dimension="1" data-theme="fire" aria-label="Echar un vistazo a la dimensión del fuego"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión del fuego</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage world-stage" id="tunel-2" style="--portal:#a17bea"><div class="world-info"><small>DIMENSIÓN 03 / VUELO EXTENDIDO · PARADA CON KURO</small><strong>EL VALLE DE LAS SOMBRAS</strong><p>Agujas y cristales oscuros de luz violeta</p></div><div class="tunnel-caption left"><button class="portal" style="--portal:#a17bea" data-dimension="2" data-theme="shadow" aria-label="Echar un vistazo a la dimensión de las sombras"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión de las sombras</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><section class="tunnel-stage world-stage" id="tunel-3" style="--portal:#58dfbd"><div class="world-info"><small>DIMENSIÓN 04 / VUELO EXTENDIDO · PARADA CON KURO</small><strong>EL COSMOS ABIERTO</strong><p>Planetas, estrellas y un horizonte sin límites</p></div><div class="tunnel-caption right"><button class="portal" style="--portal:#58dfbd" data-dimension="3" data-theme="cosmos" aria-label="Echar un vistazo a la dimensión cósmica"><span class="portal-art" aria-hidden="true"><span class="portal-depth"></span><span class="portal-flow"></span><span class="portal-sparks"></span></span><span class="sr-only">Dimensión cósmica</span><small aria-hidden="true">Mirar dimensión ↗</small></button></div></section><footer>UNIVERSO KURO · Paisajes abiertos, curvas cinematográficas y teletransportes por coordenadas.<br><a class="action" href="#despertar">Volver al origen ↑</a></footer></main>
+<div id="camera-mode" hidden role="status">CÁMARA EXTERIOR · TERCERA PERSONA</div>
+<aside id="ship-console" hidden aria-label="Consola de teletransporte de la nave">
+  <div class="ship-console-head">NAVE DE KURO · NAVEGACIÓN</div>
+  <strong id="ship-current">Dimensión de la luz</strong>
+  <p class="ship-console-route">Próxima dimensión <span id="ship-next">Dimensión del fuego</span></p>
+  <div class="ship-console-coords" id="ship-coordinates">IGN-002 · 083.4 / 012.9 / 147</div>
+  <button id="teleport-next" type="button">Fijar coordenadas y teletransportar</button>
+</aside>
+<aside id="portal-stop" hidden aria-label="Kuro estaciona la nave junto a un portal">
+ <div class="stop-head">KURO · PARADA DIMENSIONAL</div>
+ <h2 id="portal-stop-title">Portal de la Luz</h2>
+ <p id="portal-stop-text">Este es el Portal de la Luz.</p>
+ <p id="portal-stop-hint" role="status" aria-live="polite">La nave está aterrizando…</p>
+ <div class="portal-stop-actions">
+  <button type="button" id="portal-stop-enter">Entrar al portal</button>
+  <button type="button" id="portal-stop-continue">Seguir con Kuro</button>
+ </div>
+</aside>
+<div id="teleport-cockpit" hidden role="group" aria-label="Teletransporte desde la cabina de Kuro en primera persona">
+  <span class="cockpit-line left" aria-hidden="true"></span>
+  <span class="cockpit-line right" aria-hidden="true"></span>
+  <div class="cockpit-dashboard">
+    <div class="eyebrow">SISTEMA DE TELETRANSPORTE · KURO</div>
+    <h2 id="teleport-destination">Dimensión del fuego</h2>
+    <div class="coord" id="teleport-coordinates">IGN-002 · 083.4 / 012.9 / 147</div>
+    <p id="teleport-phase" role="status" aria-live="polite" aria-atomic="true">Estableciendo coordenadas…</p>
+    <div class="teleport-meter" aria-hidden="true"><span id="teleport-progress"></span></div>
+    <div class="teleport-camera-label">VISTA DESDE LA CABINA · PRIMERA PERSONA</div>
+  </div>
+</div>
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">KURO TE MUESTRA</p><h2 id="world-heading"></h2><p id="world-desc"></p><img class="world-art" id="world-art" src="./assets/portal-inferno.webp" alt="Portal ovalado de energía escarlata en una dimensión volcánica" hidden><p class="eyebrow">PUEDES SEGUIR EXPLORANDO</p><button id="close-scene" class="action">Seguir con Kuro</button></div></div>
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
-import { readJourney } from './assets/journey-motion.js?v=signs-origin';
-import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=signs-origin';
-import { createDimensionScenes } from './assets/dimension-scenes.js?v=signs-origin';
-import { createOriginSequence } from './assets/origin-sequence.js?v=signs-origin';
+import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=landing-9';
+import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=realms-14';
+import { createDimensionScenes } from './assets/dimension-scenes.js?v=realms-15';
+import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
+import { createShipVoyage } from './assets/ship-voyage.js?v=tour-6';
+import { createPortalTour } from './assets/portal-tour.js?v=realms-15';
+import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=open-worlds-1';
+import { createRenderQualityController } from './assets/quality-controller.js?v=worlds-12';
+import { createRealmActivities } from './assets/realm-activities.js?v=realms-15';
+import { createCosmicPilot } from './assets/cosmic-pilot.js?v=realms-15';
+import { createShadowMysteries } from './assets/shadow-mysteries.js?v=realms-15';
 const guide=createKuroGuide();
 installPortalInteractions();
-import { TUNNEL } from './assets/tunnel-openings.js?v=signs-origin';
+let enterRealm=()=>false;
+const portalTour=createPortalTour({onEnter:level=>enterRealm(level)});
+let prepareDimension=()=>Promise.resolve();
+const voyage=createShipVoyage({
+  dimensions:DIMENSIONS, currentLevel:()=>readJourney().level,
+  prepare:level=>prepareDimension(level),
+  reduced:matchMedia('(prefers-reduced-motion: reduce)').matches
+});
+const syncVoyage=()=>{
+ const intro=readIntro(),journey=readJourney();
+ voyage.update(intro,journey);
+ portalTour.update(journey,intro.zone,voyage.read().active);
+};
+addEventListener('scroll',syncVoyage,{passive:true});
+addEventListener('resize',syncVoyage,{passive:true});
+syncVoyage();
 let THREE;
 try { THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/+esm'); }
 catch { guide.useFallback(); }
@@ -89,10 +153,32 @@ if (!THREE) return;
 const canvas=document.getElementById('space');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const scene=new THREE.Scene();scene.background=new THREE.Color('#000000');scene.fog=new THREE.FogExp2(0x06030e,.011);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#000000');scene.fog=new THREE.FogExp2(0x06030e,.006);
 const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.1,900);camera.position.set(0,1,35);
 let renderer;try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(error){guide.useFallback();return;}document.body.classList.replace('no-webgl','has-webgl');
-renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<700?1.25:1.5));renderer.setSize(innerWidth,innerHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.06;
+// Sombras suaves, escalado según GPU disponible; prioridad a la fluidez en móvil.
+renderer.shadowMap.enabled=innerWidth>750;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const renderQuality=createRenderQualityController(renderer,{
+  reduced,width:()=>innerWidth,height:()=>innerHeight,
+  pixelRatio:()=>devicePixelRatio,mobile:()=>innerWidth<750
+});
+// Actividades desacopladas: contenido local, misterios y pilotaje libre.
+const activities=createRealmActivities(THREE);
+const mysteries=createShadowMysteries(activities.store,{THREE});
+const pilot=createCosmicPilot();
+// Los portales ofrecen una experiencia específica en lugar de abrir
+// únicamente una tarjeta con una imagen.
+enterRealm=level=>{
+ if(level===0){activities.open('library');return true;}
+ if(level===1){activities.open('forge');return true;}
+ if(level===2){mysteries.open();return true;}
+ if(level===3){pilot.start(readJourney());return true;}
+ return false;
+};
 
 const ambient=new THREE.AmbientLight(0x8b6075,1.2);scene.add(ambient);const red=new THREE.PointLight(0xff2050,140,75);red.position.set(8,5,-8);scene.add(red);
 const starCount=innerWidth<700?550:900;const xyz=new Float32Array(starCount*3);for(let i=0;i<starCount;i++){xyz[3*i]=(Math.random()-.5)*280;xyz[3*i+1]=(Math.random()-.5)*180;xyz[3*i+2]=-Math.random()*410+25}
@@ -194,6 +280,12 @@ for(const d of [-1,1]){
 }
 const shipLight=new THREE.PointLight(0xff527e,0,13,1.5);shipLight.position.set(2.2,2.7,2.1);kuro.add(shipLight);
 const shipFill=new THREE.PointLight(0xba92a6,0,14,1.4);shipFill.position.set(-2.8,2.6,3.6);kuro.add(shipFill);
+const landingLegs=[];
+for(const side of [-1,1]){
+ const leg=mesh(new THREE.CylinderGeometry(.06,.095,1.9,12),armor,craft,side*1.3,-1.5,.2);
+ mesh(new THREE.BoxGeometry(.52,.12,.9),armor,leg,0,-.9,0);
+ leg.scale.y=.05;landingLegs.push(leg);
+}
 const ease=v=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v)};
 function animateKuro(t){
  catHead.rotation.y=Math.sin(t*.75)*.08;
@@ -210,81 +302,272 @@ let lostContext=false,frameRequest=0,lastFrameTime=0;
 function scheduleFrame(){if(!frameRequest&&!document.hidden&&!lostContext)frameRequest=requestAnimationFrame(frame)}
 function useFallback(){lostContext=true;cancelAnimationFrame(frameRequest);document.body.classList.replace('has-webgl','no-webgl');canvas.hidden=true;guide.useFallback()}
 canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();useFallback()});
-const tunnels=new THREE.Group();scene.add(tunnels);
+const worlds=new THREE.Group();scene.add(worlds);
 const portalButtons=[...document.querySelectorAll('.tunnel-caption .portal')];
-const portalSystem=createPortalSystem(THREE,tunnels,{reduced,onReady:()=>{if(reduced)scheduleFrame()}});
-const scenes=createDimensionScenes(THREE,tunnels,portalSystem,portalButtons,DIMENSIONS,useFallback,scheduleFrame);
+const portalSystem=createPortalSystem(THREE,worlds,{reduced,onReady:()=>{if(reduced)scheduleFrame()}});
+const scenes=createDimensionScenes(THREE,worlds,portalSystem,portalButtons,DIMENSIONS,useFallback,scheduleFrame);
+prepareDimension=level=>scenes.prepare(level);
 const originSequence=createOriginSequence(THREE,scene,reduced);
 scenes.prepare(0).catch(()=>{});
-const portalLight=new THREE.PointLight(0xffffff,180,30,1.5);scene.add(portalLight);
-const tunnelColor=new THREE.Color();
+const portalLight=new THREE.PointLight(0xffffff,85,55,1.5);scene.add(portalLight);
+const worldFog=new THREE.Color();
+const worldFogColors=[0xa8cada,0x512219,0x382451,0x12334b];
 function journeyState(){ return readJourney(); }
 
+// Posición de la nave y cámara independientes. El ship NO depende de camera.position.
+const chase=createThirdPersonFollowCamera(THREE);
+const introPosition=new THREE.Vector3(0,1,35);
+const introTarget=new THREE.Vector3();
+const introShipPosition=new THREE.Vector3();
+const introLookAt=new THREE.Vector3();
+const worldShipPosition=new THREE.Vector3();
+const worldShipGoal=new THREE.Vector3();
+const worldShipRotation=new THREE.Quaternion();
+const targetShipRotation=new THREE.Quaternion();
+const yawEuler=new THREE.Euler(0,0,0,'YXZ');
+const verticalAxis=new THREE.Vector3(0,1,0);
+const anchorWorld=new THREE.Vector3(.1,1,.5);
+const introRotation=new THREE.Quaternion();
+const worldShip={position:worldShipPosition,quaternion:worldShipRotation};
+const blendedLookAt=new THREE.Vector3();
+const cockpitPosition=new THREE.Vector3();
+const cockpitLookAt=new THREE.Vector3();
 const guideOffset=new THREE.Vector3();
-let mx=0,my=0,sy=0;
-addEventListener('pointermove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2},{passive:true});
+const catMounted=new THREE.Vector3(0,1.04,-.19);
+const catExitWorld=new THREE.Vector3(),catMountedWorld=new THREE.Vector3();
+const catFocus=new THREE.Vector3(),stopCamera=new THREE.Vector3();
+const stopLook=new THREE.Vector3();
+let worldShipReady=false, previousLevel=-1;
+let mx=0,my=0;
+addEventListener('pointermove',e=>{
+  mx=(e.clientX/innerWidth-.5)*2;
+  my=(e.clientY/innerHeight-.5)*2;
+},{passive:true});
+
 function frame(t){
- frameRequest=0;if(lostContext||document.hidden)return;
- t*=.001;const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
- const follow=reduced?1:1-Math.exp(-12*dt);
- const sequence=readIntro();
- const {progress:p,entry:exit,portalEntry:enter}=sequence;
- const universe=ease((p-.40)/.60);
- const shipReveal=ease((p-.06)/.62);
- const distance=24-12*p;
- // Mientras duran los ojos, la cámara está quieta, y Kuro viene HACIA ella.
- const state=journeyState();
- const targetZ=35-28*exit;
- camera.position.z+=(targetZ-camera.position.z)*follow;
- camera.position.x+=((THREE.MathUtils.lerp(mx*.3,state.x,enter))-camera.position.x)*follow;
- camera.position.y+=((THREE.MathUtils.lerp(1-my*.2,state.y-1,enter))-camera.position.y)*follow;
- if(state.active&&state.fall>0){camera.position.x=state.x;camera.position.z=7;}
- // After the introduction, only screen-space X/Y panning remains. No dive or pitch.
- camera.up.set(0,1,0);
- camera.lookAt(camera.position.x,camera.position.y,camera.position.z-30);
- camera.updateMatrixWorld();
- scene.background.setRGB(.011*universe,.005*universe,.022*universe);
- starMaterial.opacity=.83*universe*(1-enter);stars.visible=universe>.01&&enter<.999;
- tunnels.visible=enter>.001;scenes.update(state,enter,camera);
- originSequence.update(t,sequence,mx,my);
- // First Kuro's eyes, then reveal cat and spacecraft gradually.
- fadeMats.forEach(mat=>{mat.opacity=shipReveal;mat.depthWrite=shipReveal>.995;mat.visible=shipReveal>.001});
- shipLight.intensity=38*shipReveal;shipFill.intensity=42*shipReveal;
- eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
- ambient.intensity=.15+universe*(state.level===0?2:1.2);
- if(state.active){tunnelColor.set(DIMENSIONS[state.level].color).multiplyScalar(.035);scene.background.copy(tunnelColor);scene.fog.color.copy(tunnelColor);}
- portalLight.color.set(DIMENSIONS[state.level].color);
- portalLight.position.set(state.side*TUNNEL.portalOffset,-state.level*32,-2);
- portalLight.intensity=180*enter;
- portalSystem.update(t,camera,state);
- red.intensity=140*universe;
- // Su presencia es el título visual: las palabras aparecen como un diálogo suyo.
- const travel=ease((p-.60)/.40);
- guideOffset.set((-state.side*2*(1-2*state.fall)*enter)+Math.sin(t*.65)*.08,
-  -.08-2.7*universe+Math.cos(t*1.2)*.05,-(distance*(1-travel)+12*travel));
- guideOffset.applyQuaternion(camera.quaternion);
- kuro.position.copy(camera.position).add(guideOffset);
- kuro.quaternion.copy(camera.quaternion);kuro.rotateY(mx*(.025+.19*universe));
- // Evitar que las alas se corten en celulares estrechos.
- kuro.scale.setScalar((innerWidth<550?(.77-.27*enter):innerWidth<780?.99:1.15)*(.87+.22*ease((p-.23)/.72)));
- animateKuro(t);
- const anchor=catBody.localToWorld(new THREE.Vector3(.1,1,.5));anchor.project(camera);
- guide.placeAnchor((anchor.x*.5+.5)*innerWidth,(1-anchor.y)*.5*innerHeight);
- renderer.render(scene,camera);
- if(!reduced)scheduleFrame();
+  frameRequest=0;if(lostContext||document.hidden)return;
+  t*=.001;
+  const dt=Math.min(.05,Math.max(1/240,t-lastFrameTime||1/60));lastFrameTime=t;
+  if(activities.isOpen()||mysteries.isOpen()){
+    activities.update(t);
+    mysteries.updateScene(t);
+    if(!reduced)scheduleFrame();
+    return;
+  }
+  renderQuality.update(dt,t);
+  const follow=reduced?1:1-Math.exp(-12*dt);
+  const sequence=readIntro();
+  const {progress:p,entry:exit,portalEntry:enter}=sequence;
+  const universe=ease((p-.40)/.60);
+  const shipReveal=ease((p-.06)/.62);
+  const state=journeyState();
+  voyage.update(sequence,state);
+  const jump=voyage.read();
+  portalTour.update(state,sequence.zone,jump.active);
+  activities.showButton(state.level,sequence,state.stop,state.f);
+  mysteries.update(state,sequence.zone,jump.active);
+  pilot.showButton(state,sequence.zone,jump.active);
+  const activeChase=sequence.zone==='dimensions';
+  const flightControl=pilot.update(dt);
+  // La transición se hace progresiva al acercarnos a la etapa de vuelo.
+  const chaseBlend=activeChase?1:ease((sequence.flight-.025)/.31);
+  const flight=ease(sequence.flight);
+  const levelChanged=previousLevel!==state.level;
+
+  // Plano de la presentación: Kuro vuela hacia el espectador con sus ojos rojos.
+  introTarget.set(
+    THREE.MathUtils.lerp(mx*.3,state.x,enter),
+    THREE.MathUtils.lerp(1-my*.2,state.y-1,enter),
+    35-28*exit
+  );
+  introPosition.lerp(introTarget,follow);
+  introLookAt.set(introPosition.x,introPosition.y,introPosition.z-30);
+  const distance=24-12*p;
+  const travel=ease((p-.60)/.40);
+  guideOffset.set(
+    -state.side*2*enter+Math.sin(t*.65)*.08,
+    -.08-2.7*universe+Math.cos(t*1.2)*.05,
+    -(distance*(1-travel)+12*travel)
+  );
+  introShipPosition.copy(introPosition).add(guideOffset);
+  introRotation.setFromAxisAngle(verticalAxis,mx*(.025+.19*universe));
+
+  // Curvas abiertas: la dirección real de la nave es tangente a la ruta.
+  // Se mantiene un eje central suave; nada de movimiento de costado.
+  if(activeChase){
+    worldShipGoal.set(flightControl?.x??state.x,
+      flightControl?.y??state.y,flightControl?.z??state.z);
+  }else{
+    worldShipGoal.set(
+      0,
+      THREE.MathUtils.lerp(8,FLIGHT_PATH.altitude,flight),
+      THREE.MathUtils.lerp(FLIGHT_PATH.openingZ,FLIGHT_PATH.startZ,flight)
+    );
+  }
+  if(!worldShipReady || (levelChanged && activeChase)){
+    worldShipPosition.copy(worldShipGoal);
+    worldShipReady=true;
+  }else{
+    worldShipPosition.lerp(worldShipGoal,reduced?1:1-Math.exp(-5.2*dt));
+  }
+  // El morro mira hacia la curva siguiente; balanceo leve, como una aeronave.
+  yawEuler.set(0,flightControl?.yaw??(activeChase?state.yaw:Math.PI),
+    reduced?0:(flightControl?.bank??(activeChase?state.bank:0)),'YXZ');
+  targetShipRotation.setFromEuler(yawEuler);
+  if(!worldShipReady || levelChanged || reduced){
+    worldShipRotation.copy(targetShipRotation);
+  }else{
+    worldShipRotation.slerp(targetShipRotation,1-Math.exp(-7.3*dt));
+  }
+
+  // Kuro es un objeto del mundo: actualizamos su posición y orientación antes
+  // de calcular una cámara que lo persigue con amortiguación independiente.
+  kuro.position.copy(introShipPosition).lerp(worldShipPosition,chaseBlend);
+  kuro.quaternion.copy(introRotation).slerp(worldShipRotation,chaseBlend);
+  const introScale=(innerWidth<550?(.77-.27*enter):innerWidth<780?.99:1.15)
+    *(.87+.22*ease((p-.23)/.72));
+  const flightScale=innerWidth<600?.91:1.1;
+  kuro.scale.setScalar(THREE.MathUtils.lerp(introScale,flightScale,chaseBlend));
+  kuro.visible=!jump.active;
+  const stop=activeChase?state.stop:null;
+  const parked=stop?.parked||0;
+  const outside=stop?.out||0;
+  // El gato deja de ser hijo de la nave al bajar. Esta separación permite
+  // iluminarlo, apuntar la cámara hacia él y evitar que lo tapen las alas.
+  if(outside>.00001){
+    kuro.updateMatrixWorld(true);
+    catMountedWorld.copy(catMounted).applyMatrix4(kuro.matrixWorld);
+    // Kuro se sitúa en la parte delantera de la plataforma, entre cámara
+    // y portal. El óvalo queda ATRÁS y ya no se superpone al personaje.
+    catExitWorld.set(stop.portalX*1.06,-32*state.level-3.52,stop.portalZ+12);
+    if(catBody.parent!==scene)scene.attach(catBody);
+    catBody.position.copy(catMountedWorld).lerp(catExitWorld,outside);
+    catBody.scale.setScalar(THREE.MathUtils.lerp(kuro.scale.x,1.95,outside));
+    catBody.quaternion.setFromAxisAngle(verticalAxis,
+      state.level%2===0?-.3:.3);
+  }else if(catBody.parent!==kuro){
+    kuro.attach(catBody);
+    catBody.position.copy(catMounted);
+    catBody.quaternion.identity();
+    catBody.scale.setScalar(1);
+  }else{
+    catBody.position.copy(catMounted);
+    catBody.scale.setScalar(1);
+  }
+  landingLegs.forEach(leg=>{leg.scale.y=.05+parked*1.10;});
+  const tracked=chase.update({
+    ship:worldShip,dt,level:state.level,
+    compact:innerWidth<700,
+    snap:levelChanged && activeChase,reduced
+  });
+
+  camera.position.copy(introPosition).lerp(tracked.position,chaseBlend);
+  blendedLookAt.copy(introLookAt).lerp(tracked.lookAt,chaseBlend);
+  if(outside>.01){
+    const side=stop.portalX<0?-1:1;
+    // Cámara adelantada lateralmente: Kuro queda en PRIMER PLANO y la nave
+    // se ve detrás. En el encuadre anterior el fuselaje ocultaba a Kuro.
+    // Encuadre frontal desde el frente de la estación: Kuro queda cerca,
+    // la nave aparcada a un lado y el portal al fondo, nunca al revés.
+    stopCamera.set(side*32,-32*state.level+4.2,stop.portalZ+31);
+    stopLook.set(side*18,-32*state.level-1.55,stop.portalZ+8);
+    const focus=ease(outside);
+    camera.position.lerp(stopCamera,focus);
+    blendedLookAt.lerp(stopLook,focus);
+  }
+  camera.up.set(0,1,0);
+  if(jump.active && chaseBlend>.8){
+    // Al activarse el salto, la cámara entra en la cabina antes de volver a
+    // la persecución exterior en el destino.
+    cockpitPosition.set(0,.55,.5)
+      .applyQuaternion(worldShipRotation).add(worldShipPosition);
+    cockpitLookAt.set(0,.65,20)
+      .applyQuaternion(worldShipRotation).add(worldShipPosition);
+    camera.position.copy(cockpitPosition);
+    camera.lookAt(cockpitLookAt);
+  }else{
+    camera.lookAt(blendedLookAt);
+  }
+  // En celulares abrimos el campo visual para no recortar las alas de la nave.
+  const desiredFov=THREE.MathUtils.lerp(72,innerWidth<700?84:72,chaseBlend);
+  if(Math.abs(camera.fov-desiredFov)>.05){
+    camera.fov=desiredFov;
+    camera.updateProjectionMatrix();
+  }
+  camera.updateMatrixWorld();
+
+  scene.background.setRGB(.011*universe,.005*universe,.022*universe);
+  starMaterial.opacity=.83*universe*(1-enter);
+  stars.visible=universe>.01&&(enter<.999||jump.active);
+  stars.position.z=sequence.zone==='flight'?flight*18:0;
+  stars.rotation.z=jump.active&&!reduced?t*.14:0;
+  // El paisaje de luz se hace visible ya durante la aproximación inicial.
+  const landscapeEntry=Math.max(enter,sequence.zone==='flight'?ease((flight-.18)/.2):0);
+  worlds.visible=landscapeEntry>.001;
+  scenes.update(state,landscapeEntry,camera,t,sequence.zone);
+  originSequence.update(t,sequence,mx,my);
+  fadeMats.forEach(mat=>{
+    mat.opacity=shipReveal;mat.depthWrite=shipReveal>.995;
+    mat.visible=shipReveal>.001;
+  });
+  shipLight.intensity=38*shipReveal*(1-parked*.38);
+  shipFill.intensity=42*shipReveal*(1-parked*.32);
+  exhaustMat.opacity=shipReveal*(1-parked*.86);
+  eyeGlows.forEach(sp=>sp.material.opacity=.94-.34*shipReveal);
+  ambient.intensity=.15+universe*([.85,1.52,1.38,.85][state.level]);
+  if(landscapeEntry>.001){
+    worldFog.set(worldFogColors[state.level]);
+    scene.background.copy(worldFog);
+    scene.fog.color.copy(worldFog);
+    scene.fog.density=state.level===0?.0017:state.level===1?.0032:state.level===2?.0031:.0014;
+    // Controlar la exposición por dimensión: elimina el cielo completamente
+    // blanco y preserva detalle en las nubes y las zonas oscuras.
+    const exposure=[.85,.98,.99,.88][state.level];
+    renderer.toneMappingExposure+=
+      (exposure-renderer.toneMappingExposure)*(reduced?1:Math.min(1,dt*2.8));
+  }else{
+    scene.fog.color.set(0x06030e);
+    scene.fog.density=.006;
+    renderer.toneMappingExposure+=
+      (1.06-renderer.toneMappingExposure)*(reduced?1:Math.min(1,dt*2.8));
+  }
+  portalLight.color.set(DIMENSIONS[state.level].color);
+  portalLight.position.set(state.stop?.portalX??-21,-state.level*32+3.5,state.stop?.portalZ??-112);
+  portalLight.intensity=85*landscapeEntry;
+  portalSystem.update(t,camera,state);
+  red.intensity=140*universe*(1-landscapeEntry);
+  animateKuro(t);
+  if(outside>.01){
+    catHead.rotation.y+=outside*.18;
+    tail.rotation.y+=Math.sin(t*2.1)*.045*outside;
+  }
+  const anchor=catBody.localToWorld(anchorWorld.set(.1,1,.5));
+  anchor.project(camera);
+  guide.placeAnchor((anchor.x*.5+.5)*innerWidth,(1-anchor.y)*.5*innerHeight);
+  renderer.render(scene,camera);
+  previousLevel=state.level;
+  if(!reduced)scheduleFrame();
 }
 if(reduced)addEventListener('scroll',scheduleFrame,{passive:true});
 scheduleFrame();
 document.addEventListener('visibilitychange',scheduleFrame);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);if(reduced)scheduleFrame()},{passive:true});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderQuality.resize(true);if(reduced)scheduleFrame()},{passive:true});
 })();
 function installPortalInteractions(){
  const popup=document.getElementById('scene-popup'),close=document.getElementById('close-scene');let last;
  document.querySelectorAll('[data-dimension]').forEach(btn=>btn.addEventListener('click',()=>{
   last=btn;const dimension=DIMENSIONS[Number(btn.dataset.dimension)];
-  document.getElementById('world-heading').textContent='Puedes echar un vistazo.';
-  document.getElementById('world-desc').textContent=dimension.description;
-  document.getElementById('world-art').hidden=dimension.theme!=='fire';
+  document.getElementById('world-heading').textContent='Entraste en '+dimension.name;
+  document.getElementById('world-desc').textContent=dimension.description+
+     ' Podés volver al lugar donde estacionó Kuro para continuar el recorrido.';
+  const art=document.getElementById('world-art');
+   art.dataset.theme=dimension.theme;
+   art.hidden=dimension.theme!=='fire'&&dimension.theme!=='light';
+   art.src=dimension.theme==='light'
+      ?'./assets/portal-luz-ovalo.avif':'./assets/portal-inferno.webp';
+   art.alt=dimension.theme==='light'
+      ?'Portal ovalado de luz celestial dorada'
+      :'Portal ovalado de energía volcánica escarlata';
   popup.hidden=false;document.body.style.overflow='hidden';close.focus();
  }));
  function dismiss(){popup.hidden=true;document.body.style.overflow='';last?.focus()}
