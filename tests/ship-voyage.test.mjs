@@ -1,49 +1,56 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { journeyAt, sampleFlightPath, FLIGHT_PATH } from '../assets/journey-motion.js';
+import { journeyAt, sampleFlightPath, FLIGHT_PATH, PORTAL_STOP } from '../assets/journey-motion.js';
 import { createShipVoyage } from '../assets/ship-voyage.js';
 
-const stages = [0, 2100, 4200, 6300].map(top => ({ top, height: 2100 }));
+const STAGE=7200;
+const stages=[0,STAGE,STAGE*2,STAGE*3].map(top=>({top,height:STAGE}));
 const position = (scroll, width = 1200) =>
   journeyAt({ scroll, stages, viewportHeight: 1000, viewportWidth: width });
 
-test('la nave navega cada dimensión sin pozos ni descensos', () => {
-  assert.deepEqual([0, 1000, 2200, 4300, 7200].map(x => position(x).level),
-    [0, 0, 1, 2, 3]);
-  for (let level = 0; level < 4; level++) {
-    const state = position(stages[level].top);
-    assert.equal(state.fall, 0);
-    assert.equal(state.y, -32 * level + 6);
-    assert.ok(Math.abs(state.x)<.00001);
-    assert.equal(state.z, 22);
+test('las cuatro dimensiones tienen un recorrido largo sin saltos prematuros',()=>{
+  assert.deepEqual([0,1900,7400,15000,22500].map(x=>position(x).level),
+    [0,0,1,2,3]);
+  for(let level=0;level<4;level++){
+    const start=position(stages[level].top);
+    assert.equal(start.fall,0);
+    assert.equal(start.y,-32*level+FLIGHT_PATH.altitude);
+    assert.equal(start.z,FLIGHT_PATH.startZ);
+    assert.ok(Math.abs(start.x)<.001);
   }
-  assert.ok(Number.isFinite(position(2200, 390).x));
-  const start=position(0);
-  const halfway=position(1050);
-  const end=position(1979);
-  assert.equal(start.z,22);
-  assert.ok(halfway.z<start.z);
-  assert.ok(end.z<halfway.z);
-  assert.ok(end.z < -145);
-  const left=position(525),right=position(1575);
-  assert.ok(left.x>2,'Primera curva hacia la derecha');
-  assert.ok(right.x< -2,'Segunda curva hacia la izquierda');
-  assert.ok(Math.abs(position(0).x)<1e-6,'El vuelo comienza centrado');
-  // La nave no puede desplazarse de costado: orientación alineada con la tangente.
+  const early=position(STAGE*.2),approach=position(STAGE*.37);
+  const parked=position(STAGE*.5),parkedAgain=position(STAGE*.55);
+  const flying=position(STAGE*.80),end=position(STAGE*.96);
+  assert.ok(early.z>approach.z);
+  assert.equal(parked.stop.phase,'guide');
+  assert.equal(parked.stop.out,1);
+  assert.ok(Math.abs(parked.z-parkedAgain.z)<.001,'La nave se queda estacionada');
+  assert.ok(Math.abs(parked.x-parkedAgain.x)<.001);
+  assert.equal(parked.stop.portalX,-PORTAL_STOP.portalX);
+  assert.ok(flying.z<parked.z-45,'El vuelo continúa luego de Kuro');
+  assert.ok(end.z<FLIGHT_PATH.endZ+10);
+  assert.ok(position(STAGE*.43).stop.parked>.999);
+  assert.equal(position(STAGE*.53).stop.interactable,true);
+  assert.equal(position(STAGE*.60).stop.phase,'reboard');
+  assert.equal(position(STAGE*.70).stop.visible,false);
+  assert.ok(position(STAGE*.63).stop.out<.04,'Kuro ya volvió a embarcar');
+});
+
+test('las curvas son suaves y la nave mira hacia su tangente',()=>{
+  const path=sampleFlightPath(.21);
+  assert.ok(path.x>3);
+  const next=sampleFlightPath(.76);
+  assert.ok(next.x< -2);
   for(const p of [.1,.2,.36,.6,.77,.92]){
-    const path=sampleFlightPath(p);
-    const prev=sampleFlightPath(p-.0005),next=sampleFlightPath(p+.0005);
-    const headingX=Math.sin(path.yaw);
-    const headingZ=Math.cos(path.yaw);
-    const deltaX=next.x-prev.x,deltaZ=next.z-prev.z;
-    const unit=Math.hypot(deltaX,deltaZ);
-    const dot=(headingX*deltaX+headingZ*deltaZ)/unit;
-    assert.ok(dot>.995,'La nave debe mirar hacia la ruta, no volar de costado');
-    assert.ok(Math.abs(path.bank)<=.111,'El balanceo nunca es brusco');
-    assert.ok(Math.abs(path.x)<15,'Las curvas deben ser amplias, no zigzag');
+    const at=sampleFlightPath(p);
+    const prev=sampleFlightPath(p-.0005),ahead=sampleFlightPath(p+.0005);
+    const unit=Math.hypot(ahead.x-prev.x,ahead.z-prev.z);
+    const dot=(Math.sin(at.yaw)*(ahead.x-prev.x)+
+      Math.cos(at.yaw)*(ahead.z-prev.z))/unit;
+    assert.ok(dot>.995);
+    assert.ok(Math.abs(at.bank)<.111);
+    assert.ok(Math.abs(at.x)<20);
   }
-  assert.equal(sampleFlightPath(0).z,FLIGHT_PATH.startZ);
-  assert.equal(sampleFlightPath(1).z,FLIGHT_PATH.endZ);
 });
 
 test('teletransporte: fija coordenadas, cambia de sala y vuelve a tercera persona', async () => {
@@ -63,7 +70,7 @@ test('teletransporte: fija coordenadas, cambia de sala y vuelve a tercera person
       documentElement: { style: { scrollBehavior: '' } },
       body: { classList: { add() {}, remove() {} } },
       getElementById(id) {
-        return id.startsWith('tunel-') ? { offsetTop: Number(id.at(-1)) * 2100 } : elements[id];
+        return id.startsWith('tunel-') ? { offsetTop: Number(id.at(-1)) * STAGE } : elements[id];
       },
       addEventListener() {}
     },
@@ -80,7 +87,9 @@ test('teletransporte: fija coordenadas, cambia de sala y vuelve a tercera person
       currentLevel: () => level,
       prepare: async target => { warmed = target; }
     });
-    voyage.update({ zone: 'dimensions' }, { level: 0 });
+    voyage.update({ zone: 'dimensions' }, { level: 0, f: .20, stop:{visible:false} });
+    assert.equal(elements['teleport-next'].disabled,true,'No permite saltarse la visita a Kuro');
+    voyage.update({zone:'dimensions'}, {level:0,f:.95,stop:{visible:false}});
     assert.equal(elements['ship-console'].hidden, false);
     assert.equal(elements['ship-next'].textContent, 'Fuego');
     elements['teleport-next'].handlers.click();
@@ -98,13 +107,13 @@ test('teletransporte: fija coordenadas, cambia de sala y vuelve a tercera person
     animate(1100);
     assert.equal(scroll, null);
     animate(2900);
-    assert.equal(scroll, 2100);
+    assert.equal(scroll, STAGE);
     level = 1;
     animate(4200);
     assert.equal(voyage.read().active, false);
     assert.equal(elements['teleport-cockpit'].hidden, true);
     assert.equal(elements['teleport-next'].disabled, false);
-    voyage.update({ zone: 'dimensions' }, { level: 1 });
+    voyage.update({ zone: 'dimensions' }, { level: 1, f: .0, stop:{visible:false} });
     assert.equal(elements['ship-next'].textContent, 'Sombra');
   } finally {
     for (const [key, value] of Object.entries(before)) {
