@@ -68,3 +68,34 @@ La referencia técnica es Abyssal Garden (WebGPU, campos fractales, instancing y
 - **Rendimiento:** la resolución del render se regula mediante histéresis en ventanas de 110 cuadros: ante FPS sostenidos menores a 38 reduce la escala; tras varios períodos rápidos la recupera. En móvil hay menos objetos, menos resolución y se mantienen desactivadas las sombras dinámicas más costosas.
 
 Para validar: `node --test tests/*.test.mjs` más los `node --check` del flujo CI. Se comprueban geometría procedural, transiciones, aparcamiento, entrada a portales y control de resolución. La revisión visual en un navegador con GPU sigue siendo necesaria; el proyecto representa realismo estilizado de alto detalle, **no** fotorrealismo garantizado a nivel de cine. No se ha convertido a WebGPU ni se ha incorporado un catálogo pesado de modelos 3D externos.
+
+## Nuevas experiencias de las cuatro dimensiones — ampliación
+
+### 1. Reino de la Luz
+- Nubes fractales y estratos con viento; aves celestiales que atraviesan el cielo.
+- Ángeles en formación en V e individuales, grandes catedrales blancas, escaleras, jardines de flores sobre islas flotantes, cascadas alineadas con las islas y haces solares.
+- **Santuario del Conocimiento:** el portal permite entrar en una biblioteca renderizada en Three.js con estantes y libros seleccionables mediante raycasting. Los escritos se clasifican en Reflexiones, Filosofía y cosmovisiones, Mitología e historia, Libros y documentos e Historias de personajes. Es posible crear, leer, editar y borrar libros, e importar archivos .txt/.md.
+- La información se guarda en `localStorage` de **ese navegador**, no en Google Drive, GitHub, Supabase ni otros servicios. Hay exportación e importación JSON para respaldos. El contenido por entrada se limita a 12.000 caracteres y el total a 80 por colección. No permite adjuntar PDFs o multimedia de forma nativa.
+
+### 2. Reino del Fuego
+- Fortalezas infernales en las montañas, cuatro torres volcánicas, ríos y lagos de lava en movimiento, descargas eléctricas escarlatas, meteoritos, cadenas monumentales, humo, cenizas, dragones y criaturas infernales errantes. El pasillo central y el portal permanecen despejados.
+- **Forja de la Creación:** el portal abre una forja tridimensional cuyos artefactos se generan a partir de los proyectos locales. Categorías: Proyectos de software, Proyectos terminados, Ideas, Objetivos y Desafíos. Cada registro tiene título, categoría, descripción y estado. Al marcarlo terminado se convierte en una reliquia luminosa en la escena 3D. La colección puede editarse y respaldarse junto con los libros.
+- Los objetos son representaciones procedurales; no hay integración automática con el estado real de proyectos de GitHub.
+
+### 3. Reino de las Sombras
+- Bosques oscuros con árboles altos, castillos derruidos, cementerios, ríos negros, bruma, ojos en la oscuridad, luces espectrales, eclipse y una puerta oculta.
+- **Misterios:** encuentros que varían en cada visita, textos de Kuro y una puerta secreta interactiva que registra su descubrimiento en el navegador. No requiere usuario. Se puede entrar desde el portal o el botón disponible en la zona de exploración.
+
+### 4. Reino Cósmico
+- Nebulosas procedurales, estaciones orbitales, patrullas de naves alienígenas, agujero negro con disco de acreción simulado, gusano espacial, instalaciones de civilizaciones y planetas visitables: Borealis, Umbra y Arca.
+- **Pilotaje libre opcional:** al entrar al portal o pulsar Pilotear libremente, cambia el modo de desplazamiento a WASD, flechas, Q/E y controles táctiles. La rueda deja de mover la página mientras se pilota. Se puede seleccionar destinos para navegación asistida por Kuro, o pilotear manualmente y volver al recorrido original. El progreso del scroll permanece intacto.
+
+## Arquitectura de la ampliación
+- `assets/realm-extras.js`: detalles decorativos y criaturas de los cuatro biomas, con actualización de animaciones.
+- `assets/realm-activities.js`: almacenamiento local versionado, Santuario y Forja, escenas Three.js independientes y selección mediante raycasting.
+- `assets/cosmic-pilot.js`: controlador de nave libre, destinos y controles de entrada.
+- `assets/shadow-mysteries.js`: eventos variables, puerta secreta y progreso.
+- `assets/realm-interactions.css`: UI accesible y responsive.
+- `tests/realm-activities.test.mjs`: validación de categorías, persistencia, exportación y navegación.
+
+La prioridad es mantener las experiencias desacopladas del motor de vuelo y preservar el recorrido con Kuro. Sigue pendiente validar visualmente con GPU los cuatro escenarios y ajustar rendimiento/materiales en dispositivos reales. **Los modelos procedurales no sustituyen un pipeline fotorrealista de modelos profesionales con PBR, rigging e iluminación avanzada.**
