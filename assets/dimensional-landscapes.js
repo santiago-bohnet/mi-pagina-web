@@ -123,9 +123,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     // Alas con plumas instanciadas y silueta humana esculpida: reemplaza
     // las antiguas esferas geométricas que se veían como figuras de juguete.
     animated.push(createAngelFlock(THREE,group,{compact,reduced}));
-    const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,2.5);
+    const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,1.35);
     group.add(heavenlyLight);
-    const sunlight=new THREE.DirectionalLight(0xffecd6,2.45);
+    const sunlight=new THREE.DirectionalLight(0xffecd6,1.65);
     sunlight.position.set(-40,80,-100);
     sunlight.castShadow=!compact;
     if(sunlight.castShadow){
@@ -142,7 +142,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
 
   if(level===1){
     // Montañas de obsidiana, cráteres, lava y brasas flotantes.
-    const rock=material(0x1b111c,{metalness:.16,emissive:0x23080c,emissiveIntensity:.3});
+    const rock=material(0x302227,{metalness:.16,emissive:0x23080c,emissiveIntensity:.3});
     const coal=material(0x392026,{emissive:0x510b03,emissiveIntensity:.3,roughness:.86});
     const spikes=[],boulders=[];
     for(let i=0;i<(compact?95:176);i++){
