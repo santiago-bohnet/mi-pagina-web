@@ -48,3 +48,11 @@ La visita al portal abre una **vista temática** dentro del sitio actual, manten
 - `assets/heavenly-cloudscape.js`: sustituye el terreno rocoso y las nubes geométricas de Luz por un mar de nubes de ruido fractal en shader y 85/155 capas de vapor de contornos orgánicos. Todo generado localmente, sin recursos de pago. No son fotografías volumétricas reales, pero mejoran el detalle visual sin exigir una GPU de alta gama.
 - `index.html`: al desembarcar Kuro se separa de la jerarquía de la nave, pasa a coordenadas mundiales y se encuadra delante de ella mediante una cámara lateral adelantada.
 - `assets/portal-tour.js`: al estar junto a un portal, la rueda de mouse y los gestos táctiles bajan a un 30 % de su velocidad; el resto del sitio mantiene desplazamiento normal y la accesibilidad de movimiento reducido se conserva.
+## Ajuste de aterrizaje y oclusión (captura del 18/11/2026)
+
+- La nave flotaba porque el centro de la nave mantenía una elevación local Y=2 pese a que el disco de aterrizaje tiene superficie en Y=-4.6. Ahora el centro desciende a Y=-1.7: con su tren extendido y escala visual, los patines apoyan sobre la plataforma. La zona de aterrizaje es X=±13 y Z=-105, dentro del radio de la plataforma.
+- El portal tapaba a Kuro porque la cámara de la parada estaba ubicada detrás del portal (Z=-135), mientras que el gato quedaba del otro lado. Se cambió el encuadre para poner la cámara en Z=-81, Kuro en Z=-100 y el portal en Z=-112. Kuro ahora está adelante de la superficie del portal en la línea de visión, junto al borde frontal del disco.
+- El gato desembarcado se muestra a escala mayor para mejorar la lectura de su silueta. El encuadre permite mantener la nave aparcada a un lado y el portal detrás.
+- Se añadieron aserciones automáticas de altura de apoyo, posición en el disco y orden de profundidad (cámara → Kuro → portal).
+
+Estas pruebas revisan coordenadas y lógica. Aún debe comprobarse el resultado visual en WebGL con la misma perspectiva de la captura de referencia.
