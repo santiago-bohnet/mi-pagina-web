@@ -1,5 +1,7 @@
 // Paisajes abiertos; no se crean paredes, tubos ni túneles.
-// Todos los mundos usan una ruta recta sobre el eje Z y comparten geometrías.
+// Los paisajes acompañan una trayectoria con curvas amplias.
+// Texturas y atmósfera generadas localmente para evitar dependencias.
+import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava } from './realistic-environments.js?v=cinematic-3';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -20,7 +22,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   const group = new THREE.Group();
   group.name = ['Cielo angelical','Infierno volcánico','Valle de sombras','Cosmos abierto'][level];
   group.position.y = -level * 32;
-  const animated = [];
+  const animated = [createAtmosphericLayers(THREE,group,level,compact,reduced)];
   const shared = {
     orb: new THREE.SphereGeometry(1, 12, 10),
     cloud: new THREE.IcosahedronGeometry(1, 1),
@@ -56,57 +58,43 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     return mesh;
   }
 
-  // Gradiente esférico independiente del fog: cielo abierto hasta el horizonte.
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(390,32,20),
+  // Horizonte con dispersión solar y halo suave; no hay cielos planos.
+  const sunDir=new THREE.Vector3(level===0?-.32:.38,.28,-.9).normalize();
+  const sky=new THREE.Mesh(new THREE.SphereGeometry(390,40,26),
     new THREE.ShaderMaterial({
-      uniforms: {
-        uZenith: { value: new THREE.Color(theme.skyTop) },
-        uHorizon: { value: new THREE.Color(theme.skyHorizon) }
+      uniforms:{
+        uZenith:{value:new THREE.Color(theme.skyTop)},
+        uHorizon:{value:new THREE.Color(theme.skyHorizon)},
+        uSun:{value:sunDir},
+        uSunColor:{value:new THREE.Color(level===0?0xfff0d8:0xff6e32)}
       },
-      vertexShader: `varying vec3 vDir;
-        void main() { vDir=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-      fragmentShader: `uniform vec3 uZenith; uniform vec3 uHorizon; varying vec3 vDir;
-        void main() {
-          float height=clamp(normalize(vDir).y*.95+.17,0.0,1.0);
-          gl_FragColor=vec4(mix(uHorizon,uZenith,smoothstep(.05,.92,height)),1.0);
+      vertexShader:`varying vec3 vDir; void main(){
+        vDir=position;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
+      }`,
+      fragmentShader:`uniform vec3 uZenith; uniform vec3 uHorizon;
+        uniform vec3 uSun; uniform vec3 uSunColor; varying vec3 vDir;
+        void main(){
+          vec3 d=normalize(vDir);
+          float h=clamp(d.y*.8+.25,0.,1.);
+          vec3 sky=mix(uHorizon,uZenith,smoothstep(.04,.93,h));
+          float a=max(dot(d,normalize(uSun)),0.);
+          float halo=pow(a,19.)*.18+pow(a,130.)*.34;
+          float disk=smoothstep(.99942,.99982,a);
+          gl_FragColor=vec4(sky+uSunColor*(halo+disk*.47),1.);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }`,
-      side: THREE.BackSide, depthWrite: false, fog: false
+      side:THREE.BackSide,depthWrite:false,fog:false
     }));
-  sky.position.set(0,0,-80);
+  sky.position.set(0,0,-82);
   group.add(sky);
-
-  const terrain = new THREE.PlaneGeometry(370,430,42,52);
-  terrain.rotateX(-Math.PI/2);
-  terrain.translate(0,-10,-85);
-  const attr=terrain.getAttribute('position');
-  const colors=[];
-  const low=new THREE.Color(theme.ground),high=new THREE.Color(theme.groundAlt);
-  const color=new THREE.Color();
-  for(let i=0;i<attr.count;i++){
-    const x=attr.getX(i),z=attr.getZ(i);
-    const wave=Math.sin(x*.064+level)*Math.cos(z*.078)+
-      Math.sin(x*.18+z*.11)*.35;
-    const side=Math.min(1,Math.max(0,(Math.abs(x)-12)/85));
-    const highland=level===0?side*3.4:side*12;
-    const variation=level===1?2.5:1.25;
-    const y=-10+wave*variation+highland;
-    attr.setY(i,y);
-    color.copy(low).lerp(high,Math.max(0,Math.min(1,.35+wave*.27+side*.17)));
-    colors.push(color.r,color.g,color.b);
-  }
-  terrain.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
-  terrain.computeVertexNormals();
-  put(terrain,new THREE.MeshStandardMaterial({
-    vertexColors:true,roughness:1,side:THREE.DoubleSide
-  }),[0,0,0]);
-  // Neblina/capas de horizonte: las formas lejanas desaparecen en el paisaje.
-  const moonMat=glowMaterial(level===0?0xfff8cd:level===1?0xfa3c12:theme.accent);
-  const sun=put(new THREE.SphereGeometry(level===0?24:16,20,16),
-    moonMat,[level===0?-72:65,level===0?73:62,-242]);
-  sun.material.depthWrite=false;
-
+  group.add(createRealisticTerrain(THREE,level,theme,compact));
+  const sun=put(new THREE.SphereGeometry(level===0?16:11,24,18),
+    new THREE.MeshBasicMaterial({
+      color:level===0?0xfff2d3:level===1?0xff4927:theme.accent,
+      fog:false,depthWrite:false
+    }),[level===0?-91:95,level===0?85:68,-257]);
   // Franjas de cielo y pequeños halos para evitar un entorno vacío.
   if(level===0){
     const cloudMat=material(0xf1f1e4,{transparent:true,opacity:.82,depthWrite:false,emissive:0xb2bdcf,emissiveIntensity:.22});
@@ -137,9 +125,12 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
 
     // Ángeles modelados con túnicas, cabezas, aureolas y alas emplumadas.
     // No se usan imágenes planas: son figuras tridimensionales ligeras.
-    const robe=material(0xf6f2e4,{emissive:0xe6dbaa,emissiveIntensity:.34});
-    const face=material(0xffe4b9,{emissive:0xf7c582,emissiveIntensity:.2});
-    const feather=material(0xfff6e0,{side:THREE.DoubleSide,emissive:0xdce2ff,emissiveIntensity:.30});
+    const robe=material(0xf3ecdb,{roughness:.96,emissive:0xd8c69a,emissiveIntensity:.12});
+    const hair=material(0xc8ad79,{roughness:.94});
+    const eye=material(0x493a31,{roughness:.65});
+    const sleeveMat=material(0xe2dccd,{roughness:.94});
+    const face=material(0xffd6af,{emissive:0xb8906e,emissiveIntensity:.09});
+    const feather=material(0xf2eee2,{roughness:.89,side:THREE.DoubleSide,emissive:0xc3cede,emissiveIntensity:.12});
     const halo=glowMaterial(0xffe19a);
     const wingshape=new THREE.SphereGeometry(1,8,6);
     const angelCount=compact?6:12;
@@ -149,19 +140,26 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       angel.position.set(side*(17+randomAt(i+128)*29),6+randomAt(i+221)*10,-24-i*(compact?29:16));
       const size=.88+randomAt(i+42)*.55;
       angel.scale.setScalar(size);
-      const robeObj=put(new THREE.ConeGeometry(.95,3,9),robe,[0,0,0],null,angel);
-      robeObj.rotation.z=Math.PI; // Falda en forma de campana.
-      put(shared.orb,face,[0,2.0,0],[.51,.55,.48],angel);
-      put(new THREE.TorusGeometry(.75,.08,6,24),halo,[0,2.84,0],null,angel).rotation.x=Math.PI/2;
+      const tunic=put(new THREE.CylinderGeometry(.42,1.15,3.3,16,3),robe,[0,-.2,0],null,angel);
+      tunic.castShadow=!compact;
+      put(shared.orb,face,[0,2.0,.03],[.48,.56,.45],angel);
+      put(shared.orb,hair,[0,2.37,-.09],[.5,.28,.5],angel);
+      for(const d of [-1,1]){
+        const arm=put(new THREE.CylinderGeometry(.19,.3,1.5,9),sleeveMat,[d*.73,.64,.07],null,angel);
+        arm.rotation.z=d*.36;
+        put(shared.orb,face,[d*.93,-.1,.13],[.17,.2,.17],angel);
+        put(shared.orb,eye,[d*.19,2.09,.47],[.041,.052,.02],angel);
+      }
+      put(new THREE.TorusGeometry(.75,.07,7,30),halo,[0,2.86,0],null,angel).rotation.x=Math.PI/2;
       const wingGroups=[];
       for(const dir of [-1,1]){
         const wing=new THREE.Group();
         wing.position.set(dir*.52,1.15,-.2);
-        for(let k=0;k<7;k++){
+        for(let k=0;k<9;k++){
+          const t=k/8;
           const featherObj=put(wingshape,feather,
-            [dir*(.32+k*.36),.46-k*.12,-.06],
-            [.23+(.04*k),1.05-k*.085,.16],wing);
-          featherObj.rotation.z=dir*(.55+k*.11);
+            [dir*(.32+k*.33),.5-k*.11,-.08],[.23+t*.07,1.05-t*.39,.15],wing);
+          featherObj.rotation.z=dir*(.55+t*.7);
         }
         angel.add(wing);
         wingGroups.push({wing,dir});
@@ -178,8 +176,18 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     }
     const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,2.5);
     group.add(heavenlyLight);
-    const sunlight=new THREE.DirectionalLight(0xfff3cf,2.1);
+    const sunlight=new THREE.DirectionalLight(0xffecd6,2.45);
     sunlight.position.set(-40,80,-100);
+    sunlight.castShadow=!compact;
+    if(sunlight.castShadow){
+      sunlight.shadow.mapSize.set(1024,1024);
+      sunlight.shadow.camera.left=-75;
+      sunlight.shadow.camera.right=75;
+      sunlight.shadow.camera.top=75;
+      sunlight.shadow.camera.bottom=-75;
+      sunlight.shadow.camera.far=270;
+      sunlight.shadow.bias=-.00035;
+    }
     group.add(sunlight);
   }
 
@@ -201,26 +209,38 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     const volcano=new THREE.Group();
     volcano.position.set(-92,-1,-176);
     group.add(volcano);
-    const cone=put(new THREE.ConeGeometry(37,67,15,3),rock,[0,0,0],null,volcano);
-    cone.rotation.y=.2;
-    // Núcleo del volcán: aro de lava en el cráter.
-    const magma=glowMaterial(0xff3f0d);
-    put(new THREE.CylinderGeometry(10,10,1.1,32),magma,[0,30,0],null,volcano);
-    const lava=glowMaterial(0xff4b13);
-    const hot=glowMaterial(0xffba3b);
-    for(const side of [-1,1]){
-      const pts=[];
-      for(let j=0;j<25;j++){
-        const z=30-j*10;
-        const x=side*(22+Math.sin(j*.68+side)*6);
-        pts.push(new THREE.Vector3(x,-7.0,z));
-      }
-      const path=new THREE.CatmullRomCurve3(pts);
-      const ribbon=put(new THREE.TubeGeometry(path,96,1.65,6),lava,[0,0,0]);
-      ribbon.frustumCulled=false;
-      const inner=pts.map(v=>v.clone().add(new THREE.Vector3(side*.1,.3,.1)));
-      put(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(inner),96,.4,5),hot,[0,0,0]);
+    const mountainGeometry=new THREE.ConeGeometry(39,76,32,12);
+    const vertices=mountainGeometry.getAttribute('position');
+    for(let i=0;i<vertices.count;i++){
+      const x=vertices.getX(i),y=vertices.getY(i),z=vertices.getZ(i);
+      const theta=Math.atan2(z,x);
+      const jagged=1+.13*Math.sin(theta*7+y*.03)+.085*Math.cos(theta*11+y*.13);
+      vertices.setXYZ(i,x*jagged,y,z*jagged);
     }
+    mountainGeometry.computeVertexNormals();
+    const mountain=put(mountainGeometry,rock,[0,0,0],null,volcano);
+    mountain.castShadow=!compact;
+    const rim=put(new THREE.TorusGeometry(11,2,10,38),coal,[0,35,0],null,volcano);
+    rim.rotation.x=Math.PI/2;
+    put(new THREE.CylinderGeometry(9.6,9.6,1,32),glowMaterial(0xff5314),
+      [0,34.7,0],null,volcano);
+    animated.push(createFlowingLava(THREE,group,compact,reduced));
+    // Plumas de ceniza sobre el cráter: cambian lentamente de altura.
+    const smokeMaterial=new THREE.MeshStandardMaterial({
+      color:0x251c21,transparent:true,opacity:.42,depthWrite:false,roughness:1
+    });
+    const smoke=[];
+    for(let i=0;i<(compact?7:13);i++){
+      smoke.push(put(shared.cloud,smokeMaterial,[-92+Math.sin(i*1.6)*4,35+i*6,
+        -176+Math.cos(i*1.9)*4],[4+i*.8,3.5+i*.7,4+i*.8]));
+    }
+    animated.push(time=>{
+      if(reduced)return;
+      smoke.forEach((obj,i)=>{
+        obj.position.y=35+i*6+((time*.65+i*2)%6);
+        obj.position.x=-92+Math.sin(time*.2+i*.9)*5;
+      });
+    });
     const points=new Float32Array((compact?100:200)*3);
     for(let i=0;i<points.length/3;i++){
       const side=i%2?1:-1;
