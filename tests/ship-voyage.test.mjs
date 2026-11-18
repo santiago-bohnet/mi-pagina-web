@@ -26,6 +26,20 @@ test('las cuatro dimensiones tienen un recorrido largo sin saltos prematuros',()
   assert.equal(parked.stop.out,1);
   assert.ok(Math.abs(parked.z-parkedAgain.z)<.001,'La nave se queda estacionada');
   assert.ok(Math.abs(parked.x-parkedAgain.x)<.001);
+  // El centro de la nave tiene que dejar los patines apoyados sobre el
+  // disco del portal (top=-4.6); no flotar como en la captura reportada.
+  const landingPad={x:-17,z:-112,top:-4.6,radius:15};
+  const landingFeet=parked.y-2.86;
+  assert.ok(Math.abs(landingFeet-landingPad.top)<.25,
+    'El tren de aterrizaje debe apoyar sobre la plataforma');
+  assert.ok(Math.hypot(parked.x-landingPad.x,parked.z-landingPad.z)<landingPad.radius-2,
+    'La nave no debe aterrizar fuera del disco');
+  // Kuro avanza hacia el frente del portal: desde el punto de vista de la
+  // cámara corregida, el gato queda delante del óvalo, no detrás.
+  const catZ=parked.stop.portalZ+12;
+  const cameraZ=parked.stop.portalZ+31;
+  assert.ok(cameraZ>catZ&&catZ>parked.stop.portalZ,
+    'Orden correcto: cámara → Kuro → portal');
   assert.equal(parked.stop.portalX,-PORTAL_STOP.portalX);
   assert.ok(flying.z<parked.z-45,'El vuelo continúa luego de Kuro');
   assert.ok(end.z<FLIGHT_PATH.endZ+10);
