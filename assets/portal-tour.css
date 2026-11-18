@@ -65,3 +65,12 @@ body.is-teleporting #ship-console {visibility:hidden}
 @media(prefers-reduced-motion:reduce){
  #scene-popup::before,#scene-popup .inner{animation:none!important}
 }
+
+/* La burbuja duplicaba el texto de la parada y tapaba la nave/portal.
+   La presentación permanece accesible en #portal-stop. */
+body.at-portal-stop #kuro-greeting{
+  opacity:0!important;visibility:hidden!important;pointer-events:none!important;
+}
+body.at-portal-stop .world-info{
+  opacity:.48;transition:opacity .3s ease;
+}
