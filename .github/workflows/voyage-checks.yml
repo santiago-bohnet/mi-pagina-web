@@ -37,6 +37,10 @@ jobs:
           node --check assets/third-person-follow-camera.js
           node --check assets/portal-tour.js
           node --check assets/ship-voyage.js
+          node --check assets/realm-extras.js
+          node --check assets/realm-activities.js
+          node --check assets/cosmic-pilot.js
+          node --check assets/shadow-mysteries.js
 
   visual:
     # Playwright 1.56 supports 22.04. ubuntu-latest can resolve to 26.04.
