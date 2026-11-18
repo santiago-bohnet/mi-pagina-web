@@ -84,6 +84,12 @@ export function createCosmicPilot({document:doc=globalThis.document,win=globalTh
  win.addEventListener('scroll',()=>{
   if(active&&latestZone!=='dimensions')stop();
  },{passive:true});
+ // Durante pilotaje táctil, gestos sobre el paisaje no desplazan el documento.
+ // Los controles e inputs mantienen interacción nativa.
+ win.addEventListener('touchmove',e=>{
+  if(!active||!e.cancelable||e.target.closest?.('#xr-pilot'))return;
+  e.preventDefault();
+ },{passive:false,capture:true});
  for(const button of panel.querySelectorAll('[data-flight]')){
   const command=button.dataset.flight;
   const down=e=>{e.preventDefault();button.setPointerCapture?.(e.pointerId);keys.add(command);waypoint=null;};
