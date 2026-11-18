@@ -36,7 +36,8 @@ jobs:
           node --check assets/ship-voyage.js
 
   visual:
-    runs-on: ubuntu-latest
+    # Playwright 1.56 supports 22.04. ubuntu-latest can resolve to 26.04.
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
     timeout-minutes: 12
