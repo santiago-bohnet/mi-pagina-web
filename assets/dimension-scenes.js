@@ -1,4 +1,4 @@
-import { makeLandscape } from './dimensional-landscapes.js?v=cinematic-tour-4';
+import { makeLandscape } from './dimensional-landscapes.js?v=clouds-8';
 
 // Escenarios independientes y abiertos: sin paredes laterales ni cilindros.
 export function createDimensionScenes(THREE, parent, portalSystem, buttons, dimensions, onError, onReady = () => {}) {
