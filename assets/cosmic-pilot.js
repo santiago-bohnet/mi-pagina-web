@@ -5,7 +5,10 @@ export const COSMIC_WAYPOINTS=Object.freeze([
  {name:'Nebulosa Esmeralda',x:-87,y:40,z:-155,description:'Una nube de gas y estrellas jóvenes.'},
  {name:'Singularidad Oscura',x:-105,y:46,z:-235,description:'Una región de gravedad extrema y disco de acreción.'},
  {name:'Puerta de Gusano',x:104,y:28,z:-179,description:'Un pasaje experimental hacia otra región del universo.'},
- {name:'Civilización Exterior',x:138,y:12,z:-291,description:'Estructuras construidas por exploradores desconocidos.'}
+ {name:'Civilización Exterior',x:138,y:12,z:-291,description:'Estructuras construidas por exploradores desconocidos.'},
+ {name:'Planeta Borealis',x:80,y:35,z:-38,description:'Un gigante oceánico de tormentas azules.'},
+ {name:'Planeta Umbra',x:-90,y:20,z:-177,description:'Un planeta oscuro rodeado de anillos.'},
+ {name:'Planeta Arca',x:128,y:45,z:-296,description:'Un mundo turquesa lleno de regiones desconocidas.'}
 ]);
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const angle=(a)=>Math.atan2(Math.sin(a),Math.cos(a));
