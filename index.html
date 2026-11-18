@@ -373,6 +373,12 @@ function frame(t){
   }else{
     camera.lookAt(blendedLookAt);
   }
+  // En celulares abrimos el campo visual para no recortar las alas de la nave.
+  const desiredFov=THREE.MathUtils.lerp(72,innerWidth<700?84:72,chaseBlend);
+  if(Math.abs(camera.fov-desiredFov)>.05){
+    camera.fov=desiredFov;
+    camera.updateProjectionMatrix();
+  }
   camera.updateMatrixWorld();
 
   scene.background.setRGB(.011*universe,.005*universe,.022*universe);
