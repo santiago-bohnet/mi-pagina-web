@@ -15,9 +15,11 @@
 - `assets/third-person-follow-camera.js`: cámara perseguidora real con suavizado independiente, orientación de la nave, mirada hacia delante y reposicionamiento instantáneo entre mundos.
 - `assets/ship-voyage.js`: máquina de estados temporal, navegación entre etapas, precarga de la siguiente escena.
 - `assets/ship-voyage.css`: consola, cabina y efecto de salto; versión de movimiento reducido y responsive.
-- `assets/journey-motion.js`: ruta recta con X=0, altitud constante y avance sobre el eje -Z; sin curvas laterales ni descensos.
+- `assets/journey-motion.js`: ruta con curvas en S muy suaves (entrada/salida centradas), tangente de vuelo y ligero alabeo. La nave nunca se desplaza de costado.
 - `assets/dimension-scenes.js`: gestiona paisajes abiertos y sus portales escénicos, sin tubos ni paredes.
-- `assets/dimensional-landscapes.js`: terreno tridimensional, cielo, columnas y ángeles animados en Luz; lava, volcanes, rocas y brasas en Fuego; cristales en Sombras y planetas en Cosmos. Todo con geometrías procedurales y luces, sin imágenes externas.
+- `assets/dimensional-landscapes.js`: cielo con dispersión solar y halo, ángeles con brazos, rostro, alas y plumas más detalladas; volumetría de ceniza en el volcán.
+- `assets/realistic-environments.js`: terreno con ruido fractal y normales suaves, mapas minerales procedurales, nubes/bruma en capas y lava animada con flujo; calidad adaptativa para móviles.
+- `index.html`: tono cinematográfico ACES, salida sRGB, y sombras suaves en pantallas con mayor capacidad.
 - `assets/kuro-guide.js`: diálogo de Kuro en vuelo y en cada dimensión.
 
 ## Comprobación
@@ -29,3 +31,7 @@ En navegador: comprobar que la nave se mueve por coordenadas 3D reales y que la 
 ## Alcance del cambio
 
 Las coordenadas son ficticias y sirven para la narrativa. No se usa geolocalización. No se requieren servicios, API ni base de datos. Los cambios están aislados en una rama y en una vista previa separada de GitHub Pages; la página principal permanece intacta.
+
+## Realismo y límites
+
+Se mejoraron materiales, geometría, profundidad atmosférica e iluminación, pero sigue siendo un entorno **3D procedural para navegador**. No equivale al fotorrealismo de escaneos 3D, personajes profesionales con rigging, texturas PBR 4K, HDRI y postprocesado de un videojuego AAA. La prueba automatizada verifica la lógica y la sintaxis, no la calidad final de renderizado con WebGL; esa revisión visual sigue siendo necesaria en dispositivos reales.
