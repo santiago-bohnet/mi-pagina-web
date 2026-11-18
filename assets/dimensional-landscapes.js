@@ -2,6 +2,7 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=tour-6';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=clouds-7';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -22,7 +23,11 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   const group = new THREE.Group();
   group.name = ['Cielo angelical','Infierno volcánico','Valle de sombras','Cosmos abierto'][level];
   group.position.y = -level * 32;
-  const animated = [createAtmosphericLayers(THREE,group,level,compact,reduced)];
+  // En Luz no se utiliza la nube radial ni terreno de roca: se sustituye por
+  // un océano continuo de nubes de ruido fractal y capas atmosféricas.
+  const animated = level===0
+    ? [createHeavenlyCloudscape(THREE,group,{compact,reduced})]
+    : [createAtmosphericLayers(THREE,group,level,compact,reduced)];
   const shared = {
     orb: new THREE.SphereGeometry(1, 12, 10),
     cloud: new THREE.IcosahedronGeometry(1, 1),
@@ -89,10 +94,11 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     }));
   sky.position.set(0,0,-82);
   group.add(sky);
-  const landform=createRealisticTerrain(THREE,level,theme,compact);
-  group.add(landform);
-  // Imágenes de roca fotografiada, cargadas con un fallback procedural sin internet.
-  upgradeTerrainWithPBR(THREE,landform,level,compact);
+  if(level!==0){
+    const landform=createRealisticTerrain(THREE,level,theme,compact);
+    group.add(landform);
+    upgradeTerrainWithPBR(THREE,landform,level,compact);
+  }
   const sun=put(new THREE.SphereGeometry(level===0?16:11,24,18),
     new THREE.MeshBasicMaterial({
       color:level===0?0xfff2d3:level===1?0xff4927:theme.accent,
@@ -100,19 +106,8 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     }),[level===0?-91:95,level===0?85:68,-257]);
   // Franjas de cielo y pequeños halos para evitar un entorno vacío.
   if(level===0){
-    const cloudMat=material(0xf1f1e4,{transparent:true,opacity:.82,depthWrite:false,emissive:0xb2bdcf,emissiveIntensity:.22});
-    const clouds=[];
-    for(let i=0;i<(compact?38:67);i++){
-      const side=i%2?1:-1;
-      clouds.push({
-        x:side*(15+randomAt(i+11)*120),
-        y:-2+randomAt(i+47)*22,
-        z:35-randomAt(i+86)*342,
-        sx:5+randomAt(i+26)*14,sy:1.1+randomAt(i+38)*2.9,
-        sz:4+randomAt(i+29)*9
-      });
-    }
-    addInstances(shared.cloud,cloudMat,clouds);
+    // Las nubes voxel/icosaedro fueron retiradas. La atmósfera ahora se
+    // compone de un suelo de nubes y masas con bordes orgánicos.
     // Columnas blancas y doradas sobre islas flotantes a ambos lados del vuelo.
     const marble=material(0xe9e4d5,{metalness:.1,emissive:0xc9b579,emissiveIntensity:.12});
     const gold=material(0xffd386,{metalness:.45,roughness:.35,emissive:0xcc9e58,emissiveIntensity:.34});
