@@ -2,7 +2,9 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=tour-6';
-import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=clouds-7';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-12';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=worlds-12';
+import { createAngelFlock } from './angel-flight.js?v=worlds-12';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -23,11 +25,13 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   const group = new THREE.Group();
   group.name = ['Cielo angelical','Infierno volcánico','Valle de sombras','Cosmos abierto'][level];
   group.position.y = -level * 32;
+  // Detalle cinematográfico por mundo: arquitectura, relieves, atmósfera y vida.
+  const cinematic=addCinematicWorldDetails(THREE,group,level,{compact,reduced});
   // En Luz no se utiliza la nube radial ni terreno de roca: se sustituye por
   // un océano continuo de nubes de ruido fractal y capas atmosféricas.
   const animated = level===0
-    ? [createHeavenlyCloudscape(THREE,group,{compact,reduced})]
-    : [createAtmosphericLayers(THREE,group,level,compact,reduced)];
+    ? [createHeavenlyCloudscape(THREE,group,{compact,reduced}),cinematic]
+    : [createAtmosphericLayers(THREE,group,level,compact,reduced),cinematic];
   const shared = {
     orb: new THREE.SphereGeometry(1, 12, 10),
     cloud: new THREE.IcosahedronGeometry(1, 1),
@@ -93,88 +97,28 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       side:THREE.BackSide,depthWrite:false,fog:false
     }));
   sky.position.set(0,0,-82);
-  group.add(sky);
-  if(level!==0){
+  // El cosmos utiliza su propia nebulosa fractal, no un cielo diurno encima.
+  if(level!==3)group.add(sky);
+  // Luz: océano de nubes. Cosmos: vacío espacial, sin suelo plano.
+  // Sólo Fuego y Sombras tienen relieve mineral.
+  if(level===1||level===2){
     const landform=createRealisticTerrain(THREE,level,theme,compact);
     group.add(landform);
     upgradeTerrainWithPBR(THREE,landform,level,compact);
   }
-  const sun=put(new THREE.SphereGeometry(level===0?16:11,24,18),
-    new THREE.MeshBasicMaterial({
-      color:level===0?0xfff2d3:level===1?0xff4927:theme.accent,
-      fog:false,depthWrite:false
-    }),[level===0?-91:95,level===0?85:68,-257]);
+  // Sol integrado en el gradiente atmosférico: las esferas luminosas
+  // opacas producían discos artificiales sobre el cielo y la nebulosa.
+  // El sol ahora forma parte del shader de dispersión anterior.
   // Franjas de cielo y pequeños halos para evitar un entorno vacío.
   if(level===0){
     // Las nubes voxel/icosaedro fueron retiradas. La atmósfera ahora se
     // compone de un suelo de nubes y masas con bordes orgánicos.
-    // Columnas blancas y doradas sobre islas flotantes a ambos lados del vuelo.
-    const marble=material(0xe9e4d5,{metalness:.1,emissive:0xc9b579,emissiveIntensity:.12});
-    const gold=material(0xffd386,{metalness:.45,roughness:.35,emissive:0xcc9e58,emissiveIntensity:.34});
-    const columns=[],capitals=[];
-    for(let i=0;i<22;i++){
-      const side=i%2?-1:1,z=4-i*13;
-      const x=side*(25+(i%4)*12);
-      // Despejar la visual de Kuro, la plataforma y el portal celestial.
-      // Una columna situada en (-25,-100) atravesaba el encuadre de la parada.
-      if(z > -155 && z < -68 && x < 0 && x > -60)continue;
-      columns.push({x,y:1+(i%3)*1.3,z,sx:1.15,sy:21+(i%4)*4,sz:1.15});
-      capitals.push({x,y:12+(i%3)*1.3+(i%4)*2,z,sx:3.4,sy:.85,sz:3.4});
-    }
-    addInstances(shared.pillar,marble,columns);
-    addInstances(shared.box,gold,capitals);
-
-    // Ángeles modelados con túnicas, cabezas, aureolas y alas emplumadas.
-    // No se usan imágenes planas: son figuras tridimensionales ligeras.
-    const robe=material(0xf3ecdb,{roughness:.96,emissive:0xd8c69a,emissiveIntensity:.12});
-    const hair=material(0xc8ad79,{roughness:.94});
-    const eye=material(0x493a31,{roughness:.65});
-    const sleeveMat=material(0xe2dccd,{roughness:.94});
-    const face=material(0xffd6af,{emissive:0xb8906e,emissiveIntensity:.09});
-    const feather=material(0xf2eee2,{roughness:.89,side:THREE.DoubleSide,emissive:0xc3cede,emissiveIntensity:.12});
-    const halo=glowMaterial(0xffe19a);
-    const wingshape=new THREE.SphereGeometry(1,8,6);
-    const angelCount=compact?6:12;
-    for(let i=0;i<angelCount;i++){
-      const angel=new THREE.Group();
-      const side=i%2?1:-1;
-      angel.position.set(side*(17+randomAt(i+128)*29),6+randomAt(i+221)*10,9-i*(compact?47:27));
-      const size=.88+randomAt(i+42)*.55;
-      angel.scale.setScalar(size);
-      const tunic=put(new THREE.CylinderGeometry(.42,1.15,3.3,16,3),robe,[0,-.2,0],null,angel);
-      tunic.castShadow=!compact;
-      put(shared.orb,face,[0,2.0,.03],[.48,.56,.45],angel);
-      put(shared.orb,hair,[0,2.37,-.09],[.5,.28,.5],angel);
-      for(const d of [-1,1]){
-        const arm=put(new THREE.CylinderGeometry(.19,.3,1.5,9),sleeveMat,[d*.73,.64,.07],null,angel);
-        arm.rotation.z=d*.36;
-        put(shared.orb,face,[d*.93,-.1,.13],[.17,.2,.17],angel);
-        put(shared.orb,eye,[d*.19,2.09,.47],[.041,.052,.02],angel);
-      }
-      put(new THREE.TorusGeometry(.75,.07,7,30),halo,[0,2.86,0],null,angel).rotation.x=Math.PI/2;
-      const wingGroups=[];
-      for(const dir of [-1,1]){
-        const wing=new THREE.Group();
-        wing.position.set(dir*.52,1.15,-.2);
-        for(let k=0;k<9;k++){
-          const t=k/8;
-          const featherObj=put(wingshape,feather,
-            [dir*(.32+k*.33),.5-k*.11,-.08],[.23+t*.07,1.05-t*.39,.15],wing);
-          featherObj.rotation.z=dir*(.55+t*.7);
-        }
-        angel.add(wing);
-        wingGroups.push({wing,dir});
-      }
-      group.add(angel);
-      animated.push(time=>{
-        if(reduced)return;
-        angel.position.y=angel.userData.baseY+Math.sin(time*.62+i)*.35;
-        wingGroups.forEach(({wing,dir})=>{
-          wing.rotation.z=dir*(.12+Math.sin(time*1.4+i*.65)*.17);
-        });
-      });
-      angel.userData.baseY=angel.position.y;
-    }
+    // La arquitectura original de cajas y columnas flotantes se eliminó.
+    // Los templos escalonados y pedestales reales se construyen y comparten
+    // geometría en el módulo de detalle cinematográfico de Luz.
+    // Alas con plumas instanciadas y silueta humana esculpida: reemplaza
+    // las antiguas esferas geométricas que se veían como figuras de juguete.
+    animated.push(createAngelFlock(THREE,group,{compact,reduced}));
     const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,2.5);
     group.add(heavenlyLight);
     const sunlight=new THREE.DirectionalLight(0xffecd6,2.45);

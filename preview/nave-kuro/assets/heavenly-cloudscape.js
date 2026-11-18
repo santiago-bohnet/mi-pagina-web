@@ -1,132 +1,184 @@
-// Capa nubosa celestial: superficie y masas gaseosas de ruido fractal.
-// No utiliza esferas, círculos, ni materiales de suelo rocoso.
-function rand(x,y,s=0){const n=Math.sin(x*127.13+y*311.71+s*17.11)*43758.545;return n-Math.floor(n);}
-function fade(x){return x*x*(3-2*x);}
-function noise(x,y,s=0){
-  const a=Math.floor(x),b=Math.floor(y),u=fade(x-a),v=fade(y-b);
-  const p=rand(a,b,s),q=rand(a+1,b,s),r=rand(a,b+1,s),t=rand(a+1,b+1,s);
-  return (p+(q-p)*u)*(1-v)+(r+(t-r)*u)*v;
+// Volumetría aproximada con estratos de vapor, nubes de ruido fractal
+// y luz direccional. Sin circunferencias de sprites ni suelo de piedra.
+// Las capas usan InstancedMesh para mantener un número bajo de draw calls.
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const smooth=x=>x*x*(3-2*x);
+const fract=x=>x-Math.floor(x);
+const rand=(x,y,s=0)=>fract(Math.sin(x*127.17+y*311.73+s*37.11)*43758.5453);
+function noise(x,y,seed=0){
+  const ix=Math.floor(x),iy=Math.floor(y),fx=smooth(x-ix),fy=smooth(y-iy);
+  return (rand(ix,iy,seed)*(1-fx)+rand(ix+1,iy,seed)*fx)*(1-fy)+
+   (rand(ix,iy+1,seed)*(1-fx)+rand(ix+1,iy+1,seed)*fx)*fy;
 }
-function fractal(x,y,s=0){
-  let v=0,amp=.55,frequency=1;
-  for(let i=0;i<5;i++){v+=noise(x*frequency,y*frequency,s+i*13)*amp;frequency*=2.13;amp*=.53;}
+function fbm(x,y,seed=0){
+  let a=.56,v=0;
+  for(let i=0;i<5;i++){
+    v+=a*noise(x,y,seed+i*9);
+    x=x*2.08+6.3;y=y*2.08+9.1;a*=.52;
+  }
   return v;
 }
-function makeCloudAtlas(THREE,compact){
-  const n=compact?192:256;
-  const canvas=document.createElement('canvas');canvas.width=canvas.height=n;
-  const ctx=canvas.getContext('2d');const img=ctx.createImageData(n,n);
+function cloudAtlas(THREE,compact){
+  const n=compact?256:512;
+  const canvas=document.createElement('canvas');
+  canvas.width=canvas.height=n;
+  const ctx=canvas.getContext('2d');
+  if(!ctx)throw Error('No se pudo generar la textura nubosa');
+  const img=ctx.createImageData(n,n);
   for(let y=0;y<n;y++)for(let x=0;x<n;x++){
-    const u=(x+.5)/n*2-1,v=(y+.5)/n*2-1;
-    const warp=fractal(u*2.9+8,v*2.4+3,2);
-    const elongated=Math.sqrt((u*.89)**2+(v*1.3)**2);
-    const billow=fractal(u*5.3+warp*1.45+3,v*5.4+warp*.91+7,19);
-    const micro=fractal(u*14+5,v*14-5,35);
-    const shape=1.18-elongated*1.04+(billow-.37)*.67+(micro-.37)*.19;
-    const alpha=Math.max(0,Math.min(1,(shape-.39)*2.7));
-    const i=(y*n+x)*4;
-    const light=222+Math.round(Math.max(0,Math.min(1,billow)) * 30);
-    img.data[i]=light;
-    img.data[i+1]=Math.min(255,light+3);
-    img.data[i+2]=255;
-    img.data[i+3]=Math.round(alpha*222);
+    const u=(x+.5)/n*2-1, v=(y+.5)/n*2-1;
+    const warp=fbm(u*3.4+5,v*3.4+8,11);
+    const billow=fbm(u*6+warp*1.6,v*5+warp*.9,17);
+    const micro=fbm(u*15+warp*2.9,v*15-warp*2,25);
+    const rim=1-Math.pow(Math.abs(u)*.94,1.7)-Math.pow(Math.abs(v)*1.12,1.7);
+    const density=rim*.9+(billow-.45)*1.05+(micro-.45)*.30;
+    const alpha=clamp((density-.25)*2.0);
+    const shade=clamp((billow-.2)*1.45)*.68+clamp((micro-.2)*1.3)*.32;
+    const light=clamp(.65+shade*.35);
+    const k=(y*n+x)*4;
+    img.data[k]=Math.round(245*light);
+    img.data[k+1]=Math.round(248*light);
+    img.data[k+2]=Math.round(255*light);
+    img.data[k+3]=Math.round(Math.pow(alpha,1.34)*225);
   }
   ctx.putImageData(img,0,0);
   const texture=new THREE.CanvasTexture(canvas);
   texture.colorSpace=THREE.SRGBColorSpace;
   texture.magFilter=THREE.LinearFilter;
+  texture.minFilter=THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps=true;
   return texture;
 }
-
-// Plano raymarched de nubes: irregularidad fractal en lugar de círculos planos.
-const floorVertex=`
-varying vec2 vUv;
-varying vec3 vWorld;
-void main(){
-  vUv=uv;
-  vec4 world=modelMatrix*vec4(position,1.0);
-  vWorld=world.xyz;
-  gl_Position=projectionMatrix*viewMatrix*world;
-}`;
-const floorFragment=`
-uniform float uTime;
-varying vec2 vUv;
-varying vec3 vWorld;
-float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}
-float n2(vec2 p){
- vec2 i=floor(p),f=fract(p);
- f=f*f*(3.-2.*f);
- return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),
- mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);
-}
-float fbm(vec2 p){
- float a=.55,s=0.;
- for(int i=0;i<5;i++){s+=n2(p)*a;p=p*2.09+vec2(12.6,3.5);a*=.51;}
- return s;
-}
-void main(){
- vec2 p=vWorld.xz*.034+vec2(uTime*.004,uTime*.002);
- float warp=fbm(p*.69+7.);
- float depth=fbm(p*2.5+warp*1.75);
- float wisps=fbm(p*6.4-warp*.36);
- float density=smoothstep(.24,.8,depth*.84+warp*.48+wisps*.12);
- float highlight=smoothstep(.36,.85,fbm(p*.65+14.)*.6+depth*.55);
- vec3 shadow=vec3(.41,.54,.70);
- vec3 white=vec3(.91,.94,.98);
- vec3 sun=vec3(1.,.96,.83);
- vec3 color=mix(shadow,white,clamp(density*.74+.22,0.,1.));
- color=mix(color,sun,highlight*.45);
- color*=.93+.12*wisps;
- gl_FragColor=vec4(color,1.);
- #include <tonemapping_fragment>
- #include <colorspace_fragment>
-}`;
-
-export function createHeavenlyCloudscape(THREE,group,{compact=false,reduced=false}={}){
-  const floorMat=new THREE.ShaderMaterial({
-    vertexShader:floorVertex,fragmentShader:floorFragment,
-    uniforms:{uTime:{value:0}},side:THREE.DoubleSide,depthWrite:true,
-    fog:false
+const vertexShader=`
+ varying vec3 vWorld;
+ varying vec3 vCloudNormal;
+ void main(){
+   vec4 world=modelMatrix*vec4(position,1.);
+   vWorld=world.xyz;
+   vCloudNormal=normalize(normalMatrix*normal);
+   gl_Position=projectionMatrix*viewMatrix*world;
+ }`;
+const fragmentShader=`
+ precision highp float;
+ uniform float uTime;
+ varying vec3 vWorld;
+ varying vec3 vCloudNormal;
+ float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+ float noise(vec2 p){
+   vec2 i=floor(p),f=fract(p);
+   f=f*f*(3.-2.*f);
+   return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),
+     mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.)),f.x),f.y);
+ }
+ float fbm(vec2 p){
+   float v=0.,a=.55;
+   for(int i=0;i<5;i++){v+=noise(p)*a;p=p*2.08+vec2(11.3,8.5);a*=.53;}
+   return v;
+ }
+ float field(vec2 p){
+   float warp=fbm(p*.61+vec2(7.2,-1.4));
+   return fbm(p*2.3+warp*2.2)*.68+fbm(p*.47)*.4+
+      fbm(p*6.3-warp*.8)*.1;
+ }
+ void main(){
+   vec2 p=vWorld.xz*.020+vec2(uTime*.0007,uTime*.0002);
+   // Integración de siete estratos: densidad y autosombreado.
+   float coverage=0.,shading=0.;
+   for(int k=0;k<7;k++){
+     float d=float(k)/6.;
+     float density=smoothstep(.31,.71,field(p+vec2(d*.22,-d*.1))-d*.045);
+     float shadow=field(p+vec2(.17+d*.26,-.24-d*.16));
+     float optical=density*(1.-coverage)*(.36-d*.032);
+     shading+=optical*(.75+.36*(density-shadow));
+     coverage+=optical;
+   }
+   vec3 shade=vec3(.31,.40,.54);
+   vec3 white=vec3(.84,.90,.96);
+   vec3 sun=vec3(1.,.94,.80);
+   float wisps=field(p*1.55+vec2(13.6,3.1));
+   float bright=clamp(shading*2.35+wisps*.2,.0,1.);
+   vec3 lightDir=normalize(vec3(-.48,.83,-.32));
+   float relief=clamp(dot(normalize(vCloudNormal),lightDir),.08,1.);
+   vec3 color=mix(shade,white,bright)*(.62+.40*relief);
+   color=mix(color,sun,pow(clamp(wisps,0.,1.),4.)*.16);
+   // Franja de niebla lejana integrada al manto.
+   color=mix(color,vec3(.75,.83,.92),.12);
+   gl_FragColor=vec4(color,1.);
+   #include <tonemapping_fragment>
+   #include <colorspace_fragment>
+ }`;
+function strata(THREE,group,atlas,{compact=false,reduced=false}={}){
+  const geo=new THREE.PlaneGeometry(1,1);
+  geo.rotateX(-Math.PI/2);
+  const mat=new THREE.MeshBasicMaterial({
+    map:atlas,color:0xe5eef8,transparent:true,opacity:.73,
+    depthWrite:false,side:THREE.DoubleSide,fog:true
   });
-  // Sin rocas debajo: un mar continuo de nubes iluminadas.
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(520,900,1,1),floorMat);
-  floor.rotation.x=-Math.PI/2;
-  floor.position.set(0,-10,-145);
-  floor.name='Océano de nubes realistas — cielo de la Luz';
-  floor.receiveShadow=false;
-  group.add(floor);
-
-  const atlas=makeCloudAtlas(THREE,compact);
-  const num=compact?85:155;
-  const layers=[];
-  for(let i=0;i<num;i++){
-    const side=i%3===0?0:i%2?1:-1;
-    const drift=rand(i,6,1),broad=rand(i,2,7);
-    const mat=new THREE.SpriteMaterial({
-      map:atlas,color:new THREE.Color().setHSL(.60,.08,.84+.12*broad),
-      transparent:true,depthWrite:false,depthTest:true,opacity:.41+.38*drift,
-      fog:true
-    });
-    const sprite=new THREE.Sprite(mat);
-    const x=side===0?(drift-.5)*65:side*(18+drift*122);
-    const z=50-rand(i,9,4)*405;
-    const y=-8.5+rand(i,11,9)*19;
-    sprite.position.set(x,y,z);
-    const scale=23+rand(i,3,8)*38;
-    sprite.scale.set(scale*(1+.55*broad),scale*(.49+.22*drift),1);
-    sprite.material.rotation=(rand(i,18,4)-.5)*.38;
-    sprite.renderOrder=side===0?0:1;
-    group.add(sprite);
-    layers.push({sprite,x,y,phase:i*.6});
-  }
-  const mist=new THREE.HemisphereLight(0xfff8ee,0x93b9dc,.72);
-  group.add(mist);
-  return time=>{
-    floorMat.uniforms.uTime.value=reduced?0:time;
-    if(reduced)return;
-    for(const part of layers){
-      part.sprite.position.x=part.x+Math.sin(time*.095+part.phase)*1.2;
-      part.sprite.position.y=part.y+Math.sin(time*.12+part.phase)*.38;
+  const layerCounts=compact?[80,32,20]:[175,65,40];
+  const objects=[];
+  const transform=new THREE.Object3D();
+  for(let band=0;band<layerCounts.length;band++){
+    const count=layerCounts[band];
+    const mesh=new THREE.InstancedMesh(geo,mat,count);
+    mesh.name=['Cumulonimbos cercanos','Bancos de vapor','Neblina elevada'][band];
+    mesh.frustumCulled=false;
+    mesh.renderOrder=band;
+    for(let i=0;i<count;i++){
+      const id=i+band*300;
+      const side=id%3===0?0:id%2?1:-1;
+      const sx=23+rand(id,5,band)*39;
+      const x=side===0?(rand(id,2,7)-.5)*110:side*(23+rand(id,4,3)*165);
+      const z=70-rand(id,19,4)*490;
+      const y=-8.4+band*4.5+rand(id,6,11)*(band?12:5);
+      transform.position.set(x,y,z);
+      transform.rotation.set(0,rand(id,7,4)*6.28,0);
+      transform.scale.set(sx*(.9+band*.35),sx*(.8+rand(id,3,9)*.55),1);
+      transform.scale.z=1;
+      // The geometry lies horizontally, local Y controls width in world Z.
+      transform.scale.set(sx,1,sx*.62);
+      transform.updateMatrix();
+      mesh.setMatrixAt(i,transform.matrix);
     }
+    mesh.instanceMatrix.needsUpdate=true;
+    group.add(mesh);
+    objects.push(mesh);
+  }
+  return t=>{
+    if(reduced)return;
+    for(let i=0;i<objects.length;i++){
+      objects[i].position.x=Math.sin(t*.02+i*3.7)*(i+1)*.12;
+    }
+  };
+}
+export function createHeavenlyCloudscape(THREE,group,{compact=false,reduced=false}={}){
+  const uniforms={uTime:{value:0}};
+  const mat=new THREE.ShaderMaterial({
+    vertexShader,fragmentShader,uniforms,
+    side:THREE.DoubleSide,depthWrite:true,fog:false
+  });
+  // Malla orgánica ondulada, no una plancha plana de color blanco.
+  const terrain=new THREE.PlaneGeometry(580,950,compact?64:104,compact?90:156);
+  terrain.rotateX(-Math.PI/2);
+  const verts=terrain.getAttribute('position');
+  for(let i=0;i<verts.count;i++){
+    const x=verts.getX(i),z=verts.getZ(i);
+    const billow=fbm(x*.016+9,z*.013+3,57);
+    const middle=fbm(x*.057,z*.046,73);
+    const t=clamp((Math.abs(x)-6)/45);
+    const y=(billow-.46)*10+(middle-.48)*4.8+t*2.4;
+    verts.setY(i,y);
+  }
+  terrain.computeVertexNormals();
+  const floor=new THREE.Mesh(terrain,mat);
+  floor.position.set(0,-10,-155);
+  floor.name='Mar de nubes multicapa — infinito a la vista';
+  group.add(floor);
+  const atlas=cloudAtlas(THREE,compact);
+  const advance=strata(THREE,group,atlas,{compact,reduced});
+  const lighting=new THREE.HemisphereLight(0xfff8f0,0x91b7d4,.48);
+  group.add(lighting);
+  return t=>{
+    uniforms.uTime.value=reduced?0:t;
+    advance(t);
   };
 }
