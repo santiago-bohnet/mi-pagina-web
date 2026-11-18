@@ -33,8 +33,8 @@ test('la nave navega cada dimensión sin pozos ni descensos', () => {
   for(const p of [.1,.2,.36,.6,.77,.92]){
     const path=sampleFlightPath(p);
     const prev=sampleFlightPath(p-.0005),next=sampleFlightPath(p+.0005);
-    const headingX=-Math.sin(path.yaw);
-    const headingZ=-Math.cos(path.yaw);
+    const headingX=Math.sin(path.yaw);
+    const headingZ=Math.cos(path.yaw);
     const deltaX=next.x-prev.x,deltaZ=next.z-prev.z;
     const unit=Math.hypot(deltaX,deltaZ);
     const dot=(headingX*deltaX+headingZ*deltaZ)/unit;
