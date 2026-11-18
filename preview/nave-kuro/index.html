@@ -53,7 +53,7 @@
 <link rel="stylesheet" href="./assets/portals.css?v=oval-ref-5">
 <link rel="stylesheet" href="./assets/ship-voyage.css?v=open-worlds-1">
 <link rel="stylesheet" href="./assets/open-worlds.css?v=open-worlds-1">
-<link rel="stylesheet" href="./assets/portal-tour.css?v=tour-6">
+<link rel="stylesheet" href="./assets/portal-tour.css?v=clouds-8">
 </head>
 <body class="no-webgl">
 <canvas id="space" aria-hidden="true"></canvas>
@@ -117,10 +117,10 @@
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
 import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=tour-6';
 import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=tour-6';
-import { createDimensionScenes } from './assets/dimension-scenes.js?v=tour-6';
+import { createDimensionScenes } from './assets/dimension-scenes.js?v=clouds-8';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
 import { createShipVoyage } from './assets/ship-voyage.js?v=tour-6';
-import { createPortalTour } from './assets/portal-tour.js?v=tour-6';
+import { createPortalTour } from './assets/portal-tour.js?v=clouds-8';
 import { createThirdPersonFollowCamera } from './assets/third-person-follow-camera.js?v=open-worlds-1';
 const guide=createKuroGuide();
 installPortalInteractions();
@@ -310,8 +310,9 @@ const cockpitPosition=new THREE.Vector3();
 const cockpitLookAt=new THREE.Vector3();
 const guideOffset=new THREE.Vector3();
 const catMounted=new THREE.Vector3(0,1.04,-.19);
-const catExitWorld=new THREE.Vector3(),catExitLocal=new THREE.Vector3();
-const tmpOrientation=new THREE.Quaternion(),catFocus=new THREE.Vector3();
+const catExitWorld=new THREE.Vector3(),catMountedWorld=new THREE.Vector3();
+const catFocus=new THREE.Vector3(),stopCamera=new THREE.Vector3();
+const stopLook=new THREE.Vector3();
 let worldShipReady=false, previousLevel=-1;
 let mx=0,my=0;
 addEventListener('pointermove',e=>{
@@ -396,15 +397,26 @@ function frame(t){
   const stop=activeChase?state.stop:null;
   const parked=stop?.parked||0;
   const outside=stop?.out||0;
+  // El gato deja de ser hijo de la nave al bajar. Esta separación permite
+  // iluminarlo, apuntar la cámara hacia él y evitar que lo tapen las alas.
   if(outside>.00001){
-    // Convertir la llegada al portal (coordenadas MUNDIALES) al espacio
-    // local de la nave; así Kuro baja incluso cuando el vehículo gira.
-    catExitWorld.set(stop.portalX*.87,-32*state.level-3,stop.portalZ+3);
-    tmpOrientation.copy(kuro.quaternion).invert();
-    catExitLocal.copy(catExitWorld).sub(kuro.position)
-      .applyQuaternion(tmpOrientation).divideScalar(kuro.scale.x);
-    catBody.position.copy(catMounted).lerp(catExitLocal,outside);
-  }else catBody.position.copy(catMounted);
+    kuro.updateMatrixWorld(true);
+    catMountedWorld.copy(catMounted).applyMatrix4(kuro.matrixWorld);
+    catExitWorld.set(stop.portalX*1.04,-32*state.level-3.1,stop.portalZ+4);
+    if(catBody.parent!==scene)scene.attach(catBody);
+    catBody.position.copy(catMountedWorld).lerp(catExitWorld,outside);
+    catBody.scale.setScalar(THREE.MathUtils.lerp(kuro.scale.x,1.55,outside));
+    catBody.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),
+      state.level%2===0?-.3:.3);
+  }else if(catBody.parent!==kuro){
+    kuro.attach(catBody);
+    catBody.position.copy(catMounted);
+    catBody.quaternion.identity();
+    catBody.scale.setScalar(1);
+  }else{
+    catBody.position.copy(catMounted);
+    catBody.scale.setScalar(1);
+  }
   landingLegs.forEach(leg=>{leg.scale.y=.05+parked*1.10;});
   const tracked=chase.update({
     ship:worldShip,dt,level:state.level,
@@ -414,10 +426,15 @@ function frame(t){
 
   camera.position.copy(introPosition).lerp(tracked.position,chaseBlend);
   blendedLookAt.copy(introLookAt).lerp(tracked.lookAt,chaseBlend);
-  if(outside>.05){
-    catBody.getWorldPosition(catFocus);
-    catFocus.y+=.45;
-    blendedLookAt.lerp(catFocus,outside*.42);
+  if(outside>.01){
+    const side=stop.portalX<0?-1:1;
+    // Cámara adelantada lateralmente: Kuro queda en PRIMER PLANO y la nave
+    // se ve detrás. En el encuadre anterior el fuselaje ocultaba a Kuro.
+    stopCamera.set(side*14,-32*state.level+4.4,stop.portalZ-23);
+    stopLook.set(side*21,-32*state.level-1.8,stop.portalZ+4);
+    const focus=ease(outside);
+    camera.position.lerp(stopCamera,focus);
+    blendedLookAt.lerp(stopLook,focus);
   }
   camera.up.set(0,1,0);
   if(jump.active && chaseBlend>.8){
@@ -475,10 +492,9 @@ function frame(t){
   red.intensity=140*universe*(1-landscapeEntry);
   animateKuro(t);
   if(outside>.01){
-    catBody.rotation.y=outside*.24;
-    catBody.rotation.x=outside*.07;
     catHead.rotation.y+=outside*.18;
-  }else{catBody.rotation.x=0;catBody.rotation.y=0;}
+    tail.rotation.y+=Math.sin(t*2.1)*.045*outside;
+  }
   const anchor=catBody.localToWorld(new THREE.Vector3(.1,1,.5));
   anchor.project(camera);
   guide.placeAnchor((anchor.x*.5+.5)*innerWidth,(1-anchor.y)*.5*innerHeight);
