@@ -29,7 +29,8 @@ export function createOriginSequence(THREE, scene, reduced) {
   function update(time, sequence, mx, my) {
     if (!root && sequence.progress > .55 && sequence.portalEntry < 1) build();
     if (!root) return;
-    const opacity = sequence.entry * (1 - sequence.portalEntry);
+    const flightFade = sequence.zone === 'flight' ? Math.max(0, 1 - sequence.flight * 1.7) : sequence.zone === 'dimensions' ? 0 : 1;
+    const opacity = sequence.entry * (1 - sequence.portalEntry) * flightFade;
     root.visible = opacity > .002;
     if (!root.visible) return;
     const amount = Math.min(1, sequence.nucleus * 2);
