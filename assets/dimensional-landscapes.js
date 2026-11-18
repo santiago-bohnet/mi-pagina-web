@@ -115,6 +115,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     for(let i=0;i<22;i++){
       const side=i%2?-1:1,z=4-i*13;
       const x=side*(25+(i%4)*12);
+      // Despejar la visual de Kuro, la plataforma y el portal celestial.
+      // Una columna situada en (-25,-100) atravesaba el encuadre de la parada.
+      if(z > -155 && z < -68 && x < 0 && x > -60)continue;
       columns.push({x,y:1+(i%3)*1.3,z,sx:1.15,sy:21+(i%4)*4,sz:1.15});
       capitals.push({x,y:12+(i%3)*1.3+(i%4)*2,z,sx:3.4,sy:.85,sz:3.4});
     }
@@ -198,6 +201,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
       const side=i%2?1:-1;
       const x=side*(17+randomAt(i+41)*146);
       const z=30-randomAt(i+56)*345;
+      if(z>-150&&z<-74&&x>0&&x<60)continue;
       spikes.push({x,y:-6+randomAt(i+7)*3,z,
         sx:2+randomAt(i+17)*4,sy:8+randomAt(i+71)*42,sz:2+randomAt(i+22)*4,ry:randomAt(i+80)*6});
       if(i%3===0)boulders.push({x:x+6,y:-8,z:z-2,sx:3+randomAt(i+14)*7,sy:2+randomAt(i+91)*6,sz:4+randomAt(i+67)*9});
@@ -269,6 +273,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     for(let i=0;i<(compact?100:185);i++){
       const side=i%2?1:-1;
       const x=side*(17+randomAt(i+31)*140),z=30-randomAt(i+44)*345;
+      if(z>-150&&z<-74&&x<0&&x>-60)continue;
       const h=9+randomAt(i+66)*49;
       placements.push({x,y:-6,z,sx:1+randomAt(i)*3,sy:h,sz:1+randomAt(i+3)*3});
       if(i%4===0)highlights.push({x,y:-3+h*.45,z,sx:.3,sy:h*.21,sz:.3});
