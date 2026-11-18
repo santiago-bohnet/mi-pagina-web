@@ -142,7 +142,7 @@ function infernalFortresses(T,parent,compact){
   }
 }
 function infernalCreatures(T,parent,compact,reduced,updates){
-  const skin=color(T,0x27161c,{metalness:.15}),eye=new T.MeshBasicMaterial({color:0xf43c16});
+  const skin=color(T,0x372028,{metalness:.15}),eye=new T.MeshBasicMaterial({color:0xf43c16});
   const dragons=[];
   for(let i=0;i<(compact?2:5);i++){
     const g=new T.Group();parent.add(g);g.name='Dragón infernal';
@@ -204,7 +204,7 @@ function meteors(T,parent,compact,reduced,updates){
   });
 }
 function shadowForest(T,parent,compact,reduced,updates){
-  const trunk=color(T,0x171922),leaf=color(T,0x121b1a,{roughness:1});
+  const trunk=color(T,0x272b33),leaf=color(T,0x252e2c,{roughness:1});
   const dead=color(T,0x302e3b);
   const treeGeo=new T.CylinderGeometry(.25,.62,1,7);
   const crownGeo=new T.IcosahedronGeometry(1,1);
