@@ -22,6 +22,7 @@ jobs:
         run: node --test tests/*.test.mjs
       - name: Comprobar sintaxis de los escenarios 3D
         run: |
+          node --check assets/realistic-environments.js
           node --check assets/dimensional-landscapes.js
           node --check assets/dimension-scenes.js
           node --check assets/portal-effects.js
