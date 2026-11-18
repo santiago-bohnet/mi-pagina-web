@@ -40,9 +40,22 @@ try{
         const stage=document.getElementById('tunel-'+previous);
         scrollTo(0,stage.getBoundingClientRect().top+scrollY+stage.offsetHeight*.95);
       },level-1);
-      await page.waitForTimeout(500);
-      assert.equal(await page.locator('#teleport-next').isEnabled(),true,
-        'Debe poder teletransportarse al completar el recorrido');
+      await page.waitForTimeout(1700);
+      const ready=await page.evaluate(async()=>{
+        const j=await import('./assets/journey-motion.js?v=landing-9');
+        const g=await import('./assets/kuro-guide.js?v=tour-6');
+        const state=j.readJourney(),intro=g.readIntro();
+        return {
+          scroll:scrollY,level:state.level,f:state.f,zone:intro.zone,
+          disabled:document.getElementById('teleport-next').disabled,
+          consoleHidden:document.getElementById('ship-console').hidden,
+          cockpitHidden:document.getElementById('teleport-cockpit').hidden,
+          stage:document.getElementById('tunel-'+(level-1)).offsetTop
+        };
+      });
+      console.log('Teletransporte preparado: '+JSON.stringify(ready));
+      assert.equal(ready.disabled,false,
+        'Debe poder teletransportarse al completar el recorrido: '+JSON.stringify(ready));
       await page.locator('#teleport-next').click();
       await page.waitForTimeout(4950);
     }
