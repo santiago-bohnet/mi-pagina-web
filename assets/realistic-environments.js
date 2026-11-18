@@ -204,14 +204,16 @@ export function upgradeTerrainWithPBR(THREE,mesh,level,compact=false){
   const id=PBR_ASSETS[level];
   if(!id)return;
   const loader=new THREE.TextureLoader();
-  const base='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/'+id+'/'+id;
+  // 2K en escritorio para conservar vetas y volumen de la roca; 1K en móvil.
+  const resolution=compact?'1k':'2k';
+  const base='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/'+resolution+'/'+id+'/'+id;
   const setup=texture=>{
     texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
     texture.repeat.set(8,12);
     texture.anisotropy=compact?2:4;
     return texture;
   };
-  loader.load(base+'_diff_1k.jpg',map=>{
+  loader.load(base+'_diff_'+resolution+'.jpg',map=>{
     map.colorSpace=THREE.SRGBColorSpace;
     mesh.material.map=setup(map);
     mesh.material.needsUpdate=true;
@@ -219,7 +221,7 @@ export function upgradeTerrainWithPBR(THREE,mesh,level,compact=false){
     // El material procedural original es siempre usable sin conexión.
   });
   if(!compact){
-    loader.load(base+'_nor_gl_1k.jpg',normal=>{
+    loader.load(base+'_nor_gl_'+resolution+'.jpg',normal=>{
       mesh.material.normalMap=setup(normal);
       mesh.material.normalScale.set(.33,.33);
       mesh.material.needsUpdate=true;
