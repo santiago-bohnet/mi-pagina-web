@@ -91,17 +91,22 @@ function makeCloudCitadels(THREE,group,compact,updates){
   const gold=new THREE.MeshStandardMaterial({
     color:0xc5a96f,metalness:.75,roughness:.25
   });
-  const items=[],capitals=[],struts=[];
+  const items=[],capitals=[],struts=[],pedestals=[];
   for(let i=0;i<(compact?15:29);i++){
     const side=i%2?-1:1;
     const x=side*(44+rng(i,1)*64);
     const z=35-i*(compact?23:12)-rng(i,12)*7;
     if(portalExclusion(x,z,0))continue;
     const scale=.7+rng(i,14)*1.05;
-    items.push({x,y:4+scale*8,z,sx:1.4*scale,sy:19*scale,sz:1.4*scale});
-    capitals.push({x,y:4+scale*18,z,sx:3.4*scale,sy:.9*scale,sz:3.4*scale});
-    if(i%3===0)struts.push({x:x+side*5,y:11,z,sx:1,sy:21,sz:1});
+    const h=18*scale;
+    const base=-7.0;
+    items.push({x,y:base+h*.5,z,sx:1.4*scale,sy:h,sz:1.4*scale});
+    capitals.push({x,y:base+h+.35,z,sx:3.5*scale,sy:.68*scale,sz:3.5*scale});
+    pedestals.push({x,y:base-.45,z,sx:3.7*scale,sy:.9,sz:3.7*scale});
+    if(i%3===0)struts.push({x:x+side*5,y:base+h*.42,z,sx:.8,sy:h*.84,sz:.8});
   }
+  // Cada columna nace de un pedestal apoyado sobre las nubes, no del vacío.
+  instances(THREE,group,new THREE.CylinderGeometry(1,1,1,16),marble,pedestals);
   instances(THREE,group,new THREE.CylinderGeometry(.72,.9,1,16,2),marble,items);
   instances(THREE,group,new THREE.BoxGeometry(1,1,1),quartz,capitals);
   instances(THREE,group,new THREE.CylinderGeometry(.8,1,1,12),gold,struts);
