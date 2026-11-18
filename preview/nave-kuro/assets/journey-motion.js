@@ -86,11 +86,14 @@ export function journeyAt({scroll,stages,viewportHeight}) {
   const path=sampleFlightPath(travelProgress(f));
   // Durante el descenso la nave se acerca lateralmente al portal y reduce
   // altura. En el despegue vuelve suavemente a su ruta de vuelo.
-  const dockX=stop.portalX*.53;
+  // El tren de aterrizaje debe tocar la plataforma (superficie Y=-4.6).
+  // Con la escala de la nave y las patas extendidas, el centro Y=-1.7
+  // deja los patines apoyados, en lugar de flotar varios metros arriba.
+  const dockX=stop.portalX*(13/21);
   const offset=stop.parked;
   const x=mix(path.x,dockX,offset);
-  const y=mix(path.y,2.0,offset);
-  const z=mix(path.z,stop.portalZ+13,offset);
+  const y=mix(path.y,-1.7,offset);
+  const z=mix(path.z,stop.portalZ+7,offset);
   const facing=Math.atan2(stop.portalX-x,stop.portalZ-z);
   // Interpolación angular corta: nunca gira un círculo completo al aparcar.
   const relative=Math.atan2(Math.sin(facing-path.yaw),Math.cos(facing-path.yaw));
