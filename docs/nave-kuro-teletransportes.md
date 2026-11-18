@@ -56,3 +56,15 @@ La visita al portal abre una **vista temática** dentro del sitio actual, manten
 - Se añadieron aserciones automáticas de altura de apoyo, posición en el disco y orden de profundidad (cámara → Kuro → portal).
 
 Estas pruebas revisan coordenadas y lógica. Aún debe comprobarse el resultado visual en WebGL con la misma perspectiva de la captura de referencia.
+
+## Reconstrucción cinematográfica de las cuatro dimensiones (18/11/2026)
+
+La referencia técnica es Abyssal Garden (WebGPU, campos fractales, instancing y medición GPU), sin copiar su motor ni abandonar el Three.js actual. Se implementó un módulo de detalle independiente por mundo, con materiales y geometrías reutilizables, generación determinista y cantidad de objetos limitada en móvil.
+
+- **Luz:** océano de nubes con integración óptica de siete capas, contornos fractales orgánicos y hasta 280 bancos de vapor instanciados. Catedrales y piedras blancas flotantes alejadas de la ruta; ángeles con túnicas plegadas, rasgos faciales y alas de plumas por instancias; tonos cálidos y luz ambiente con reducción de sobreexposición. Sin suelo rocoso.
+- **Fuego:** cuencas de lava animada, terreno mineral PBR (2K escritorio, 1K móvil), hasta 280 rocas irregulares, agujas de basalto, cuatro volcanes, brasas, ceniza y luces rojizas variables. Zonas de aterrizaje despejadas.
+- **Sombras:** antiguas columnas arruinadas, fragmentos caídos, cristales luminosos, campo de relieves oscuros, partículas y bruma violeta. El portal y el camino hacia la plataforma se mantienen libres de obstáculos.
+- **Cosmos:** nebulosa 3D fractal en shader propio, campo de asteroides instanciados, planetas de diferentes tamaños y materiales, halos atmosféricos y anillos. Se quitó el suelo plano para que el escenario sea espacio abierto.
+- **Rendimiento:** la resolución del render se regula mediante histéresis en ventanas de 110 cuadros: ante FPS sostenidos menores a 38 reduce la escala; tras varios períodos rápidos la recupera. En móvil hay menos objetos, menos resolución y se mantienen desactivadas las sombras dinámicas más costosas.
+
+Para validar: `node --test tests/*.test.mjs` más los `node --check` del flujo CI. Se comprueban geometría procedural, transiciones, aparcamiento, entrada a portales y control de resolución. La revisión visual en un navegador con GPU sigue siendo necesaria; el proyecto representa realismo estilizado de alto detalle, **no** fotorrealismo garantizado a nivel de cine. No se ha convertido a WebGPU ni se ha incorporado un catálogo pesado de modelos 3D externos.
