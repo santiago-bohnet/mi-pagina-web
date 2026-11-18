@@ -1,4 +1,4 @@
-import { readJourney } from './journey-motion.js?v=signs-origin';
+import { readJourney } from './journey-motion.js?v=ship-voyage-1';
 
 export const DIMENSIONS = Object.freeze([
   { theme: 'light', name: 'Dimensión de la luz', color: '#e2c88d',
