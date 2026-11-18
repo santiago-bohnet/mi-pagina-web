@@ -2,7 +2,8 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=tour-6';
-import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=clouds-7';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-11';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=worlds-11';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -23,11 +24,13 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
   const group = new THREE.Group();
   group.name = ['Cielo angelical','Infierno volcánico','Valle de sombras','Cosmos abierto'][level];
   group.position.y = -level * 32;
+  // Detalle cinematográfico por mundo: arquitectura, relieves, atmósfera y vida.
+  const cinematic=addCinematicWorldDetails(THREE,group,level,{compact,reduced});
   // En Luz no se utiliza la nube radial ni terreno de roca: se sustituye por
   // un océano continuo de nubes de ruido fractal y capas atmosféricas.
   const animated = level===0
-    ? [createHeavenlyCloudscape(THREE,group,{compact,reduced})]
-    : [createAtmosphericLayers(THREE,group,level,compact,reduced)];
+    ? [createHeavenlyCloudscape(THREE,group,{compact,reduced}),cinematic]
+    : [createAtmosphericLayers(THREE,group,level,compact,reduced),cinematic];
   const shared = {
     orb: new THREE.SphereGeometry(1, 12, 10),
     cloud: new THREE.IcosahedronGeometry(1, 1),
@@ -99,11 +102,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     group.add(landform);
     upgradeTerrainWithPBR(THREE,landform,level,compact);
   }
-  const sun=put(new THREE.SphereGeometry(level===0?16:11,24,18),
-    new THREE.MeshBasicMaterial({
-      color:level===0?0xfff2d3:level===1?0xff4927:theme.accent,
-      fog:false,depthWrite:false
-    }),[level===0?-91:95,level===0?85:68,-257]);
+  // Sol integrado en el gradiente atmosférico: las esferas luminosas
+  // opacas producían discos artificiales sobre el cielo y la nebulosa.
+  // El sol ahora forma parte del shader de dispersión anterior.
   // Franjas de cielo y pequeños halos para evitar un entorno vacío.
   if(level===0){
     // Las nubes voxel/icosaedro fueron retiradas. La atmósfera ahora se
@@ -134,7 +135,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     const feather=material(0xf2eee2,{roughness:.89,side:THREE.DoubleSide,emissive:0xc3cede,emissiveIntensity:.12});
     const halo=glowMaterial(0xffe19a);
     const wingshape=new THREE.SphereGeometry(1,8,6);
-    const angelCount=compact?6:12;
+    const angelCount=compact?12:26;
     for(let i=0;i<angelCount;i++){
       const angel=new THREE.Group();
       const side=i%2?1:-1;
