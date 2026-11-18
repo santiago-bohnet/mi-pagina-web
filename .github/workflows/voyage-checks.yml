@@ -28,3 +28,5 @@ jobs:
           node --check assets/portal-effects.js
           node --check assets/journey-motion.js
           node --check assets/third-person-follow-camera.js
+          node --check assets/portal-tour.js
+          node --check assets/ship-voyage.js
