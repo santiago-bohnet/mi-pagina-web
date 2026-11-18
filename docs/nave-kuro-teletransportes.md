@@ -42,3 +42,9 @@ Se mejoraron materiales, geometría, profundidad atmosférica e iluminación, pe
 Los materiales de roca `rock_path`, `rocky_gravel` y `rock_ground_02` se cargan desde https://dl.polyhaven.org bajo licencia CC0 (https://polyhaven.com/). El proyecto no reexporta las fotografías ni necesita pagos/API. Se comprueban las descargas en el navegador; si no están disponibles, quedan las texturas procedurales. El uso de CDN supone conectividad en la primera visita y la carga aumenta el consumo de memoria de GPU.
 
 La visita al portal abre una **vista temática** dentro del sitio actual, manteniendo la nave estacionada hasta continuar el scroll; no es una dimensión 3D independiente ni un videojuego terminado. Queda pendiente una verificación visual real de WebGL y, para un objetivo fotográfico total, modelos/escaneos de alta resolución de paisajes, ángeles y naves con texturas PBR y revisión de rendimiento.
+
+## Nubes de Luz y visibilidad de Kuro
+
+- `assets/heavenly-cloudscape.js`: sustituye el terreno rocoso y las nubes geométricas de Luz por un mar de nubes de ruido fractal en shader y 85/155 capas de vapor de contornos orgánicos. Todo generado localmente, sin recursos de pago. No son fotografías volumétricas reales, pero mejoran el detalle visual sin exigir una GPU de alta gama.
+- `index.html`: al desembarcar Kuro se separa de la jerarquía de la nave, pasa a coordenadas mundiales y se encuadra delante de ella mediante una cámara lateral adelantada.
+- `assets/portal-tour.js`: al estar junto a un portal, la rueda de mouse y los gestos táctiles bajan a un 30 % de su velocidad; el resto del sitio mantiene desplazamiento normal y la accesibilidad de movimiento reducido se conserva.
