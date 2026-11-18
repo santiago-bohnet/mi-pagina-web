@@ -115,7 +115,7 @@
 <div id="scene-popup" hidden role="dialog" aria-modal="true" aria-labelledby="world-heading"><div class="inner"><p class="eyebrow">KURO TE MUESTRA</p><h2 id="world-heading"></h2><p id="world-desc"></p><img class="world-art" id="world-art" src="./assets/portal-inferno.webp" alt="Portal ovalado de energía escarlata en una dimensión volcánica" hidden><p class="eyebrow">PUEDES SEGUIR EXPLORANDO</p><button id="close-scene" class="action">Seguir con Kuro</button></div></div>
 <script type="module">
 import { createPortalSystem } from './assets/portal-effects.js?v=oval-ref-5';
-import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=tour-6';
+import { readJourney, FLIGHT_PATH } from './assets/journey-motion.js?v=landing-9';
 import { DIMENSIONS, createKuroGuide, readIntro } from './assets/kuro-guide.js?v=tour-6';
 import { createDimensionScenes } from './assets/dimension-scenes.js?v=clouds-8';
 import { createOriginSequence } from './assets/origin-sequence.js?v=ship-voyage-1';
@@ -402,10 +402,12 @@ function frame(t){
   if(outside>.00001){
     kuro.updateMatrixWorld(true);
     catMountedWorld.copy(catMounted).applyMatrix4(kuro.matrixWorld);
-    catExitWorld.set(stop.portalX*1.04,-32*state.level-3.1,stop.portalZ+4);
+    // Kuro se sitúa en la parte delantera de la plataforma, entre cámara
+    // y portal. El óvalo queda ATRÁS y ya no se superpone al personaje.
+    catExitWorld.set(stop.portalX*1.06,-32*state.level-3.52,stop.portalZ+12);
     if(catBody.parent!==scene)scene.attach(catBody);
     catBody.position.copy(catMountedWorld).lerp(catExitWorld,outside);
-    catBody.scale.setScalar(THREE.MathUtils.lerp(kuro.scale.x,1.55,outside));
+    catBody.scale.setScalar(THREE.MathUtils.lerp(kuro.scale.x,1.95,outside));
     catBody.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),
       state.level%2===0?-.3:.3);
   }else if(catBody.parent!==kuro){
@@ -430,8 +432,10 @@ function frame(t){
     const side=stop.portalX<0?-1:1;
     // Cámara adelantada lateralmente: Kuro queda en PRIMER PLANO y la nave
     // se ve detrás. En el encuadre anterior el fuselaje ocultaba a Kuro.
-    stopCamera.set(side*14,-32*state.level+4.4,stop.portalZ-23);
-    stopLook.set(side*21,-32*state.level-1.8,stop.portalZ+4);
+    // Encuadre frontal desde el frente de la estación: Kuro queda cerca,
+    // la nave aparcada a un lado y el portal al fondo, nunca al revés.
+    stopCamera.set(side*32,-32*state.level+4.2,stop.portalZ+31);
+    stopLook.set(side*18,-32*state.level-1.55,stop.portalZ+8);
     const focus=ease(outside);
     camera.position.lerp(stopCamera,focus);
     blendedLookAt.lerp(stopLook,focus);
