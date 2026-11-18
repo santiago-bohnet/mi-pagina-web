@@ -126,6 +126,12 @@ export function createShipVoyage({ dimensions, currentLevel, prepare, reduced = 
     } else {
       displayRoute(state.level);
     }
+    // El siguiente salto se activa solo tras volar casi todo el paisaje.
+    // Evita que el botón salte la secuencia con Kuro en el portal.
+    const ready=state.f>=.90&&!state.stop?.visible;
+    button.disabled=!ready;
+    button.title=ready?'Fijar coordenadas y teletransportar':
+      'Recorré la dimensión y visitá a Kuro junto al portal antes de saltar.';
   }
 
   function read() {
@@ -135,7 +141,9 @@ export function createShipVoyage({ dimensions, currentLevel, prepare, reduced = 
       : { active: false, progress: 0, jumped: false };
   }
 
-  button.addEventListener('click', () => begin());
+  button.addEventListener('click',()=>{
+    if(!button.disabled)begin();
+  });
   document.addEventListener('visibilitychange', () => {
     // Si la pestaña queda suspendida durante el viaje, completamos el salto al volver.
     if (!document.hidden && transit && performance.now() - transit.started >= duration) {

@@ -49,9 +49,9 @@ function makeMineralTexture(THREE,level,compact){
 
 export function createRealisticTerrain(THREE,level,theme,compact=false){
   const segments=compact?76:138;
-  const geometry=new THREE.PlaneGeometry(400,530,segments,compact?86:170);
+  const geometry=new THREE.PlaneGeometry(420,700,segments,compact?112:196);
   geometry.rotateX(-Math.PI/2);
-  geometry.translate(0,0,-100);
+  geometry.translate(0,0,-130);
   const attr=geometry.attributes.position;
   const c1=new THREE.Color(theme.ground);
   const c2=new THREE.Color(theme.groundAlt);
@@ -113,7 +113,7 @@ export function createAtmosphericLayers(THREE,group,level,compact=false,reduced=
     groupCloud.position.set(
       side*(22+hash(i,1,level)*105),
       (isHeaven?9:-1)+hash(i,2,level)*(isHeaven?34:55),
-      34-hash(i,3,level)*245
+      34-hash(i,3,level)*340
     );
     for(let j=0;j<4;j++){
       const mat=new THREE.SpriteMaterial({
@@ -175,7 +175,7 @@ export function createFlowingLava(THREE,group,compact=false,reduced=false){
   for(let r=0;r<riverCount;r++){
     const side=r%2?-1:1;
     const coords=[];
-    for(let j=0;j<38;j++){
+    for(let j=0;j<55;j++){
       const z=44-j*7.7;
       const x=side*(29+r*8+Math.sin(j*.37+r)*9)+
         Math.sin(j*.7+r*.9)*3;
@@ -191,4 +191,40 @@ export function createFlowingLava(THREE,group,compact=false,reduced=false){
     map.offset.x=reduced?0:(time*.045)%1;
     map.offset.y=reduced?0:(time*.027)%1;
   };
+}
+
+// Materiales PBR fotográficos CC0 (Poly Haven). Se cargan en segundo plano.
+// Si el CDN falla, se conserva la textura mineral procedural incorporada.
+const PBR_ASSETS = {
+  0:'rock_path',
+  1:'rocky_gravel',
+  2:'rock_ground_02'
+};
+export function upgradeTerrainWithPBR(THREE,mesh,level,compact=false){
+  const id=PBR_ASSETS[level];
+  if(!id)return;
+  const loader=new THREE.TextureLoader();
+  // 2K en escritorio para conservar vetas y volumen de la roca; 1K en móvil.
+  const resolution=compact?'1k':'2k';
+  const base='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/'+resolution+'/'+id+'/'+id;
+  const setup=texture=>{
+    texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+    texture.repeat.set(8,12);
+    texture.anisotropy=compact?2:4;
+    return texture;
+  };
+  loader.load(base+'_diff_'+resolution+'.jpg',map=>{
+    map.colorSpace=THREE.SRGBColorSpace;
+    mesh.material.map=setup(map);
+    mesh.material.needsUpdate=true;
+  },undefined,()=>{
+    // El material procedural original es siempre usable sin conexión.
+  });
+  if(!compact){
+    loader.load(base+'_nor_gl_'+resolution+'.jpg',normal=>{
+      mesh.material.normalMap=setup(normal);
+      mesh.material.normalScale.set(.33,.33);
+      mesh.material.needsUpdate=true;
+    },undefined,()=>{});
+  }
 }

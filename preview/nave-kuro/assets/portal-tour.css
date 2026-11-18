@@ -1,0 +1,67 @@
+/* Recorridos prolongados con una parada a mitad de cada mundo. */
+.world-stage.tunnel-stage { height: 720svh; }
+#portal-stop[hidden] {display:none!important}
+#portal-stop {
+ position:fixed;bottom:26px;z-index:8;width:min(390px,calc(100vw - 30px));
+ border-radius:18px;border:1px solid #fff4cb85;
+ padding:20px 21px;background:linear-gradient(140deg,#080f1df5,#180e1afb);
+ color:#fff;box-shadow:0 20px 56px #000e,0 0 50px #f2d89d1b;
+ backdrop-filter:blur(13px);
+}
+#portal-stop[data-side='right'] {right:22px;left:auto}
+#portal-stop[data-side='left'] {left:22px;right:auto}
+#portal-stop .stop-head {color:#f4dbaa;font-size:.68rem;letter-spacing:.2em;font-weight:800}
+#portal-stop-title {font-size:clamp(1.35rem,2.6vw,1.9rem);color:white;margin:.45rem 0}
+#portal-stop-text {font-size:.93rem;line-height:1.55;margin:.6rem 0;color:#e5e0e3}
+#portal-stop-hint {color:#b9dcd8;font-size:.81rem;line-height:1.4;min-height:2.4em}
+.portal-stop-actions {display:flex;gap:10px;flex-wrap:wrap;margin-top:13px}
+.portal-stop-actions button {flex:1 1 120px;min-height:46px;font:700 .86rem system-ui,sans-serif;
+ background:linear-gradient(125deg,#45152c,#9c2c54);color:white;border:1px solid #ec9db0;
+ border-radius:11px;cursor:pointer;padding:10px 13px}
+.portal-stop-actions button:last-child {background:linear-gradient(125deg,#12302f,#164850);border-color:#63babc}
+.portal-stop-actions button:hover {filter:brightness(1.19)}
+.portal-stop-actions button:focus-visible {outline:3px solid #fff9dd;outline-offset:3px}
+.portal-stop-actions button[hidden]{display:none!important}
+#portal-stop[data-phase='landing'],#portal-stop[data-phase='disembark'],
+#portal-stop[data-phase='takeoff'] {border-color:#ffc86b55}
+#portal-stop[data-phase='guide'] {box-shadow:0 20px 55px #000d,0 0 60px #ffe1a329}
+body.at-portal-stop #ship-console {visibility:hidden;pointer-events:none}
+body.is-teleporting #portal-stop {visibility:hidden}
+body.is-teleporting #ship-console {visibility:hidden}
+#world-art[data-theme='light'] {background:radial-gradient(ellipse,#fff9df,#c6dcff 55%,#08152f)}
+#scene-popup .inner {box-shadow:0 24px 85px #000e}
+@media (max-width:700px) {
+ .world-stage.tunnel-stage {height:650svh}
+ #portal-stop[data-side] {
+  bottom:14px;left:14px;right:14px;width:auto;max-height:56svh;overflow-y:auto;
+  padding:13px 15px;
+ }
+ #portal-stop-title {font-size:1.25rem}
+ #portal-stop-text {font-size:.85rem;margin:.3rem 0}
+ #portal-stop-hint {font-size:.73rem;min-height:1em}
+ .portal-stop-actions button {min-height:44px;font-size:.78rem}
+}
+@media (prefers-reduced-motion:reduce) {
+ #portal-stop,.portal-stop-actions button{transition:none!important}
+}
+
+/* Entrada ceremonial: la pantalla se convierte brevemente en un vórtice. */
+#scene-popup {isolation:isolate;overflow:hidden}
+#scene-popup::before {
+ content:'';position:absolute;inset:-65%;z-index:0;pointer-events:none;
+ background:repeating-conic-gradient(from 0deg,transparent 0deg 15deg,
+   #784dc52e 21deg,transparent 24deg 40deg,#eec47135 49deg,transparent 55deg 68deg);
+ opacity:.42;animation:portal-enter-vortex 1.25s ease-out both;
+}
+#scene-popup .inner {position:relative;z-index:1;animation:portal-enter-card 1s ease-out both}
+@keyframes portal-enter-vortex{
+ from{transform:rotate(160deg) scale(.03);opacity:1;filter:blur(25px)}
+ to{transform:rotate(0) scale(1);opacity:.28;filter:blur(3px)}
+}
+@keyframes portal-enter-card{
+ from{transform:scale(.55);opacity:0;filter:blur(13px)}
+ to{transform:scale(1);opacity:1;filter:blur(0)}
+}
+@media(prefers-reduced-motion:reduce){
+ #scene-popup::before,#scene-popup .inner{animation:none!important}
+}

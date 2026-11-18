@@ -1,6 +1,13 @@
 // Trayectoria cinematográfica con curvas amplias (no zigzag lateral).
 // El avión siempre apunta en la dirección de su velocidad.
-export const FLIGHT_PATH=Object.freeze({startZ:22,endZ:-158,altitude:6,openingZ:75});
+// Cada mundo ocupa varios largos de pantalla. En el tramo central hay una
+// parada real: la nave desacelera, aterriza, Kuro baja y vuelve a subir.
+export const FLIGHT_PATH=Object.freeze({startZ:65,endZ:-270,altitude:9,openingZ:100});
+export const PORTAL_STOP=Object.freeze({
+  approachStart:.37, dockStart:.43, greetStart:.49,
+  greetEnd:.57, boardingEnd:.64, departEnd:.69,
+  parkProgress:.53, portalZ:-112, portalX:21
+});
 export const smooth=value=>{
   const n=Math.max(0,Math.min(1,value));
   return n*n*(3-2*n);
@@ -13,7 +20,7 @@ function lateral(progress) {
   // Las curvas se desvanecen en la entrada y la salida para que los
   // teletransportes y el cambio de mundo no den tirones.
   const envelope=Math.sin(Math.PI*p)**2;
-  return envelope*(10.2*Math.sin(p*Math.PI*2)+3*Math.sin(p*Math.PI*4));
+  return envelope*(13.2*Math.sin(p*Math.PI*2)+4.2*Math.sin(p*Math.PI*4));
 }
 
 export function sampleFlightPath(progress) {
@@ -35,6 +42,38 @@ export function sampleFlightPath(progress) {
   };
 }
 
+export function getStopState(f,level) {
+  const n=clamp(f,0,1),stop=PORTAL_STOP;
+  const approach=smooth((n-stop.approachStart)/(stop.dockStart-stop.approachStart));
+  const departure=smooth((n-stop.boardingEnd)/(stop.departEnd-stop.boardingEnd));
+  const parked=approach*(1-departure);
+  const out=smooth((n-stop.dockStart)/(stop.greetStart-stop.dockStart))*
+    (1-smooth((n-stop.greetEnd)/(stop.boardingEnd-stop.greetEnd)));
+  const side=level%2===0?-1:1;
+  return {
+    visible:n>=stop.approachStart&&n<=stop.departEnd,
+    phase:n<stop.approachStart?'flight'
+      :n<stop.dockStart?'landing'
+      :n<stop.greetStart?'disembark'
+      :n<stop.greetEnd?'guide'
+      :n<stop.boardingEnd?'reboard'
+      :n<stop.departEnd?'takeoff':'flight',
+    parked, out,
+    portalX:side*stop.portalX,
+    portalZ:stop.portalZ,
+    interactable:n>=stop.greetStart&&n<=stop.greetEnd,
+    level
+  };
+}
+
+export function travelProgress(f) {
+  const n=clamp(f,0,1),s=PORTAL_STOP;
+  if(n<=s.dockStart)return s.parkProgress*smooth(n/s.dockStart);
+  if(n<s.boardingEnd)return s.parkProgress;
+  return s.parkProgress+(1-s.parkProgress)*
+    smooth((n-s.boardingEnd)/(1-s.boardingEnd));
+}
+
 export function journeyAt({scroll,stages,viewportHeight}) {
   let level=0;
   for(let i=1;i<stages.length;i++){
@@ -43,11 +82,24 @@ export function journeyAt({scroll,stages,viewportHeight}) {
   const start=stages[level].top;
   const end=stages[level+1]?.top??start+stages[level].height;
   const f=clamp((scroll-start)/Math.max(1,end-start),0,1);
-  const path=sampleFlightPath(smooth(f));
+  const stop=getStopState(f,level);
+  const path=sampleFlightPath(travelProgress(f));
+  // Durante el descenso la nave se acerca lateralmente al portal y reduce
+  // altura. En el despegue vuelve suavemente a su ruta de vuelo.
+  const dockX=stop.portalX*.53;
+  const offset=stop.parked;
+  const x=mix(path.x,dockX,offset);
+  const y=mix(path.y,2.0,offset);
+  const z=mix(path.z,stop.portalZ+13,offset);
+  const facing=Math.atan2(stop.portalX-x,stop.portalZ-z);
+  // Interpolación angular corta: nunca gira un círculo completo al aparcar.
+  const relative=Math.atan2(Math.sin(facing-path.yaw),Math.cos(facing-path.yaw));
+  const yaw=path.yaw+relative*offset;
   return {
     level,f,side:1,fall:0,
-    x:path.x,y:-32*level+path.y,z:path.z,
-    yaw:path.yaw,bank:path.bank,
+    x,y:-32*level+y,z,
+    yaw,bank:path.bank*(1-offset),stop,
+    distance:travelProgress(f),
     active:scroll>stages[0].top-viewportHeight*.8
   };
 }

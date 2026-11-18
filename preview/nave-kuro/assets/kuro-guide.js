@@ -1,4 +1,4 @@
-import { readJourney } from './journey-motion.js?v=open-worlds-1';
+import { readJourney } from './journey-motion.js?v=tour-5';
 
 export const DIMENSIONS = Object.freeze([
   { theme: 'light', name: 'Dimensión de la luz', color: '#e2c88d',
@@ -11,13 +11,22 @@ export const DIMENSIONS = Object.freeze([
     description: 'Esta es la dimensión cósmica: un horizonte abierto de planetas flotantes, estrellas y energía de otros mundos.' }
 ]);
 
-export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimensions', level, f, fall }) {
+export function guideLine({ progress, entry, portalEntry = entry, zone = 'dimensions', level, f, stop }) {
   if (progress < .28) return 'Hola, soy Kuro.';
   if (progress < 1 || zone === 'intro') return 'Seré tu guía. Ven, tengo algo que mostrarte.';
   if (zone === 'exploration') return 'No todo lo que flota está perdido. Aquí comienza nuestro recorrido.';
   if (zone === 'nucleus' && portalEntry < .20) return 'Este es el núcleo Ω, el corazón de nuestro universo.';
-  if (zone === 'flight') return 'Subí a la nave. Iremos siempre en línea recta, con la cámara detrás de la nave.';
-   if (portalEntry < .99) return 'Preparando la ruta de la nave hacia la primera dimensión.';
+  if (zone === 'flight') return 'Subí a la nave. Vamos a explorar cada dimensión con calma, haciendo paradas en sus portales.';
+  if (zone === 'dimensions' && stop?.visible) {
+    const titles=['de la Luz','del Fuego','de las Sombras','del Cosmos'];
+    const name=titles[level]||'dimensional';
+    if(stop.phase==='landing')return 'Reduciendo velocidad. Estamos por estacionar junto al Portal '+name+'.';
+    if(stop.phase==='disembark')return 'Ya aterrizamos. Bajo de la nave para mostrarte algo.';
+    if(stop.phase==='guide')return 'Este es el Portal '+name+'. Podés entrar o seguir viajando conmigo.';
+    if(stop.phase==='reboard')return 'Vuelvo a subir a la nave. Seguí avanzando para despegar.';
+    if(stop.phase==='takeoff')return '¡De vuelta a bordo! Sigamos explorando.';
+  }
+  if (portalEntry < .99) return 'Preparando la ruta de la nave hacia la primera dimensión.';
   if (level === 0 && f < .08) return 'Bienvenido al cielo angelical. Mirá los ángeles y las columnas mientras avanzamos.';
   if (f > .76) return 'La nave está lista. Configurá el teletransporte para avanzar.';
   if (level === 3 && f > .94) return 'Podemos fijar coordenadas y regresar al origen cuando quieras.';
