@@ -122,7 +122,7 @@ function makeCloudCitadels(THREE,group,compact,updates){
 }
 function makeInferno(THREE,group,compact,updates){
   const basalt=new THREE.MeshStandardMaterial({
-    color:0x1a151b,roughness:.94,metalness:.08,
+    color:0x34272a,roughness:.94,metalness:.08,
     flatShading:true
   });
   const ash=new THREE.MeshStandardMaterial({color:0x2e2225,roughness:1,flatShading:true});
@@ -204,8 +204,8 @@ function makeCosmos(THREE,group,compact,updates){
           float w=cloud(p*.47);
           float d=cloud(p+vec3(w*2.,0.,w*.9));
           float t=smoothstep(.43,.79,d*.7+w*.5);
-          vec3 col=mix(vec3(.003,.009,.028),vec3(.065,.25,.34),t);
-          col+=vec3(.2,.065,.22)*pow(t,2.3);
+          vec3 col=mix(vec3(.003,.009,.028),vec3(.029,.14,.23),t);
+          col+=vec3(.095,.035,.14)*pow(t,2.3);
           gl_FragColor=vec4(col,1.);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>

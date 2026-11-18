@@ -44,6 +44,7 @@ export function createPortalTour({onEnter=()=>false}={}){
     }
     panel.hidden=false;
     const selectable=stop.interactable;
+    enter.textContent=['Entrar al Santuario','Entrar a la Forja','Descubrir el misterio','Pilotear la nave'][state.level]||'Entrar al portal';
     enter.hidden=!selectable;
     continueButton.hidden=!selectable;
     // Durante la exposición, la consola de salto se oculta para evitar una

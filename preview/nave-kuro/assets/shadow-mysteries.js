@@ -110,7 +110,7 @@ export function createShadowMysteries(store,{doc=document,THREE=null}={}){
   renderer.render(scene,camera);
  }
  function update(state,zone,teleporting=false){
-  const available=zone==='dimensions'&&state.level===2&&state.f>.66&&state.f<.91&&!teleporting;
+  const available=zone==='dimensions'&&state.level===2&&state.f>.72&&state.f<.91&&!teleporting;
   button.hidden=!available||!layer.hidden;
   if(!available&&wasActive&&!layer.hidden)close();
   wasActive=available;

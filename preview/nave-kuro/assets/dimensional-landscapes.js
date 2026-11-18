@@ -2,10 +2,10 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=realms-14';
-import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=worlds-12';
-import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-14';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=realms-15';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-15';
 import { createAngelFlock } from './angel-flight.js?v=realms-14';
-import { enhanceRealm } from './realm-extras.js?v=realms-14';
+import { enhanceRealm } from './realm-extras.js?v=realms-15';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -123,9 +123,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     // Alas con plumas instanciadas y silueta humana esculpida: reemplaza
     // las antiguas esferas geométricas que se veían como figuras de juguete.
     animated.push(createAngelFlock(THREE,group,{compact,reduced}));
-    const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,2.5);
+    const heavenlyLight=new THREE.HemisphereLight(0xfff7d9,0x527fba,1.35);
     group.add(heavenlyLight);
-    const sunlight=new THREE.DirectionalLight(0xffecd6,2.45);
+    const sunlight=new THREE.DirectionalLight(0xffecd6,1.65);
     sunlight.position.set(-40,80,-100);
     sunlight.castShadow=!compact;
     if(sunlight.castShadow){
@@ -142,7 +142,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
 
   if(level===1){
     // Montañas de obsidiana, cráteres, lava y brasas flotantes.
-    const rock=material(0x1b111c,{metalness:.16,emissive:0x23080c,emissiveIntensity:.3});
+    const rock=material(0x302227,{metalness:.16,emissive:0x23080c,emissiveIntensity:.3});
     const coal=material(0x392026,{emissive:0x510b03,emissiveIntensity:.3,roughness:.86});
     const spikes=[],boulders=[];
     for(let i=0;i<(compact?95:176);i++){

@@ -140,7 +140,7 @@ export function createCosmicPilot({document:doc=globalThis.document,win=globalTh
  }
  function showButton(state,zone,teleport=false){
   latestState=state;latestZone=zone;
-  const valid=zone==='dimensions'&&state.level===3&&!teleport;
+  const valid=zone==='dimensions'&&state.level===3&&!teleport&&!state.stop?.visible;
   begin.hidden=!valid||active;
   if(active&&!valid)stop();
  }

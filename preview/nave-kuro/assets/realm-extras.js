@@ -35,9 +35,18 @@ function gardens(T,parent,compact){
     const side=i%2?1:-1;
     const x=side*(79+rand(i,4)*40),z=27-i*40;
     const g=new T.Group();g.position.set(x,12+rand(i,5)*8,z);parent.add(g);
-    const rock=m(T,g,new T.IcosahedronGeometry(14,2),islandStone,0,-6,0);
-    rock.scale.set(1.5,.45,1.0);
-    m(T,g,new T.CylinderGeometry(18,17,1.3,24),green,0,0,0);
+    const islandGeo=new T.IcosahedronGeometry(1,3);
+    const vertex=islandGeo.getAttribute('position');
+    for(let v=0;v<vertex.count;v++){
+      const x=vertex.getX(v),y=vertex.getY(v),z=vertex.getZ(v);
+      const irregular=.85+.15*Math.sin(x*14+z*9+i)+.1*Math.cos(z*12-y*13+i);
+      vertex.setXYZ(v,x*irregular,y*irregular,z*irregular);
+    }
+    islandGeo.computeVertexNormals();
+    const rock=m(T,g,islandGeo,islandStone,0,-5,0);
+    rock.scale.set(19,6.5,15);
+    const canopy=m(T,g,islandGeo,green,0,.25,0);
+    canopy.scale.set(18.4,2.05,14.6);
     for(let j=0;j<(compact?10:23);j++){
       const theta=rand(i*61+j,10)*Math.PI*2,r=3+rand(i*61+j,11)*12;
       const xx=Math.cos(theta)*r,zz=Math.sin(theta)*r;
@@ -69,14 +78,14 @@ function waterfalls(T,parent,compact,reduced,updates){
   updates.push(t=>{if(!reduced)for(const w of ribbons){w.position.z+=Math.sin(t*.9+w.userData.phase)*.003;}});
 }
 function sunshafts(T,parent,reduced,updates){
-  const mat=new T.MeshBasicMaterial({color:0xfff5d0,transparent:true,opacity:.09,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending});
+  const mat=new T.MeshBasicMaterial({color:0xfff3cd,transparent:true,opacity:.043,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending});
   const group=new T.Group();parent.add(group);
   for(let i=0;i<16;i++){
     const x=-130+i*17.8,z=-180+rand(i,8)*150;
-    const beam=m(T,group,new T.ConeGeometry(7+rand(i,3)*3,110,7,1,true),mat,x,49,z);
+    const beam=m(T,group,new T.ConeGeometry(7+rand(i,3)*3,110,18,1,true),mat,x,49,z);
     beam.rotation.z=-.27;
   }
-  updates.push(t=>{if(!reduced)mat.opacity=.075+.025*Math.sin(t*.3);});
+  updates.push(t=>{if(!reduced)mat.opacity=.035+.012*Math.sin(t*.3);});
 }
 function heavenlyCreatures(T,parent,compact,reduced,updates){
   const feather=color(T,0xf2ecde),gold=color(T,0xd7c7a1,{metalness:.4});
@@ -142,7 +151,7 @@ function infernalFortresses(T,parent,compact){
   }
 }
 function infernalCreatures(T,parent,compact,reduced,updates){
-  const skin=color(T,0x27161c,{metalness:.15}),eye=new T.MeshBasicMaterial({color:0xf43c16});
+  const skin=color(T,0x372028,{metalness:.15}),eye=new T.MeshBasicMaterial({color:0xf43c16});
   const dragons=[];
   for(let i=0;i<(compact?2:5);i++){
     const g=new T.Group();parent.add(g);g.name='Dragón infernal';
@@ -204,7 +213,7 @@ function meteors(T,parent,compact,reduced,updates){
   });
 }
 function shadowForest(T,parent,compact,reduced,updates){
-  const trunk=color(T,0x171922),leaf=color(T,0x121b1a,{roughness:1});
+  const trunk=color(T,0x272b33),leaf=color(T,0x252e2c,{roughness:1});
   const dead=color(T,0x302e3b);
   const treeGeo=new T.CylinderGeometry(.25,.62,1,7);
   const crownGeo=new T.IcosahedronGeometry(1,1);

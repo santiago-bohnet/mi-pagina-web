@@ -218,9 +218,11 @@ export function createRealmActivities(THREE,{storage=globalThis.localStorage}={}
   exhibit.camera.aspect=w/h;exhibit.camera.updateProjectionMatrix();render.setSize(w,h,false);
   exhibit.scene.rotation.y=Math.sin(t*.1)*.008;render.render(exhibit.scene,exhibit.camera);
  }
- function showButton(level,sequence,stop){
+ function showButton(level,sequence,stop,f=0){
+  // Evita duplicar el botón principal de la tarjeta de parada de Kuro.
+  // El acceso adicional solo aparece después de que la nave despega.
   const near=sequence.zone==='dimensions'&&[0,1].includes(level)&&
-    stop?.visible&&stop.out>.4&&!document.body.classList.contains('is-teleporting');
+    !stop?.visible&&f>.72&&f<.90&&!document.body.classList.contains('is-teleporting');
   button.hidden=!near||!root.hidden;button.dataset.kind=level===0?'library':'forge';
   button.textContent=level===0?'Entrar al Santuario del Conocimiento':'Entrar a la Forja de la Creación';
  }
