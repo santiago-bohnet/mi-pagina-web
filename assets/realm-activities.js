@@ -79,7 +79,39 @@ function exhibit3D(T,kind,items){
    add(new T.BoxGeometry(1.38,.08,.86),gold,0,-.4,.01,book);
   });
  }else{
-  add(new T.CylinderGeometry(4,4.5,1.8,18),stone,0,1,0);
+  const basalt=new T.MeshStandardMaterial({color:0x372831,roughness:.96});
+  const iron=new T.MeshStandardMaterial({color:0x4b3233,metalness:.58,roughness:.64});
+  const magma=new T.MeshStandardMaterial({color:0xf95017,emissive:0xff4107,emissiveIntensity:1.35});
+  scene.fog=new T.FogExp2(0x281119,.016);
+  const brick=new T.BoxGeometry(3.9,1.9,1.4);
+  for(let row=0;row<7;row++){
+   for(let col=0;col<10;col++){
+    const x=(col-4.5)*4+(row%2)*2;
+    const y=.55+row*2;
+    if(Math.abs(x)<4.2&&y<8.6)continue;
+    add(brick,(row+col)%5===0?stone:basalt,x,y,-13).rotation.z=.016*Math.sin(row*13+col);
+   }
+  }
+  const arch=new T.TorusGeometry(4.3,.68,10,36,Math.PI);
+  add(arch,iron,0,4.9,-12.02);
+  const jamb=new T.BoxGeometry(1.34,5,1.12);
+  for(const side of [-1,1]){
+   add(jamb,iron,side*4.3,2.45,-12.02);
+   add(new T.BoxGeometry(3.3,1.8,2.3),stone,side*7.3,.74,-9.9);
+  }
+  add(new T.BoxGeometry(7.3,.45,3),magma,0,-.11,-13.4);
+  const furnace=new T.PointLight(0xff491e,310,29,1.65);
+  furnace.position.set(0,2.3,-11.6);
+  scene.add(furnace);
+  const grate=new T.BoxGeometry(.12,3.6,.18);
+  for(let i=-4;i<=4;i++)add(grate,iron,i*.64,1.72,-12.78);
+  const edge=new T.BoxGeometry(6.2,.29,.7);
+  for(const y of [.36,2.8])add(edge,iron,0,y,-12.7);
+  const tile=new T.BoxGeometry(3.88,.18,3.88);
+  for(let i=0;i<9;i++)for(let j=0;j<7;j++){
+   add(tile,(i+2*j)%4?basalt:stone,(i-4)*4,.54,(j-3)*4);
+  }
+  const plinth=new T.CylinderGeometry(1.14,1.41,1.84,8);
   items.slice(0,36).forEach((item,i)=>{
    const completed=item.done;
    const metal=new T.MeshStandardMaterial({color:completed?0xffc86e:0x694c73,
@@ -87,7 +119,8 @@ function exhibit3D(T,kind,items){
     metalness:completed?.8:.3,roughness:.3});
    const g=new T.Group();g.position.set((i%8-3.5)*3,2.3-Math.floor(i/8)*.1,
     6-Math.floor(i/8)*4);scene.add(g);
-   const gem=add(new T.OctahedronGeometry(.95,1),metal,0,0,0,g);
+   add(plinth,stone,0,-.61,0,g);
+   const gem=add(new T.OctahedronGeometry(.95,1),metal,0,.48,0,g);
    gem.userData.id=item.id;targets.push(gem);
    if(completed){
     const sword=add(new T.ConeGeometry(.4,3.7,4),metal,0,2.5,0,g);

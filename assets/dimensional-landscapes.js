@@ -1,11 +1,12 @@
 // Paisajes abiertos; no se crean paredes, tubos ni túneles.
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
-import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR } from './realistic-environments.js?v=realms-14';
+import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR, surfaceHeight } from './realistic-environments.js?v=realms-16';
 import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=realms-15';
-import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-15';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-16';
 import { createAngelFlock } from './angel-flight.js?v=realms-14';
-import { enhanceRealm } from './realm-extras.js?v=realms-15';
+import { enhanceRealm } from './realm-extras.js?v=realms-16';
+import { calderaGeometry, fracturedRock } from './realm-models.js?v=realm-models-1';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
     groundAlt: 0xcfe7e0, mist: 0xb8d5e5 },
@@ -154,26 +155,23 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
         sx:2+randomAt(i+17)*4,sy:8+randomAt(i+71)*42,sz:2+randomAt(i+22)*4,ry:randomAt(i+80)*6});
       if(i%3===0)boulders.push({x:x+6,y:-8,z:z-2,sx:3+randomAt(i+14)*7,sy:2+randomAt(i+91)*6,sz:4+randomAt(i+67)*9});
     }
-    addInstances(shared.shard,rock,spikes);
-    addInstances(shared.cloud,coal,boulders);
-    const volcano=new THREE.Group();
-    volcano.position.set(-92,-1,-176);
-    group.add(volcano);
-    const mountainGeometry=new THREE.ConeGeometry(39,76,32,12);
-    const vertices=mountainGeometry.getAttribute('position');
-    for(let i=0;i<vertices.count;i++){
-      const x=vertices.getX(i),y=vertices.getY(i),z=vertices.getZ(i);
-      const theta=Math.atan2(z,x);
-      const jagged=1+.13*Math.sin(theta*7+y*.03)+.085*Math.cos(theta*11+y*.13);
-      vertices.setXYZ(i,x*jagged,y,z*jagged);
-    }
-    mountainGeometry.computeVertexNormals();
-    const mountain=put(mountainGeometry,rock,[0,0,0],null,volcano);
-    mountain.castShadow=!compact;
-    const rim=put(new THREE.TorusGeometry(11,2,10,38),coal,[0,35,0],null,volcano);
-    rim.rotation.x=Math.PI/2;
-    put(new THREE.CylinderGeometry(9.6,9.6,1,32),glowMaterial(0xff5314),
-      [0,34.7,0],null,volcano);
+    addInstances(fracturedRock(THREE,2),rock,spikes.map(item => ({
+      ...item,y:surfaceHeight(1,item.x,item.z)+item.sy*.19,sy:item.sy*.46
+    })));
+    addInstances(fracturedRock(THREE,4),coal,boulders.map(item => ({
+      ...item,y:surfaceHeight(1,item.x,item.z)
+    })));
+    const volcanoX = -92, volcanoZ = -176, summit = 51;
+    const groundAt = (x,z) => surfaceHeight(1,x,z);
+    const volcano = calderaGeometry(THREE,volcanoX,volcanoZ,54,summit,groundAt,compact);
+    const mountain = put(volcano,material(0xffffff,{vertexColors:true,roughness:.96}),
+      [volcanoX,0,volcanoZ]);
+    mountain.name = 'Caldera y laderas de ceniza';
+    mountain.castShadow = !compact;
+    const lavaHeight = groundAt(volcanoX,volcanoZ) + summit*.875;
+    const lake = put(new THREE.CircleGeometry(11.7,48),glowMaterial(0xff5314),
+      [volcanoX,lavaHeight,volcanoZ]);
+    lake.rotation.x = -Math.PI/2;
     animated.push(createFlowingLava(THREE,group,compact,reduced));
     // Plumas de ceniza sobre el cráter: cambian lentamente de altura.
     const smokeMaterial=new THREE.MeshStandardMaterial({
@@ -181,13 +179,13 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     });
     const smoke=[];
     for(let i=0;i<(compact?7:13);i++){
-      smoke.push(put(shared.cloud,smokeMaterial,[-92+Math.sin(i*1.6)*4,35+i*6,
+      smoke.push(put(shared.cloud,smokeMaterial,[-92+Math.sin(i*1.6)*4,lavaHeight+i*6,
         -176+Math.cos(i*1.9)*4],[4+i*.8,3.5+i*.7,4+i*.8]));
     }
     animated.push(time=>{
       if(reduced)return;
       smoke.forEach((obj,i)=>{
-        obj.position.y=35+i*6+((time*.65+i*2)%6);
+        obj.position.y=lavaHeight+i*6+((time*.65+i*2)%6);
         obj.position.x=-92+Math.sin(time*.2+i*.9)*5;
       });
     });

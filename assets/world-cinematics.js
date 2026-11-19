@@ -1,3 +1,5 @@
+import { surfaceHeight } from './realistic-environments.js?v=realms-16';
+import { calderaGeometry } from './realm-models.js?v=realm-models-1';
 // XR cinematic world pass — shared scenery infrastructure.
 // Procedural geometry + physically based materials, seeded and batched.
 // Entirely deterministic: re-entering a dimension never changes its landmarks.
@@ -140,15 +142,14 @@ function makeInferno(THREE,group,compact,updates){
   instances(THREE,group,rugged,basalt,chunks);
   instances(THREE,group,new THREE.ConeGeometry(1,3,9),ash,ridges);
   instances(THREE,group,new THREE.BoxGeometry(1,.1,1),luminous,glowing);
-  const volcanoes=new THREE.Group();
-  group.add(volcanoes);
-  for(let i=0;i<4;i++){
-    const side=i%2?1:-1;
-    const x=side*(95+rng(i,19)*30),z=5-i*90;
-    const h=45+rng(i,4)*44;
-    const mountain=put(THREE,volcanoes,new THREE.ConeGeometry(32,h,19,8),basalt,x,5,z);
-    mountain.scale.x=1.05+rng(i,24)*.55;
-    const lava=put(THREE,volcanoes,new THREE.CircleGeometry(5.3,26),luminous,x,5+h*.5,z);
+  const flank = new THREE.MeshStandardMaterial({ vertexColors:true, roughness:.96 });
+  const heightAt = (x,z) => surfaceHeight(1,x,z);
+  for (let i=0;i<(compact?2:3);i++){
+    const x=(i%2?1:-1)*(112+rng(i,19)*28),z=7-i*80;
+    const height=30+rng(i,4)*27;
+    put(THREE,group,calderaGeometry(THREE,x,z,35,height,heightAt,compact),flank,x,0,z);
+    const lava=put(THREE,group,new THREE.CircleGeometry(7.5,32),luminous,
+      x,heightAt(x,z)+height*.875,z);
     lava.rotation.x=-Math.PI/2;
   }
   const light=new THREE.PointLight(0xff461e,compact?180:350,110);
