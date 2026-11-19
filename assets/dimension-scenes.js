@@ -1,4 +1,4 @@
-import { makeLandscape } from './dimensional-landscapes.js?v=realms-17';
+import { makeLandscape } from './dimensional-landscapes.js?v=realms-18';
 import { surfaceHeight } from './realistic-environments.js?v=realms-16';
 
 // Escenarios independientes y abiertos: sin paredes laterales ni cilindros.

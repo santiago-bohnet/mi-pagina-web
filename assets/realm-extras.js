@@ -313,10 +313,34 @@ function shadowForest(T,parent,compact,reduced,updates){
     const geo=new T.TubeGeometry(new T.CatmullRomCurve3(pts),150,2.5,6,false);
     m(T,parent,geo,water,0,0,0);
   }
-  const moonMat=new T.MeshBasicMaterial({color:0xd6dcf6});
-  m(T,parent,new T.SphereGeometry(21,30,20),moonMat,110,82,-270);
-  const eclipse=new T.MeshBasicMaterial({color:0x151827});
-  m(T,parent,new T.SphereGeometry(17,30,20),eclipse,110,82,-250);
+  const eclipse = new T.ShaderMaterial({
+    transparent:true,depthWrite:false,fog:false,
+    vertexShader:`
+      varying vec2 vUv;
+      void main() {
+        vUv=uv;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
+      }`,
+    fragmentShader:`
+      varying vec2 vUv;
+      void main() {
+        vec2 p=vUv*2.-1.;
+        float r=length(p);
+        float mask=1.-smoothstep(.70,.71,r);
+        float cover=length(p-vec2(.27,.085));
+        float crescent=smoothstep(.57,.65,cover);
+        float textureShade=.90+.055*sin(p.x*31. + p.y*40.)*
+          sin(p.y*33. - p.x*12.)+.028*cos(p.y*125.);
+        float corona=exp(-abs(r-.702)*19.)*.20;
+        vec3 dark=vec3(.029,.016,.059);
+        vec3 light=vec3(.77,.66,.98)*textureShade;
+        vec3 color=mix(dark,light,crescent)+vec3(.57,.21,.77)*corona;
+        gl_FragColor=vec4(color,max(mask,corona));
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`
+  });
+  m(T,parent,new T.PlaneGeometry(66,66),eclipse,108,76,-280).rotation.y=-.23;
   const ghosts=[];
   const ghostMat=new T.MeshBasicMaterial({color:0x73a2a7,transparent:true,opacity:.26,depthWrite:false});
   for(let i=0;i<12;i++){
@@ -348,8 +372,8 @@ function cosmicConstructs(T,parent,compact,reduced,updates){
   const metal=color(T,0x40606e,{metalness:.86,roughness:.21});
   const cyan=new T.MeshBasicMaterial({color:0x66ebdb});
   const structures=[];
-  for(let i=0;i<(compact?3:7);i++){
-    const side=i%2?1:-1,x=side*(48+rand(i,3)*80),y=18+rand(i,5)*45,z=24-i*53;
+  for(let i=0;i<(compact?2:3);i++){
+    const side=i%2?1:-1,x=side*(88+rand(i,3)*57),y=22+rand(i,5)*53,z=-46-i*81;
     const g=new T.Group();g.position.set(x,y,z);parent.add(g);
     m(T,g,new T.CylinderGeometry(3,3,15,12),metal,0,0,0).rotation.x=Math.PI/2;
     for(let j=0;j<3;j++){
@@ -419,15 +443,6 @@ function cosmicConstructs(T,parent,compact,reduced,updates){
     g.position.set(Math.sin(p)*range,12+Math.sin(p*.8)*10,-80-i*32+Math.cos(p)*24);
     g.rotation.set(.08 * Math.cos(p*.8), Math.atan2(-Math.cos(p)*range, Math.sin(p)*24), .2 * Math.sin(p), 'YXZ');
   }));
-  const alien=color(T,0x2c675f,{emissive:0x103b3e,emissiveIntensity:.4});
-  for(let i=0;i<4;i++){
-    const side=i%2?1:-1,x=side*(135+rand(i,4)*23),z=-35-i*85;
-    const dome=m(T,parent,new T.SphereGeometry(18,16,12),alien,x,-13,z);
-    dome.scale.y=.22;
-    for(let j=0;j<5;j++){
-      const spire=m(T,parent,new T.ConeGeometry(2.3,25,7),metal,x+Math.cos(j*1.26)*12,6,z+Math.sin(j*1.26)*12);
-    }
-  }
 }
 export function enhanceRealm(THREE,parent,level,{compact=false,reduced=false}={}){
   const decor=new THREE.Group();decor.name='Detalles del reino '+level;parent.add(decor);

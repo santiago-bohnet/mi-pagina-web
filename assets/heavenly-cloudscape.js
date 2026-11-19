@@ -122,22 +122,24 @@ function strata(THREE,group,atlas,{compact=false,reduced=false}={}){
     mesh.name=['Cumulonimbos cercanos','Bancos de vapor','Neblina elevada'][band];
     mesh.frustumCulled=false;
     mesh.renderOrder=band;
+    let placed=0;
     for(let i=0;i<count;i++){
       const id=i+band*300;
       const side=id%3===0?0:id%2?1:-1;
       const sx=23+rand(id,5,band)*39;
       const x=side===0?(rand(id,2,7)-.5)*110:side*(23+rand(id,4,3)*165);
       const z=70-rand(id,19,4)*490;
+      const depth = sx*(.62+band*.12);
+      // El vapor queda fuera de la pista y de la línea de visión frontal.
+      if (Math.hypot(x+15,z+96)<29+Math.max(sx,depth)*.50) continue;
       const y=-8.4+band*4.5+rand(id,6,11)*(band?12:5);
       transform.position.set(x,y,z);
       transform.rotation.set(0,rand(id,7,4)*6.28,0);
-      transform.scale.set(sx*(.9+band*.35),sx*(.8+rand(id,3,9)*.55),1);
-      transform.scale.z=1;
-      // The geometry lies horizontally, local Y controls width in world Z.
-      transform.scale.set(sx,1,sx*.62);
+      transform.scale.set(sx,1,depth);
       transform.updateMatrix();
-      mesh.setMatrixAt(i,transform.matrix);
+      mesh.setMatrixAt(placed++,transform.matrix);
     }
+    mesh.count=placed;
     mesh.instanceMatrix.needsUpdate=true;
     group.add(mesh);
     objects.push(mesh);
@@ -165,7 +167,8 @@ export function createHeavenlyCloudscape(THREE,group,{compact=false,reduced=fals
     const middle=fbm(x*.057,z*.046,73);
     const t=clamp((Math.abs(x)-6)/45);
     const y=(billow-.46)*16+(middle-.48)*7.5+t*2.4;
-    verts.setY(i,y);
+    const clearance=smooth(clamp((Math.hypot(x+15,z-155+100)-24)/24));
+    verts.setY(i,-4.5+(y+4.5)*clearance);
   }
   terrain.computeVertexNormals();
   const floor=new THREE.Mesh(terrain,mat);

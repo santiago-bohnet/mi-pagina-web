@@ -71,7 +71,7 @@ function addAmbientParticles(THREE,group,level,compact,reduced){
   geometry.setAttribute('position',new THREE.BufferAttribute(points,3));
   geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));
   const mat=new THREE.PointsMaterial({
-    vertexColors:true,size:level===1?.5:level===3?.8:.34,
+    vertexColors:true,size:level===1?.5:level===3?.26:.34,
     sizeAttenuation:true,transparent:true,opacity:level===1?.83:.65,
     depthWrite:false,blending:level===1?THREE.AdditiveBlending:THREE.NormalBlending
   });
@@ -228,10 +228,10 @@ function makeCosmos(THREE,group,compact,updates){
   instances(THREE,group,rockyGeometry(THREE),rockMat,asteroids);
   const planets=[];
   const planetColors=[0x547d9b,0x98736a,0x496b82,0x8d7596,0x749194];
-  for(let i=0;i<(compact?7:12);i++){
+  for(let i=0;i<(compact?2:3);i++){
     const side=i%2?1:-1;
-    const radius=5+rng(i,44)*12;
-    const x=side*(53+rng(i,23)*108),y=9+rng(i,28)*58,z=42-i*31;
+    const radius=11+rng(i,44)*15;
+    const x=side*(125+rng(i,23)*57),y=37+rng(i,28)*71,z=-180-i*67;
     const mat=new THREE.MeshStandardMaterial({
       color:planetColors[i%planetColors.length],metalness:.12,roughness:.94,
       emissive:planetColors[i%planetColors.length],emissiveIntensity:.055

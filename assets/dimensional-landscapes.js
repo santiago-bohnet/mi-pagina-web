@@ -2,10 +2,10 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR, surfaceHeight } from './realistic-environments.js?v=realms-16';
-import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=realms-17';
-import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-16';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=realms-18';
+import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-18';
 import { createAngelFlock } from './angel-flight.js?v=realms-14';
-import { enhanceRealm } from './realm-extras.js?v=realms-17';
+import { enhanceRealm } from './realm-extras.js?v=realms-18';
 import { calderaGeometry, fracturedRock } from './realm-models.js?v=realm-models-1';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,
@@ -80,21 +80,22 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
         uZenith:{value:new THREE.Color(theme.skyTop)},
         uHorizon:{value:new THREE.Color(theme.skyHorizon)},
         uSun:{value:sunDir},
-        uSunColor:{value:new THREE.Color(level===0?0xfff0d8:0xff6e32)}
+        uSunColor:{value:new THREE.Color(level===0?0xfff0d8:level===2?0x8b4fd6:0xff6e32)},
+        uDisc:{value:level===2?0:1}
       },
       vertexShader:`varying vec3 vDir; void main(){
         vDir=position;
         gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
       }`,
       fragmentShader:`uniform vec3 uZenith; uniform vec3 uHorizon;
-        uniform vec3 uSun; uniform vec3 uSunColor; varying vec3 vDir;
+        uniform vec3 uSun; uniform vec3 uSunColor; uniform float uDisc; varying vec3 vDir;
         void main(){
           vec3 d=normalize(vDir);
           float h=clamp(d.y*.8+.25,0.,1.);
           vec3 sky=mix(uHorizon,uZenith,smoothstep(.04,.93,h));
           float a=max(dot(d,normalize(uSun)),0.);
           float halo=pow(a,19.)*.18+pow(a,130.)*.34;
-          float disk=smoothstep(.99942,.99982,a);
+          float disk=smoothstep(.99942,.99982,a)*uDisc;
           gl_FragColor=vec4(sky+uSunColor*(halo+disk*.47),1.);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
@@ -226,7 +227,7 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     }
     addInstances(shared.shard,crystal,placements);
     addInstances(shared.shard,tips,highlights);
-    group.add(new THREE.HemisphereLight(0xa172ea,0x0b071c,1.6));
+    group.add(new THREE.HemisphereLight(0xa172ea,0x25173c,1.85));
   }
 
   if(level===3){
@@ -240,22 +241,9 @@ export function makeLandscape(THREE, level, { compact = false, reduced = false }
     }
     stars.setAttribute('position',new THREE.BufferAttribute(positions,3));
     const swarm=new THREE.Points(stars,new THREE.PointsMaterial({
-      color:0xc7ffe9,size:.75,transparent:true,opacity:.82,depthWrite:false
+      color:0xc7ffe9,size:.26,transparent:true,opacity:.82,depthWrite:false
     }));
     group.add(swarm);
-    const orbsMat=material(0x286a79,{metalness:.65,roughness:.3,emissive:0x0c6670,emissiveIntensity:.8});
-    const ringsMat=glowMaterial(0x58dfbd);
-    for(let i=0;i<13;i++){
-      const side=i%2?1:-1;
-      const x=side*(25+randomAt(i+7)*100);
-      const y=8+randomAt(i+66)*43;
-      const z=18-i*28;
-      const size=2+randomAt(i+18)*9;
-      put(shared.orb,orbsMat,[x,y,z],[size,size,size]);
-      const ring=put(new THREE.TorusGeometry(size*1.55,.12,6,32),ringsMat,[x,y,z]);
-      ring.rotation.x=.4;ring.rotation.y=i*.55;
-      animated.push(time=>{if(!reduced)ring.rotation.z=time*.09;});
-    }
     group.add(new THREE.HemisphereLight(0x64e5d6,0x07151d,1.7));
   }
 
