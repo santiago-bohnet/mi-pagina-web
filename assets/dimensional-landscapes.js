@@ -2,10 +2,10 @@
 // Los paisajes acompañan una trayectoria con curvas amplias.
 // Texturas y atmósfera generadas localmente para evitar dependencias.
 import { createRealisticTerrain, createAtmosphericLayers, createFlowingLava, upgradeTerrainWithPBR, surfaceHeight } from './realistic-environments.js?v=realms-16';
-import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=realms-15';
+import { createHeavenlyCloudscape } from './heavenly-cloudscape.js?v=realms-17';
 import { addCinematicWorldDetails } from './world-cinematics.js?v=realms-16';
 import { createAngelFlock } from './angel-flight.js?v=realms-14';
-import { enhanceRealm } from './realm-extras.js?v=realms-16';
+import { enhanceRealm } from './realm-extras.js?v=realms-17';
 import { calderaGeometry, fracturedRock } from './realm-models.js?v=realm-models-1';
 const THEMES = Object.freeze([
   { skyTop: 0x346b9a, skyHorizon: 0xffedc8, ground: 0x9cbdd4, accent: 0xffe5a2,

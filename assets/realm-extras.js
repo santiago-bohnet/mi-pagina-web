@@ -82,14 +82,35 @@ function waterfalls(T,parent,compact,reduced,updates){
   updates.push(t=>{if(!reduced)for(const w of ribbons){w.position.z+=Math.sin(t*.9+w.userData.phase)*.003;}});
 }
 function sunshafts(T,parent,reduced,updates){
-  const mat=new T.MeshBasicMaterial({color:0xfff3cd,transparent:true,opacity:.043,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending});
-  const group=new T.Group();parent.add(group);
-  for(let i=0;i<16;i++){
-    const x=-130+i*17.8,z=-180+rand(i,8)*150;
-    const beam=m(T,group,new T.ConeGeometry(7+rand(i,3)*3,110,18,1,true),mat,x,49,z);
-    beam.rotation.z=-.27;
+  const mat = new T.ShaderMaterial({
+    uniforms: { uOpacity: { value: .105 } },
+    transparent: true, depthWrite: false, side: T.DoubleSide, blending: T.AdditiveBlending,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.);
+      }`,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float uOpacity;
+      void main() {
+        float x = abs(vUv.x-.5)*2.;
+        float edge = 1.-smoothstep(.02,.88,x);
+        float ends = smoothstep(0.,.24,vUv.y)*(1.-smoothstep(.66,1.,vUv.y));
+        gl_FragColor = vec4(1.,.91,.73,edge*edge*ends*uOpacity);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`
+  });
+  const geometry = new T.PlaneGeometry(21,112);
+  for (let i=0;i<10;i++) {
+    const x=-138+i*28.5,z=-196+rand(i,8)*144;
+    const shaft=m(T,parent,geometry,mat,x,49,z);
+    shaft.rotation.set(-.12,(i%3-1)*.32,-.32);
+    shaft.scale.x=.58+rand(i,3)*.63;
   }
-  updates.push(t=>{if(!reduced)mat.opacity=.035+.012*Math.sin(t*.3);});
+  updates.push(t=>{if(!reduced)mat.uniforms.uOpacity.value=.099+.017*Math.sin(t*.3);});
 }
 function heavenlyCreatures(T,parent,compact,reduced,updates){
   const feather=color(T,0xf2ecde),gold=color(T,0xd7c7a1,{metalness:.4});

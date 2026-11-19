@@ -72,37 +72,36 @@ const fragmentShader=`
  }
  float fbm(vec2 p){
    float v=0.,a=.55;
-   for(int i=0;i<5;i++){v+=noise(p)*a;p=p*2.08+vec2(11.3,8.5);a*=.53;}
+   for(int i=0;i<3;i++){v+=noise(p)*a;p=p*2.08+vec2(11.3,8.5);a*=.53;}
    return v;
  }
  float field(vec2 p){
    float warp=fbm(p*.61+vec2(7.2,-1.4));
-   return fbm(p*2.3+warp*2.2)*.68+fbm(p*.47)*.4+
-      fbm(p*6.3-warp*.8)*.1;
+   return fbm(p*2.35+warp*2.5)*.76+fbm(p*.54)*.45;
  }
  void main(){
    vec2 p=vWorld.xz*.020+vec2(uTime*.0007,uTime*.0002);
    // Integración de siete estratos: densidad y autosombreado.
    float coverage=0.,shading=0.;
+   float shadow=field(p+vec2(.27,-.32));
    for(int k=0;k<7;k++){
      float d=float(k)/6.;
-     float density=smoothstep(.31,.71,field(p+vec2(d*.22,-d*.1))-d*.045);
-     float shadow=field(p+vec2(.17+d*.26,-.24-d*.16));
+     float density=smoothstep(.25,.66,field(p+vec2(d*.54,-d*.29))-d*.068);
      float optical=density*(1.-coverage)*(.36-d*.032);
-     shading+=optical*(.75+.36*(density-shadow));
+     shading+=optical*(.65+.65*(density-shadow));
      coverage+=optical;
    }
-   vec3 shade=vec3(.20,.31,.49);
-   vec3 white=vec3(.76,.85,.96);
+   vec3 shade=vec3(.105,.184,.32);
+   vec3 white=vec3(.90,.95,1.);
    vec3 sun=vec3(1.,.94,.80);
    float wisps=field(p*1.55+vec2(13.6,3.1));
-   float bright=clamp(shading*2.35+wisps*.2,.0,1.);
+   float bright=clamp(shading*1.82+wisps*.28,.0,1.);
    vec3 lightDir=normalize(vec3(-.48,.83,-.32));
    float relief=clamp(dot(normalize(vCloudNormal),lightDir),.08,1.);
    vec3 color=mix(shade,white,bright)*(.62+.40*relief);
    color=mix(color,sun,pow(clamp(wisps,0.,1.),4.)*.16);
    // Franja de niebla lejana integrada al manto.
-   color=mix(color,vec3(.75,.83,.92),.12);
+   color=mix(color,vec3(.67,.77,.94),.09);
    gl_FragColor=vec4(color,1.);
    #include <tonemapping_fragment>
    #include <colorspace_fragment>
@@ -165,7 +164,7 @@ export function createHeavenlyCloudscape(THREE,group,{compact=false,reduced=fals
     const billow=fbm(x*.016+9,z*.013+3,57);
     const middle=fbm(x*.057,z*.046,73);
     const t=clamp((Math.abs(x)-6)/45);
-    const y=(billow-.46)*10+(middle-.48)*4.8+t*2.4;
+    const y=(billow-.46)*16+(middle-.48)*7.5+t*2.4;
     verts.setY(i,y);
   }
   terrain.computeVertexNormals();
