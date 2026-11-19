@@ -1,4 +1,5 @@
-import { makeLandscape } from './dimensional-landscapes.js?v=realms-15';
+import { makeLandscape } from './dimensional-landscapes.js?v=realms-18';
+import { surfaceHeight } from './realistic-environments.js?v=realms-16';
 
 // Escenarios independientes y abiertos: sin paredes laterales ni cilindros.
 export function createDimensionScenes(THREE, parent, portalSystem, buttons, dimensions, onError, onReady = () => {}) {
@@ -37,6 +38,22 @@ export function createDimensionScenes(THREE, parent, portalSystem, buttons, dime
     platform.position.set(side*17,-5.6,-112);
     platform.receiveShadow=true;
     station.add(platform);
+    if (level === 1 || level === 2) {
+      // Extiende el cimiento por debajo de la ladera sin cambiar la pista de Kuro.
+      const x = side * 17, z = -112, top = -6.25;
+      let bottom = surfaceHeight(level,x,z);
+      for (let i = 0; i < 18; i++) {
+        const a = i * Math.PI / 9;
+        bottom = Math.min(bottom,surfaceHeight(level,x + Math.cos(a)*16.6,z + Math.sin(a)*16.6));
+      }
+      bottom = Math.min(top - .5,bottom - 2);
+      const foundation = new THREE.Mesh(
+        new THREE.CylinderGeometry(15.2,16.6,top - bottom,36),stone);
+      foundation.position.set(x,(top + bottom) / 2,z);
+      foundation.receiveShadow = true;
+      foundation.name = 'Cimiento de la plataforma';
+      station.add(foundation);
+    }
     const ring=new THREE.Mesh(new THREE.TorusGeometry(12.5,.13,8,64),metal);
     ring.rotation.x=-Math.PI/2;
     ring.position.set(side*17,-4.53,-112);

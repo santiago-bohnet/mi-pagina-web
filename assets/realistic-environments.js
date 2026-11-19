@@ -47,6 +47,22 @@ function makeMineralTexture(THREE,level,compact){
   return texture;
 }
 
+function terrainProfile(level,x,z) {
+  const rough=fbm(x*.068,z*.063,level*12+3);
+  const detail=fbm(x*.20,z*.24,level*12+15);
+  const ridge=1-Math.abs(fbm(x*.026,z*.029,level*12+22)*2-1);
+  // Zona amplia y despejada por donde puede pasar la nave en curva.
+  const side=Math.max(0,Math.min(1,(Math.abs(x)-19)/95));
+  const mountains=side*side*(level===1?38:level===0?12:25);
+  const roughness=side*(rough-.46)*(level===1?17:9)+(detail-.5)*2.8;
+
+  return { height: -12+mountains+roughness+(level===1?ridge*side*8:0), rough, ridge, side };
+}
+
+export function surfaceHeight(level,x,z) {
+  return terrainProfile(level,x,z).height;
+}
+
 export function createRealisticTerrain(THREE,level,theme,compact=false){
   const segments=compact?76:138;
   const geometry=new THREE.PlaneGeometry(420,700,segments,compact?112:196);
@@ -60,14 +76,7 @@ export function createRealisticTerrain(THREE,level,theme,compact=false){
   const colors=new Float32Array(attr.count*3);
   for(let i=0;i<attr.count;i++){
     const x=attr.getX(i),z=attr.getZ(i);
-    const rough=fbm(x*.068,z*.063,level*12+3);
-    const detail=fbm(x*.20,z*.24,level*12+15);
-    const ridge=1-Math.abs(fbm(x*.026,z*.029,level*12+22)*2-1);
-    // Zona amplia y despejada por donde puede pasar la nave en curva.
-    const side=Math.max(0,Math.min(1,(Math.abs(x)-19)/95));
-    const mountains=side*side*(level===1?38:level===0?12:25);
-    const roughness=side*(rough-.46)*(level===1?17:9)+(detail-.5)*2.8;
-    const height=-12+mountains+roughness+(level===1?ridge*side*8:0);
+    const { height, rough, ridge, side } = terrainProfile(level,x,z);
     attr.setY(i,height);
     const shade=Math.max(0,Math.min(1,(rough-.27)*1.65+side*.2));
     color.copy(c1).lerp(c2,shade);

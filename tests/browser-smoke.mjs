@@ -8,7 +8,7 @@ const browser=await chromium.launch({
   args:['--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist',
     '--disable-dev-shm-usage','--no-sandbox']
 });
-const page=await browser.newPage({viewport:{width:1366,height:768},deviceScaleFactor:1});
+const page=await browser.newPage({viewport:{width:1140,height:680},deviceScaleFactor:1,reducedMotion:'reduce'});
 const warnings=[],errors=[];
 page.on('console',msg=>{
   if(msg.type()==='error') errors.push(msg.text());
@@ -18,7 +18,7 @@ page.on('pageerror',e=>errors.push(e.message));
 mkdirSync('browser-artifacts',{recursive:true});
 try{
   await page.goto('http://127.0.0.1:8765/index.html',{waitUntil:'domcontentloaded',timeout:60000});
-  await page.waitForTimeout(2500);
+  await page.locator('body.has-webgl').waitFor({timeout:30000});
   const gl=await page.evaluate(()=>{
     const canvas=document.querySelector('canvas#space');
     if(!canvas)return {hasCanvas:false};
@@ -33,54 +33,31 @@ try{
   assert.equal(gl.hasContext,true,'Se requiere un contexto WebGL en Chromium de CI');
   assert.equal(gl.hasWebGL,true,'Three.js no pudo inicializarse');
   for(let level=0;level<4;level++){
-    // Carga limpia en la ruta exacta para no generar teletransportes
-    // no solicitados al saltar artificialmente varias pantallas en CI.
-    await page.goto('http://127.0.0.1:8765/index.html?visual-level='+level+'#tunel-'+level,{
+    // Arrancar en el origen evita competir con el desplazamiento del hash
+    // inicial. Cada nivel se prueba en una página con su propia navegación.
+    await page.goto('http://127.0.0.1:8765/index.html?visual-level='+level,{
       waitUntil:'domcontentloaded',timeout:60000
     });
-    await page.waitForTimeout(2200);
-    const initial=await page.evaluate(()=>({
-      scroll:scrollY,level:Number(document.body.dataset.level)||null,
-      visible:document.body.classList.contains('has-webgl')
-    }));
-    console.log('Initial dimension '+level+' '+JSON.stringify(initial));
+    await page.locator('body.has-webgl').waitFor({timeout:30000});
     await page.evaluate(level=>{
       const stage=document.getElementById('tunel-'+level);
       const top=stage.getBoundingClientRect().top+scrollY;
       document.documentElement.style.scrollBehavior='auto';
       window.scrollTo(0,top+stage.offsetHeight*.51);
-      // El movimiento simulado no equivale a una rueda física. Disparar
-      // el evento garantiza el mismo recorrido de actualización del HUD.
       window.dispatchEvent(new Event('scroll'));
     },level);
-    await page.waitForTimeout(2100);
-    const debug=await page.evaluate(()=>({
-      title:document.querySelector('#portal-stop-title')?.textContent,
-      hidden:document.querySelector('#portal-stop')?.hidden,
-      cockpitHidden:document.querySelector('#teleport-cockpit')?.hidden,
-      scroll:scrollY,
-      stageTop:document.querySelector('.tunnel-stage')?.offsetTop,
-      webgl:document.body.classList.contains('has-webgl')
+    const title=['Luz','Fuego','Sombras','Cosmos'][level];
+    await page.waitForFunction(title=>{
+      const panel=document.querySelector('#portal-stop');
+      return document.body.classList.contains('has-webgl') && !panel.hidden &&
+        panel.querySelector('h2')?.textContent.includes(title);
+    },title,{timeout:40000,polling:250});
+    // Permite que terminen de construirse las mallas y se dibuje el cuadro.
+    await page.evaluate(()=>new Promise(resolve=>{
+      let frames=0;
+      function frame(){if(++frames<12)requestAnimationFrame(frame);else resolve();}
+      requestAnimationFrame(frame);
     }));
-    console.log('Portal en Chromium: '+level+' '+JSON.stringify(debug));
-    if(debug.hidden){
-      const diagnostic=await page.evaluate(async()=>{
-        const journey=await import('./assets/journey-motion.js?v=landing-9');
-        const intro=await import('./assets/kuro-guide.js?v=realms-14');
-        return {
-          state:journey.readJourney(),intro:intro.readIntro(),
-          panel:document.getElementById('portal-stop')?.outerHTML.slice(0,300),
-          canvas:document.getElementById('space')?.width
-        };
-      });
-      console.log('STOP_DIAGNOSTIC '+JSON.stringify(diagnostic));
-      console.log('BROWSER_ERRORS '+JSON.stringify(errors));
-      await page.waitForTimeout(3000);
-    }
-    assert.equal(debug.webgl,true,'WebGL debe seguir activo');
-    assert.ok(debug.title?.includes(['Luz','Fuego','Sombras','Cosmos'][level]),
-      'Portal equivocado: '+JSON.stringify(debug));
-    assert.equal(await page.locator('#portal-stop').isVisible(),true);
     const shot=await page.screenshot({timeout:30000});
     writeFileSync('browser-artifacts/dimension-'+level+'.png',shot);
     const tiny=await page.screenshot({type:'jpeg',quality:24});

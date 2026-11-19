@@ -1,3 +1,5 @@
+import { surfaceHeight } from './realistic-environments.js?v=realms-16';
+import { calderaGeometry } from './realm-models.js?v=realm-models-1';
 // XR cinematic world pass — shared scenery infrastructure.
 // Procedural geometry + physically based materials, seeded and batched.
 // Entirely deterministic: re-entering a dimension never changes its landmarks.
@@ -69,7 +71,7 @@ function addAmbientParticles(THREE,group,level,compact,reduced){
   geometry.setAttribute('position',new THREE.BufferAttribute(points,3));
   geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));
   const mat=new THREE.PointsMaterial({
-    vertexColors:true,size:level===1?.5:level===3?.8:.34,
+    vertexColors:true,size:level===1?.5:level===3?.26:.34,
     sizeAttenuation:true,transparent:true,opacity:level===1?.83:.65,
     depthWrite:false,blending:level===1?THREE.AdditiveBlending:THREE.NormalBlending
   });
@@ -140,15 +142,14 @@ function makeInferno(THREE,group,compact,updates){
   instances(THREE,group,rugged,basalt,chunks);
   instances(THREE,group,new THREE.ConeGeometry(1,3,9),ash,ridges);
   instances(THREE,group,new THREE.BoxGeometry(1,.1,1),luminous,glowing);
-  const volcanoes=new THREE.Group();
-  group.add(volcanoes);
-  for(let i=0;i<4;i++){
-    const side=i%2?1:-1;
-    const x=side*(95+rng(i,19)*30),z=5-i*90;
-    const h=45+rng(i,4)*44;
-    const mountain=put(THREE,volcanoes,new THREE.ConeGeometry(32,h,19,8),basalt,x,5,z);
-    mountain.scale.x=1.05+rng(i,24)*.55;
-    const lava=put(THREE,volcanoes,new THREE.CircleGeometry(5.3,26),luminous,x,5+h*.5,z);
+  const flank = new THREE.MeshStandardMaterial({ vertexColors:true, roughness:.96 });
+  const heightAt = (x,z) => surfaceHeight(1,x,z);
+  for (let i=0;i<(compact?2:3);i++){
+    const x=(i%2?1:-1)*(112+rng(i,19)*28),z=7-i*80;
+    const height=30+rng(i,4)*27;
+    put(THREE,group,calderaGeometry(THREE,x,z,35,height,heightAt,compact),flank,x,0,z);
+    const lava=put(THREE,group,new THREE.CircleGeometry(7.5,32),luminous,
+      x,heightAt(x,z)+height*.875,z);
     lava.rotation.x=-Math.PI/2;
   }
   const light=new THREE.PointLight(0xff461e,compact?180:350,110);
@@ -227,10 +228,10 @@ function makeCosmos(THREE,group,compact,updates){
   instances(THREE,group,rockyGeometry(THREE),rockMat,asteroids);
   const planets=[];
   const planetColors=[0x547d9b,0x98736a,0x496b82,0x8d7596,0x749194];
-  for(let i=0;i<(compact?7:12);i++){
+  for(let i=0;i<(compact?2:3);i++){
     const side=i%2?1:-1;
-    const radius=5+rng(i,44)*12;
-    const x=side*(53+rng(i,23)*108),y=9+rng(i,28)*58,z=42-i*31;
+    const radius=11+rng(i,44)*15;
+    const x=side*(125+rng(i,23)*57),y=37+rng(i,28)*71,z=-180-i*67;
     const mat=new THREE.MeshStandardMaterial({
       color:planetColors[i%planetColors.length],metalness:.12,roughness:.94,
       emissive:planetColors[i%planetColors.length],emissiveIntensity:.055

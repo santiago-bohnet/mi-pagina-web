@@ -108,3 +108,20 @@ La prioridad es mantener las experiencias desacopladas del motor de vuelo y pres
 - **Cosmos**: nebulosas, asteroides, agujero negro estilizado, túnel de gusano, estructuras extraterrestres, patrullas de naves y tres planetas visitables —Borealis, Umbra y Arca— con waypoints y desplazamiento asistido. Modo libre WASD/flechas/QE/controles táctiles, con opción de volver al scroll.
 
 **Privacidad y límites**: el Santuario, la Forja y la exploración de Sombras usan almacenamiento local (`localStorage`) y botón de exportar respaldo JSON. Los escritos no están sincronizados con otros dispositivos ni protegidos por una cuenta. No se adjuntan archivos binarios ni PDFs. La importación JSON reemplaza ambos catálogos después de confirmar. Máximo: 80 entradas por colección y 12.000 caracteres por texto. La calidad visual es una aproximación procedural para navegador y requiere control visual en WebGL para evaluar artefactos; no se afirma fotorrealismo cinematográfico.
+
+
+## Remodelado de Fuego, Sombras y Cosmos
+
+Fuego incorpora dragones de alas articuladas, cadenas de eslabones ovalados
+entrelazados y meteoros con una estela alineada con su trayectoria. Las
+calderas y las bases de las plataformas de Fuego y Sombras se ajustan al
+relieve. La Forja conserva la colección local de proyectos y añade un taller
+de basalto con horno y pedestales. Sombras usa seis variantes de árboles
+ramificados mediante instancias. Cosmos incorpora naves de patrulla con
+casco biselado, cabina, motores y orientación según el rumbo.
+
+Las mallas de esta revisión son originales y procedurales. Para una siguiente
+iteración con escaneos conviene probar [Boulder 01 de Poly Haven](https://polyhaven.com/a/boulder_01)
+(Rico Cilliers, modelo CC0 con LOD) y [Tree Bark 03](https://polyhaven.com/a/tree_bark_03)
+(material de corteza de Poly Haven). Son referencias evaluadas para esta
+revisión y no forman parte de las descargas de la escena.

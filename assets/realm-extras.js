@@ -1,3 +1,7 @@
+import { chainGeometry, fracturedRock, createMeteorTail, createDragonKit,
+  createScoutKit, createTreeGeometry } from './realm-models.js?v=realm-models-1';
+import { surfaceHeight } from './realistic-environments.js?v=realms-16';
+
 // Landmarks del universo XR. Geometría procedural reutilizable, comportamiento
 // determinista, zonas de vuelo y plataformas protegidas. Escenas con Three.js.
 const rand=(n,s=1)=>{const v=Math.sin(n*123.37+s*76.9)*43758.5453;return v-Math.floor(v)};
@@ -78,14 +82,35 @@ function waterfalls(T,parent,compact,reduced,updates){
   updates.push(t=>{if(!reduced)for(const w of ribbons){w.position.z+=Math.sin(t*.9+w.userData.phase)*.003;}});
 }
 function sunshafts(T,parent,reduced,updates){
-  const mat=new T.MeshBasicMaterial({color:0xfff3cd,transparent:true,opacity:.043,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending});
-  const group=new T.Group();parent.add(group);
-  for(let i=0;i<16;i++){
-    const x=-130+i*17.8,z=-180+rand(i,8)*150;
-    const beam=m(T,group,new T.ConeGeometry(7+rand(i,3)*3,110,18,1,true),mat,x,49,z);
-    beam.rotation.z=-.27;
+  const mat = new T.ShaderMaterial({
+    uniforms: { uOpacity: { value: .105 } },
+    transparent: true, depthWrite: false, side: T.DoubleSide, blending: T.AdditiveBlending,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.);
+      }`,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float uOpacity;
+      void main() {
+        float x = abs(vUv.x-.5)*2.;
+        float edge = 1.-smoothstep(.02,.88,x);
+        float ends = smoothstep(0.,.24,vUv.y)*(1.-smoothstep(.66,1.,vUv.y));
+        gl_FragColor = vec4(1.,.91,.73,edge*edge*ends*uOpacity);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`
+  });
+  const geometry = new T.PlaneGeometry(21,112);
+  for (let i=0;i<10;i++) {
+    const x=-138+i*28.5,z=-196+rand(i,8)*144;
+    const shaft=m(T,parent,geometry,mat,x,49,z);
+    shaft.rotation.set(-.12,(i%3-1)*.32,-.32);
+    shaft.scale.x=.58+rand(i,3)*.63;
   }
-  updates.push(t=>{if(!reduced)mat.opacity=.035+.012*Math.sin(t*.3);});
+  updates.push(t=>{if(!reduced)mat.uniforms.uOpacity.value=.099+.017*Math.sin(t*.3);});
 }
 function heavenlyCreatures(T,parent,compact,reduced,updates){
   const feather=color(T,0xf2ecde),gold=color(T,0xd7c7a1,{metalness:.4});
@@ -142,38 +167,57 @@ function infernalFortresses(T,parent,compact){
       m(T,parent,new T.ConeGeometry(3,5,8),ember,xx,33,z-13);
     }
   }
-  // Gigantic chains across canyon. Links constructed as repeatable torus segments.
-  const metal=color(T,0x393436,{metalness:.82,roughness:.3});
-  for(let i=0;i<3;i++)for(let j=0;j<26;j++){
-    const link=m(T,parent,new T.TorusGeometry(1.6,.38,7,12),metal,
-      -107+j*8.4,24-Math.sin(j/25*Math.PI)*18,10-i*118);
-    link.rotation.y=j%2?Math.PI/2:0;
+  const metal = color(T, 0x554049, { metalness: .7, roughness: .57 });
+  const link = chainGeometry(T);
+  const along = new T.Vector3(0,1,0), tangent = new T.Vector3();
+  const anchorGeometry = new T.CylinderGeometry(2.45, 3.2, 1, 10);
+  const matrix = new T.Object3D();
+  const tilt = new T.Quaternion();
+  const count = compact ? 2 : 3;
+  const links = new T.InstancedMesh(link, metal, count * 59);
+  for (let chain = 0; chain < count; chain++) {
+    const z = 10 - chain * 118;
+    for (const x of [-81,81]) {
+      const bottom = surfaceHeight(1,x,z) - 1;
+      const anchor = m(T,parent,anchorGeometry,iron,x,(35 + bottom) / 2,z);
+      anchor.scale.y = 35 - bottom;
+    }
+    for (let i = 0; i < 59; i++) {
+      const t = i / 58;
+      matrix.position.set(-81 + t * 162, 34 - 16 * Math.sin(t * Math.PI), z);
+      tangent.set(162,-16 * Math.PI * Math.cos(t * Math.PI),0).normalize();
+      tilt.setFromAxisAngle(along,(i % 2 ? Math.PI / 2 : 0) + .08 * Math.sin(i * 13));
+      matrix.quaternion.setFromUnitVectors(along,tangent).multiply(tilt);
+      matrix.updateMatrix();
+      links.setMatrixAt(chain * 59 + i,matrix.matrix);
+    }
   }
+  links.instanceMatrix.needsUpdate = true;
+  links.name = 'Cadenas forjadas entre anclajes de basalto';
+  parent.add(links);
 }
 function infernalCreatures(T,parent,compact,reduced,updates){
   const skin=color(T,0x372028,{metalness:.15}),eye=new T.MeshBasicMaterial({color:0xf43c16});
   const dragons=[];
+  const buildDragon = createDragonKit(T,skin,eye);
   for(let i=0;i<(compact?2:5);i++){
     const g=new T.Group();parent.add(g);g.name='Dragón infernal';
-    const torso=m(T,g,new T.ConeGeometry(2.1,12,8),skin,0,0,0);torso.rotation.x=Math.PI/2;
-    m(T,g,new T.ConeGeometry(1.4,4.5,8),skin,0,.6,6).rotation.x=Math.PI/2;
-    for(const s of [-1,1]){
-      const wing=m(T,g,new T.ConeGeometry(3.4,11,3),skin,s*6,0,-1);
-      wing.rotation.z=s*Math.PI/2;wing.userData.side=s;
-    }
-    m(T,g,new T.SphereGeometry(.22,8,6),eye,1,.5,6.2);
-    g.scale.setScalar(1.1+rand(i,3)*1.15);
-    g.userData.phase=i*1.7;
-    dragons.push(g);
+    const wings = buildDragon(g);
+    g.scale.setScalar(.85 + rand(i,3) * .75);
+    dragons.push({ g, wings, phase: i * 1.7 });
   }
   updates.push(t=>{
-    for(const d of dragons){
-      const p=d.userData.phase;
-      d.position.set(Math.sin(t*.12+p)*64,32+Math.sin(t*.7+p)*6,-18-p*86);
-      d.rotation.y=Math.sin(t*.1+p)*.55;
-      if(!reduced)d.children.filter(x=>x.userData.side).forEach(wing=>{
-        wing.rotation.y=Math.sin(t*1.9+p)*.27*wing.userData.side;
-      });
+    const time = reduced ? 0 : t;
+    for(const { g, wings, phase } of dragons){
+      const orbit = time * .12 + phase;
+      g.position.set(Math.sin(orbit)*64, 32+Math.sin(time*.7+phase)*5,
+        -48-phase*57+Math.cos(orbit)*36);
+      g.rotation.y = Math.atan2(64 * Math.cos(orbit), -36 * Math.sin(orbit));
+      g.rotation.z = .12 * Math.sin(orbit);
+      for (const { wing, side } of wings) {
+        wing.rotation.z = side * (.14 + .5 * Math.sin(time * 2.2 + phase));
+        wing.rotation.y = side * .19 * Math.cos(time * 2.2 + phase);
+      }
     }
   });
   const demons=[];
@@ -195,41 +239,62 @@ function infernalCreatures(T,parent,compact,reduced,updates){
   });
 }
 function meteors(T,parent,compact,reduced,updates){
-  const stone=color(T,0x37282b,{emissive:0x75240e,emissiveIntensity:.5});
-  const streak=new T.MeshBasicMaterial({color:0xff5020,transparent:true,opacity:.68,depthWrite:false,blending:T.AdditiveBlending});
+  const stone = color(T,0x4b3537,{emissive:0x982905,emissiveIntensity:.49,roughness:.88});
+  const variants = [fracturedRock(T,1), fracturedRock(T,5), fracturedRock(T,9)];
+  const {geometry,material} = createMeteorTail(T);
+  const up = new T.Vector3(0,1,0);
+  const trailing = new T.Vector3(-260,84,0).normalize();
   const objects=[];
   for(let i=0;i<(compact?5:12);i++){
-    const g=new T.Group();parent.add(g);
-    m(T,g,new T.IcosahedronGeometry(1.9,1),stone,0,0,0);
-    const tail=m(T,g,new T.ConeGeometry(.8,15,8),streak,0,6,0);tail.rotation.z=.4;
-    objects.push({g,i});
+    const g=new T.Group();parent.add(g);g.name='Meteoro de obsidiana';
+    g.quaternion.setFromUnitVectors(up,trailing);
+    const rock = m(T,g,variants[i % variants.length],stone,0,0,0);
+    rock.scale.setScalar(1.35 + rand(i,4) * 1.1);
+    m(T,g,geometry,material,0,0,0);
+    m(T,g,geometry,material,0,0,0).rotation.y = Math.PI / 2;
+    objects.push({g,rock,i});
   }
   updates.push(t=>{
-    for(const {g,i} of objects){
-      const p=(t*.03+i*.167)%1;
+    const time = reduced ? 0 : t;
+    material.uniforms.uTime.value = time;
+    for(const {g,rock,i} of objects){
+      const p=(time*.03+i*.167)%1;
       g.position.set(-130+p*260,93-p*84,24-i*31);
       g.visible=p>.05&&p<.89;
+      const edgeScale = Math.min(1,(p-.05)/.075,(.89-p)/.075);
+      g.scale.setScalar(Math.max(.001,edgeScale));
+      rock.rotation.set(time * .9 + i,time * .51 + i,.38);
     }
   });
 }
 function shadowForest(T,parent,compact,reduced,updates){
-  const trunk=color(T,0x272b33),leaf=color(T,0x252e2c,{roughness:1});
+  const trunk=color(T,0x34303c,{roughness:.95});
   const dead=color(T,0x302e3b);
-  const treeGeo=new T.CylinderGeometry(.25,.62,1,7);
-  const crownGeo=new T.IcosahedronGeometry(1,1);
-  const tmp=new T.Object3D();
-  const count=compact?135:290;
-  const trees=new T.InstancedMesh(treeGeo,trunk,count),tops=new T.InstancedMesh(crownGeo,leaf,count);
-  for(let i=0;i<count;i++){
-    const s=i%2?1:-1,x=s*(31+rand(i,4)*165),z=46-rand(i,7)*460;
-    const h=13+rand(i,8)*34;
-    tmp.position.set(x,-5+h*.5,z);tmp.scale.set(1.0+rand(i,5),h,1.0+rand(i,10));
-    tmp.rotation.set(0,rand(i,9)*6.28,.07);tmp.updateMatrix();trees.setMatrixAt(i,tmp.matrix);
-    tmp.position.set(x,-5+h,z);tmp.scale.set(6+rand(i,2)*8,7+rand(i,3)*10,6+rand(i,6)*8);
-    tmp.updateMatrix();tops.setMatrixAt(i,tmp.matrix);
+  const tmp = new T.Object3D();
+  const tint = new T.Color();
+  const count = compact ? 114 : 228;
+  const variants = 6;
+  for (let style=0;style<variants;style++) {
+    const trees = new T.InstancedMesh(createTreeGeometry(T,style+1,compact),trunk,count / variants);
+    for (let j=0;j<count/variants;j++) {
+      const i = j * variants + style;
+      const side = (j+style)%2 ? 1 : -1;
+      const x = side * (36 + rand(i,4) * 153), z = 46 - rand(i,7) * 460;
+      const scale = 1.25 + rand(i,8) * 2.75;
+      const girth = scale * (.64 + rand(i,6) * .29);
+      tmp.position.set(x,surfaceHeight(2,x,z)-.35,z);
+      tmp.scale.set(girth,scale,girth);
+      tmp.rotation.set(0,rand(i,9)*Math.PI*2,0);
+      tmp.updateMatrix();
+      trees.setMatrixAt(j,tmp.matrix);
+      tint.setScalar(.59 + rand(i,10) * .41);
+      trees.setColorAt(j,tint);
+    }
+    trees.instanceMatrix.needsUpdate = true;
+    trees.instanceColor.needsUpdate = true;
+    trees.name = 'Bosque de troncos retorcidos';
+    parent.add(trees);
   }
-  trees.instanceMatrix.needsUpdate=true;tops.instanceMatrix.needsUpdate=true;
-  trees.frustumCulled=false;tops.frustumCulled=false;parent.add(trees,tops);
   // Ancient cemetery and overgrown abandoned castles.
   for(let i=0;i<(compact?18:36);i++){
     const s=i%2?1:-1,x=s*(26+rand(i,5)*102),z=36-i*13;
@@ -248,10 +313,34 @@ function shadowForest(T,parent,compact,reduced,updates){
     const geo=new T.TubeGeometry(new T.CatmullRomCurve3(pts),150,2.5,6,false);
     m(T,parent,geo,water,0,0,0);
   }
-  const moonMat=new T.MeshBasicMaterial({color:0xd6dcf6});
-  m(T,parent,new T.SphereGeometry(21,30,20),moonMat,110,82,-270);
-  const eclipse=new T.MeshBasicMaterial({color:0x151827});
-  m(T,parent,new T.SphereGeometry(17,30,20),eclipse,110,82,-250);
+  const eclipse = new T.ShaderMaterial({
+    transparent:true,depthWrite:false,fog:false,
+    vertexShader:`
+      varying vec2 vUv;
+      void main() {
+        vUv=uv;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);
+      }`,
+    fragmentShader:`
+      varying vec2 vUv;
+      void main() {
+        vec2 p=vUv*2.-1.;
+        float r=length(p);
+        float mask=1.-smoothstep(.70,.71,r);
+        float cover=length(p-vec2(.27,.085));
+        float crescent=smoothstep(.57,.65,cover);
+        float textureShade=.90+.055*sin(p.x*31. + p.y*40.)*
+          sin(p.y*33. - p.x*12.)+.028*cos(p.y*125.);
+        float corona=exp(-abs(r-.702)*19.)*.20;
+        vec3 dark=vec3(.029,.016,.059);
+        vec3 light=vec3(.77,.66,.98)*textureShade;
+        vec3 color=mix(dark,light,crescent)+vec3(.57,.21,.77)*corona;
+        gl_FragColor=vec4(color,max(mask,corona));
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+      }`
+  });
+  m(T,parent,new T.PlaneGeometry(66,66),eclipse,108,76,-280).rotation.y=-.23;
   const ghosts=[];
   const ghostMat=new T.MeshBasicMaterial({color:0x73a2a7,transparent:true,opacity:.26,depthWrite:false});
   for(let i=0;i<12;i++){
@@ -283,8 +372,8 @@ function cosmicConstructs(T,parent,compact,reduced,updates){
   const metal=color(T,0x40606e,{metalness:.86,roughness:.21});
   const cyan=new T.MeshBasicMaterial({color:0x66ebdb});
   const structures=[];
-  for(let i=0;i<(compact?3:7);i++){
-    const side=i%2?1:-1,x=side*(48+rand(i,3)*80),y=18+rand(i,5)*45,z=24-i*53;
+  for(let i=0;i<(compact?2:3);i++){
+    const side=i%2?1:-1,x=side*(88+rand(i,3)*57),y=22+rand(i,5)*53,z=-46-i*81;
     const g=new T.Group();g.position.set(x,y,z);parent.add(g);
     m(T,g,new T.CylinderGeometry(3,3,15,12),metal,0,0,0).rotation.x=Math.PI/2;
     for(let j=0;j<3;j++){
@@ -341,28 +430,19 @@ function cosmicConstructs(T,parent,compact,reduced,updates){
   });
   // Naves desconocidas: patrullan en trayectorias propias.
   const scouts=[];
+  const buildScout = createScoutKit(T,metal,cyan);
   for(let i=0;i<(compact?4:9);i++){
     const g=new T.Group();g.name='Nave exploradora desconocida';parent.add(g);
-    const hull=m(T,g,new T.ConeGeometry(1.7,7,6),metal,0,0,0);
-    hull.rotation.x=Math.PI/2;
-    m(T,g,new T.BoxGeometry(9,.25,2),metal,0,0,-.7);
-    m(T,g,new T.SphereGeometry(.52,8,6),cyan,0,0,-3.3);
+    buildScout(g);
+    g.scale.setScalar(.78 + rand(i,3) * .46);
     scouts.push({g,i});
   }
   updates.push(t=>scouts.forEach(({g,i})=>{
-    const p=t*.12+i*.8;
-    g.position.set(Math.sin(p)*(65+i*5),12+Math.sin(p*.8)*10,-80-i*32+Math.cos(p)*24);
-    g.rotation.y=p*.2;
+    const p=(reduced ? 0 : t)*.12+i*.8;
+    const range = 65 + i * 5;
+    g.position.set(Math.sin(p)*range,12+Math.sin(p*.8)*10,-80-i*32+Math.cos(p)*24);
+    g.rotation.set(.08 * Math.cos(p*.8), Math.atan2(-Math.cos(p)*range, Math.sin(p)*24), .2 * Math.sin(p), 'YXZ');
   }));
-  const alien=color(T,0x2c675f,{emissive:0x103b3e,emissiveIntensity:.4});
-  for(let i=0;i<4;i++){
-    const side=i%2?1:-1,x=side*(135+rand(i,4)*23),z=-35-i*85;
-    const dome=m(T,parent,new T.SphereGeometry(18,16,12),alien,x,-13,z);
-    dome.scale.y=.22;
-    for(let j=0;j<5;j++){
-      const spire=m(T,parent,new T.ConeGeometry(2.3,25,7),metal,x+Math.cos(j*1.26)*12,6,z+Math.sin(j*1.26)*12);
-    }
-  }
 }
 export function enhanceRealm(THREE,parent,level,{compact=false,reduced=false}={}){
   const decor=new THREE.Group();decor.name='Detalles del reino '+level;parent.add(decor);
